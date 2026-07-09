@@ -46,6 +46,15 @@
 | WACC | **8.5%** | Institutional cost of capital benchmark |
 | Contract Mix | **70% 3-yr / 30% 5-yr** | Industry baseline |
 
+### Principled Justification of Transformation Constants & Clip Bounds
+*   **Downsizing Ratio ($1.0	imes$ multiplier, $[0.25, 0.90]$ bounds)**:
+    *   *Theory*: The ratio of aggregate quarterly CapEx to committed revenue backlog (RPO) represents the **physical overinvestment rate**. If quarterly spend on compute infrastructure equals 60% of total contracted backlog (RPO), 60% of capacity stands to be underutilized/redundant upon renewal under stress. Thus, a direct $1.0	imes$ linear mapping represents this proportional exposure.
+    *   *Clip Bounds*: The **$0.25$ floor** represents the baseline contract churn observed during tech transitions when workloads are migrated to standard SaaS. The **$0.90$ ceiling** reflects that even in severe stress, a structural minimum of 10% of commitments must renew to keep core enterprise systems and legacy services operational.
+*   **Capital Reflexivity ($1.5	imes$ multiplier, $[0.10, 0.80]$ bounds)**:
+    *   *Theory*: The CapEx-to-Revenue ratio measures the proportion of current revenues reinvested in growth infrastructure. In corporate finance and reflexivity theory (George Soros), capital markets act as an amplifier of real-economy trends. A $1.5	imes$ multiplier scales the parameter to reflect that stock price appreciation and competitive FOMO expand capital budgets faster than actual revenues grow.
+    *   *Clip Bounds*: The **$0.10$ floor** prevents the feedback loop from collapsing to zero during contraction phases (ensuring some baseline strategic investment remains). The **$0.80$ ceiling** is a safety constraint to prevent feedback coefficients from exceeding $1.0$, which would create unstable infinite exponential loops.
+
+
 ---
 
 ## 2. Baseline Simulation (20-Year Projection)
