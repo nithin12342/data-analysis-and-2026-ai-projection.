@@ -54,7 +54,8 @@ const DEFAULT_PARAMS = {
   elasticityCoefficient: 1.25,
   adoptionDecayRate: 0.03,
   capitalReflexivity: 0.30, // Feedback strength of stock index back to CapEx
-  nationalStrategicInvestment: 1.5 // Multiplier of government subsidy spending
+  nationalStrategicInvestment: 1.5, // Multiplier of government subsidy spending
+  insolvencyWriteDownRate: 0.0 // Default is 0% (only active for startup backtests)
 };
 
 function runSimulation(params = {}) {
@@ -171,7 +172,7 @@ function runSimulation(params = {}) {
     // Unprofitable startups run out of cash and go bankrupt, leading to
     // an additional software subscription revenue write-down of 10% per quarter.
     const externalFinancingAvailable = investorSentiment > 0.60 ? investorSentiment : 0.0;
-    const insolvencyWriteDown = externalFinancingAvailable === 0.0 ? softwareRevenues * 0.10 : 0.0;
+    const insolvencyWriteDown = externalFinancingAvailable === 0.0 ? softwareRevenues * merged.insolvencyWriteDownRate : 0.0;
 
     if (netSavings > 0) {
       softwareRevenues += (netSavings * adoptionRate - merged.adoptionDecayRate * softwareRevenues - insolvencyWriteDown) * dt;
@@ -446,6 +447,7 @@ function optimizeHistoricalParameters(dynamicCrisis) {
           testParams.sentimentDecay = 0.55;
           testParams.targetMultipleSales = 0.5;
           testParams.downsizingRatio = 0.85;
+          testParams.insolvencyWriteDownRate = 0.10;
         } else if (dynamicCrisis === "japan") {
           testParams.wacc = 0.06;
           testParams.downsizingRatio = 0.75;
@@ -529,6 +531,7 @@ function verifyHistoricalCase(dynamicCrisis) {
     testParams.sentimentDecay = 0.55;
     testParams.targetMultipleSales = 0.5;
     testParams.downsizingRatio = 0.85;
+    testParams.insolvencyWriteDownRate = 0.10;
   } else if (dynamicCrisis === "japan") {
     testParams.wacc = 0.06;
     testParams.downsizingRatio = 0.75;

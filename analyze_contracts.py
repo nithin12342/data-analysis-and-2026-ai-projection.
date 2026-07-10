@@ -36,7 +36,8 @@ DEFAULT_PARAMS = {
     "adoptionDecayRate": 0.03,
     "capitalReflexivity": 0.30,
     "nationalStrategicInvestment": 1.5,
-    "siliconSupply": 12.0
+    "siliconSupply": 12.0,
+    "insolvencyWriteDownRate": 0.0
 }
 
 # Merge calibrated parameters
@@ -144,7 +145,7 @@ def run_simulation_python(p):
         # Unprofitable startups run out of cash and go bankrupt, leading to
         # an additional software subscription revenue write-down of 10% per quarter.
         externalFinancingAvailable = investorSentiment if investorSentiment > 0.60 else 0.0
-        insolvencyWriteDown = softwareRevenues * 0.10 if externalFinancingAvailable == 0.0 else 0.0
+        insolvencyWriteDown = softwareRevenues * p["insolvencyWriteDownRate"] if externalFinancingAvailable == 0.0 else 0.0
 
         # CRITICAL FIX 3: Accelerated dis-adoption/cancellation when netSavings is negative
         if netSavings > 0:
