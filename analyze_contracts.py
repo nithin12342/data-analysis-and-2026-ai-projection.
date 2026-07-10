@@ -140,7 +140,9 @@ def run_simulation_python(p):
             cancellationRate = p["adoptionDecayRate"] + min(0.20, -netSavings / (cloudRevenue + 0.1))
             softwareRevenues += (netSavings * adoptionRate - cancellationRate * softwareRevenues) * dt
             
+        softwareRevenues = max(0.0, softwareRevenues)
         netROI = softwareRevenues / (cloudRevenue + 0.1)
+
         
         # 4. Contracts renewal lag
         expiring3yr = contractQueue3yr[t] if t < len(contractQueue3yr) else 0.1

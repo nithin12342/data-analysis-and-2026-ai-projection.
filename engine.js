@@ -165,6 +165,8 @@ function runSimulation(params = {}) {
       const cancellationRate = merged.adoptionDecayRate + Math.min(0.20, -netSavings / (cloudRevenue + 0.1));
       softwareRevenues += (netSavings * adoptionRate - cancellationRate * softwareRevenues) * dt;
     }
+    softwareRevenues = Math.max(0.0, softwareRevenues);
+
     
     const gdpGrowthPct = Math.min(0.04, (softwareRevenues * 0.005) * pppAdjustment);
 
