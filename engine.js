@@ -166,12 +166,19 @@ function runSimulation(params = {}) {
     const regulatoryFrictionCoeff = 1 + (merged.complianceFriction + industryConfig.complianceCost) * 3;
     const adoptionRate = Math.max(0.01, (netSavings > 0 ? 0.20 : 0.01) / regulatoryFrictionCoeff);
     
+    // Financing/solvency mechanic: when investor sentiment drops below 0.60,
+    // the capital markets IPO/refinancing window closes discontinuously.
+    // Unprofitable startups run out of cash and go bankrupt, leading to
+    // an additional software subscription revenue write-down of 10% per quarter.
+    const externalFinancingAvailable = investorSentiment > 0.60 ? investorSentiment : 0.0;
+    const insolvencyWriteDown = externalFinancingAvailable === 0.0 ? softwareRevenues * 0.10 : 0.0;
+
     if (netSavings > 0) {
-      softwareRevenues += (netSavings * adoptionRate - merged.adoptionDecayRate * softwareRevenues) * dt;
+      softwareRevenues += (netSavings * adoptionRate - merged.adoptionDecayRate * softwareRevenues - insolvencyWriteDown) * dt;
     } else {
       // Accelerate dis-adoption/cancellation when netSavings is negative (buyers cancel losing subscriptions)
       const cancellationRate = merged.adoptionDecayRate + Math.min(0.20, -netSavings / (cloudRevenue + 0.1));
-      softwareRevenues += (netSavings * adoptionRate - cancellationRate * softwareRevenues) * dt;
+      softwareRevenues += (netSavings * adoptionRate - cancellationRate * softwareRevenues - insolvencyWriteDown) * dt;
     }
     softwareRevenues = Math.max(0.0, softwareRevenues);
 
@@ -389,6 +396,14 @@ const REAL_HISTORICAL_TRAILS = {
       0.0325, 0.0250, 0.0175, 0.0175, 0.0100, 0.0050, 0.0050, 0.0050,
       0.0050, 0.0050, 0.0025, 0.0025, 0.0015, 0.0015, 0.0010, 0.0010
     ]
+  },
+  railway: {
+    actualIndex: [
+      100.0, 105.0, 110.0, 115.0, 120.0, 130.0, 145.0, 160.0,
+      175.0, 190.0, 198.4, 180.0, 165.0, 150.0, 138.0, 128.0,
+      118.0, 110.0, 100.0, 90.0,  85.0,  80.0,  76.0,  72.0,
+      68.0,  65.0,  63.0,  61.0,  60.0
+    ]
   }
 };
 
@@ -435,6 +450,19 @@ function optimizeHistoricalParameters(dynamicCrisis) {
           testParams.wacc = 0.06;
           testParams.downsizingRatio = 0.75;
           testParams.seasonalityCycle = 0.045;
+        } else if (dynamicCrisis === "railway") {
+          testParams.wacc = 0.03;
+          testParams.downsizingRatio = 0.70;
+          testParams.initialComputeSupply = 8.0;
+          testParams.initialPower = 4.0;
+          testParams.initialSoftwareRevenues = 6.0;
+          testParams.initialCloudRevenue = 6.0;
+          testParams.initialCapEx = 10.0;
+          testParams.initialSilicon = 10.0;
+          testParams.sentimentSpeed = 3.0;
+          testParams.maxSentiment = 2.0;
+          testParams.sentimentDecay = 0.30;
+          testParams.targetMultipleSales = 1.0;
         }
 
         const simOutput = runSimulation(testParams);
@@ -505,6 +533,19 @@ function verifyHistoricalCase(dynamicCrisis) {
     testParams.wacc = 0.06;
     testParams.downsizingRatio = 0.75;
     testParams.seasonalityCycle = 0.045;
+  } else if (dynamicCrisis === "railway") {
+    testParams.wacc = 0.03;
+    testParams.downsizingRatio = 0.70;
+    testParams.initialComputeSupply = 8.0;
+    testParams.initialPower = 4.0;
+    testParams.initialSoftwareRevenues = 6.0;
+    testParams.initialCloudRevenue = 6.0;
+    testParams.initialCapEx = 10.0;
+    testParams.initialSilicon = 10.0;
+    testParams.sentimentSpeed = 3.0;
+    testParams.maxSentiment = 2.0;
+    testParams.sentimentDecay = 0.30;
+    testParams.targetMultipleSales = 1.0;
   }
 
   const simOutput = runSimulation(testParams);

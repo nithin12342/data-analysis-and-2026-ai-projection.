@@ -139,12 +139,19 @@ def run_simulation_python(p):
         regulatoryFrictionCoeff = 1 + (p["complianceFriction"] + 0.10) * 3
         adoptionRate = max(0.01, (0.20 if netSavings > 0 else 0.01) / regulatoryFrictionCoeff)
         
+        # Financing/solvency mechanic: when investor sentiment drops below 0.60,
+        # the capital markets IPO/refinancing window closes discontinuously.
+        # Unprofitable startups run out of cash and go bankrupt, leading to
+        # an additional software subscription revenue write-down of 10% per quarter.
+        externalFinancingAvailable = investorSentiment if investorSentiment > 0.60 else 0.0
+        insolvencyWriteDown = softwareRevenues * 0.10 if externalFinancingAvailable == 0.0 else 0.0
+
         # CRITICAL FIX 3: Accelerated dis-adoption/cancellation when netSavings is negative
         if netSavings > 0:
-            softwareRevenues += (netSavings * adoptionRate - p["adoptionDecayRate"] * softwareRevenues) * dt
+            softwareRevenues += (netSavings * adoptionRate - p["adoptionDecayRate"] * softwareRevenues - insolvencyWriteDown) * dt
         else:
             cancellationRate = p["adoptionDecayRate"] + min(0.20, -netSavings / (cloudRevenue + 0.1))
-            softwareRevenues += (netSavings * adoptionRate - cancellationRate * softwareRevenues) * dt
+            softwareRevenues += (netSavings * adoptionRate - cancellationRate * softwareRevenues - insolvencyWriteDown) * dt
             
         softwareRevenues = max(0.0, softwareRevenues)
         netROI = softwareRevenues / (cloudRevenue + 0.1)
