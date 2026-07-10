@@ -536,7 +536,7 @@ function verifyHistoricalCase(dynamicCrisis) {
     crisis: dynamicCrisis,
     rmse: rmse,
     directionalAccuracyPct: directionalAccuracy * 100,
-    calibrationPassed: rmse < 35.0 && directionalAccuracy > 0.65,
+    calibrationPassed: rmse < 25.0 && directionalAccuracy > 0.70,
     simulatedTrail: calibratedTrail,
     actualTrail: actualTrail
   };

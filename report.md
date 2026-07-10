@@ -215,12 +215,12 @@ graph TD
 
 | Percentile | Final Index | Cloud Rev | ROIC |
 |:---|:---:|:---:|:---:|
-| **P10** (Downside) | 91.06 | $19.82B | 11.2% |
-| **P50** (Median) | 119.56 | $26.02B | 14.0% |
-| **P90** (Upside) | 581.06 | $64.05B | 22.5% |
+| **P10** (Downside) | 89.24 | $19.42B | 11.0% |
+| **P50** (Median) | 106.77 | $23.23B | 12.8% |
+| **P90** (Upside) | 233.45 | $50.80B | 21.0% |
 
 > [!NOTE]
-> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 581.06) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
+> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 233.45) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
 
 ---
 
@@ -231,7 +231,7 @@ graph TD
 
 | Backtest | RMSE | Target | DA | Target | Status |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| **Dot-com Bubble** (NASDAQ 1997-2002) | 31.086 | < 35.0 | 69.6% | > 65% | **PASSED** |
+| **Dot-com Bubble** (NASDAQ 1997-2002) | 31.086 | < 25.0 | 69.6% | > 70% | **FAILED** |
 | **Japan Asset Bubble** (Nikkei 1989-1995) | 18.468 | < 25.0 | 87.0% | > 70% | **PASSED** |
 
 ---
@@ -241,15 +241,16 @@ graph TD
 ### Contracts Expiring
 | Year | 3-Year Contracts | 5-Year Contracts | **Total Expiring** |
 |:---|:---:|:---:|:---:|
-| **2026** | ${contracts_3yr_exp_2026:,.1f}B | ${contracts_5yr_exp_2026:,.1f}B | **${exp_2026:,.1f}B** |
-| **2027** | ${contracts_3yr_exp_2027:,.1f}B | ${contracts_5yr_exp_2027:,.1f}B | **${exp_2027:,.1f}B** |
-| **Combined** | ${contracts_3yr_exp_2026 + contracts_3yr_exp_2027:,.1f}B | ${contracts_5yr_exp_2026 + contracts_5yr_exp_2027:,.1f}B | **${combined_exp:,.1f}B** |
+| **2026** | $247.8B | $63.7B | **$311.6B** |
+| **2027** | $318.1B | $79.7B | **$397.7B** |
+| **Combined** | $565.9B | $143.4B | **$709.3B** |
 
 ### Revenue Loss by Scenario
 | Scenario | 2026 Loss | 2027 Loss | **Combined** |
 |:---|:---:|:---:|:---:|
-| Normal (4% churn) | ${loss_normal_2026:,.1f}B | ${loss_normal_2027:,.1f}B | **${loss_normal_2026 + loss_normal_2027:,.1f}B** |
-| Full Stress (60% downsize) | ${loss_stressed_2026:,.1f}B | ${loss_stressed_2027:,.1f}B | **${combined_stressed_loss:,.1f}B** |
+| Normal (4% churn) | $12.5B | $15.9B | **$28.4B** |
+| Full Stress (60% downsize) | $186.9B | $238.6B | **$425.6B** |
+
 
 ---
 
@@ -276,13 +277,13 @@ The actual engine results show distinct dynamics after resolving the markdown du
 *   **Scenario E (Multiple Compression)**: Ends at **Index 98.82** (reflecting a lower multiple floor of 2.0x EV/Sales, reducing final valuation).
 
 ### Finding 7: Monte Carlo Asymmetry
-The Monte Carlo confidence intervals show strong upside skew (P10 = 91.06, P50 = 119.56, P90 = 581.06). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
+The Monte Carlo confidence intervals show strong upside skew (P10 = 89.24, P50 = 106.77, P90 = 233.45). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
 
 ---
 
 ## 8. Appendix: Mathematical & Logical Trace of Scenario A
 
-To address the key question of how Scenario A's index behaves under parameter shifts (Index 78.11 in the old uncorrected engine vs. 52.65 in the current corrected engine), this appendix provides a mathematical trace of the simulation dynamics.
+To address the key question of how Scenario A's index behaves under parameter shifts (Index 78.11 in the old uncorrected engine vs. 52.81 in the current corrected engine), this appendix provides a mathematical trace of the simulation dynamics.
 
 ### Step 1: Direct Coupling Verification
 There is **no direct coupling** where a compliance-drag term divides by or is multiplied by `downsizingRatio`, `capitalReflexivity`, or `wacc` in the engine equations.
@@ -299,15 +300,15 @@ $$\implies \text{renewalMultiplier} = 1.0 - \text{downsizingRatio}$$
 
 ### Step 3: Parameter Monotonicity Audit
 To verify parameter monotonicity, we ran all 32 scenarios on the **same corrected engine** under both parameter sets (V2 vs V3):
-*   **Parameter Set v2**: `downsizingRatio = 0.75`, `capitalReflexivity = 0.55` (Scenario A Index = **52.59**)
-*   **Parameter Set v3**: `downsizingRatio = 0.60`, `capitalReflexivity = 0.26` (Scenario A Index = **52.65**)
+*   **Parameter Set v2**: `downsizingRatio = 0.75`, `capitalReflexivity = 0.55` (Scenario A Index = **52.75**)
+*   **Parameter Set v3**: `downsizingRatio = 0.60`, `capitalReflexivity = 0.26` (Scenario A Index = **52.81**)
 
-As parameters got milder (downsizing ratio decreased), the Scenario A final index **increased** from `52.59` to `52.65` (monotonic). The index behaved monotonically for all other 31 scenarios as well.
+As parameters got milder (downsizing ratio decreased), the Scenario A final index **increased** from `52.75` to `52.81` (monotonic). The index behaved monotonically for all other 31 scenarios as well.
 
-### Step 4: The 78.11 to 52.65 Cross-Engine Version Shift
-The apparent drop from `78.11` to `52.65` was a **cross-engine version artifact**:
+### Step 4: The 78.11 to 52.81 Cross-Engine Version Shift
+The apparent drop from `78.11` to `52.81` was a **cross-engine version artifact**:
 1.  *Old uncorrected engine*: Did not accelerate dis-adoption when `netSavings <= 0`. As a result, `softwareRevenues` decayed very slowly, keeping `netROI` above `WACC` for the entire 80 steps. The downsizing trigger **never fired**, and the index remained artificially high at `78.11` under both parameter sets.
-2.  *New corrected engine*: Correctly accelerates dis-adoption on negative enterprise returns, dragging `netROI` below `WACC` and activating the renewal cliff. This results in the true, lower Scenario A index of `52.65`.
+2.  *New corrected engine*: Correctly accelerates dis-adoption on negative enterprise returns, dragging `netROI` below `WACC` and activating the renewal cliff. This results in the true, lower Scenario A index of `52.81`.
 
 ---
 *Report generated by TESM Engine v2.0 | Calibration Pipeline v3.0 | 97/97 verification tests passed*
