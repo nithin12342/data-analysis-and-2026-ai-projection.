@@ -32,6 +32,21 @@ The model is anchored in empirical datasets spanning physical infrastructure que
     *   *Stressed Downsizing Ratio*: **0.60** (60%), derived from the overinvestment ratio: $\min(0.90, \max(0.25, (\text{meanCapEx} / \text{meanRPO}) \times 1.0))$.
     *   *Capital Reflexivity*: **0.26** (26%), derived from sentiment-to-reinvestment feedback: $\min(0.80, \max(0.10, (\text{meanCapEx} / \text{meanRevenue}) \times 1.5))$.
 
+### D. Global Model Assumptions & Reference Constants (Disclosed Inputs)
+To ensure complete structural transparency, the following hand-calibrated global baseline constants are utilized throughout the simulation loop:
+*   **Initial Index State**: `initialIndex = 100.0` (normalizing base stock index value).
+*   **WACC (Weighted Average Cost of Capital)**: `wacc = 0.085` (8.5% annual hurdle rate, or 2.125% per quarter). This parameter gates the sentiment-growth trigger and defines the enterprise contract downsizing cliff.
+*   **Valuation Multiple Anchors**:
+    *   *Base EV/Sales Multiple*: `baseMultipleSales = 8.0` (normal market multiple for software/cloud segments).
+    *   *Target EV/Sales Multiple (Floor)*: `targetMultipleSales = 3.5` (minimum multiple support floor during a severe contraction).
+*   **Initial State Vector Assets**:
+    *   *Initial Compute Supply*: `initialComputeSupply = 10.0`
+    *   *Initial Active Power*: `initialPower = 5.0`
+    *   *Initial Software Revenues*: `initialSoftwareRevenues = 4.0`
+    *   *Initial Cloud Revenue*: `initialCloudRevenue = 8.0`
+    *   *Initial CapEx Balance*: `initialCapEx = 15.0`
+    *   *Initial Silicon Wafer Inflows*: `initialSilicon = 12.0`
+
 ---
 
 ## 2. Core Model Equations & Formulas
@@ -147,6 +162,7 @@ graph TD
 | **Year 1 Q1** | 100.00 | $8.16B | 49.2% | 9.6% | 43.6% | 9.34x | 1.29% |
 | **Year 1 Q4** | 87.95 | $8.62B | 46.0% | 9.8% | 46.3% | 7.77x | 1.28% |
 | **Year 3 Q4** | 66.24 | $9.83B | 39.8% | 10.1% | 52.6% | 5.13x | 1.27% |
+| **Year 5 Q1** | 49.14 | $10.61B | 37.2% | 10.3% | 52.9% | 3.53x | 1.28% |
 | **Year 5 Q4** | 50.93 | $11.08B | 36.1% | 10.5% | 52.7% | 3.50x | 1.29% |
 | **Year 10 Q4** | 67.53 | $14.69B | 34.6% | 12.0% | 54.1% | 3.50x | 1.64% |
 | **Year 15 Q4** | 89.18 | $19.40B | 34.0% | 13.0% | 56.7% | 3.50x | 2.13% |
@@ -219,12 +235,12 @@ graph TD
 
 | Percentile | Final Index | Cloud Rev | ROIC |
 |:---|:---:|:---:|:---:|
-| **P10** (Downside) | 88.25 | $19.20B | 10.9% |
-| **P50** (Median) | 112.06 | $24.38B | 13.3% |
-| **P90** (Upside) | 296.14 | $52.73B | 21.9% |
+| **P10** (Downside) | 88.53 | $19.26B | 10.9% |
+| **P50** (Median) | 122.74 | $26.71B | 14.2% |
+| **P90** (Upside) | 242.90 | $52.86B | 21.4% |
 
 > [!NOTE]
-> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 296.14) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
+> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 242.90) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
 
 ---
 
@@ -240,7 +256,7 @@ graph TD
 | **Railway Mania** (UK 1843-1850) | 22.837 | < 25.0 | 57.1% | > 70% | **FAILED** |
 
 > [!NOTE]
-> **Methodology and Solvency Limits**: Re-evaluating historical backtests on the same raw, unrescaled index scale reveals structural differences. The Dot-com Bubble fails to pass the strict RMSE target because it lacks cash-runway modeling for unprofitable startups. We have added a discontinuous financing shut-off threshold (insolvencyWriteDownRate = 10%/qtr when sentiment drops below 0.60), scoped specifically to startup backtests so as not to distort the self-funded hyperscaler baseline. Railway Mania's RMSE clears the bar (22.84 < 25), even though overall directional accuracy does not — consistent with the stranding module fitting well while the crash-timing dynamics don't.
+> **Methodology and Solvency Limits**: Re-evaluating historical backtests on the same raw, unrescaled index scale reveals structural differences. The Dot-com Bubble fails to pass the strict RMSE target because it lacks cash-runway modeling for unprofitable startups. We have added a discontinuous financing shut-off threshold (insolvencyWriteDownRate = 10%/qtr when sentiment drops below 0.60), scoped specifically to startup backtests so as not to distort the self-funded hyperscaler baseline. Railway Mania's RMSE clears the bar (22.84 < 25), even though overall directional accuracy does not -- consistent with the stranding module fitting well while the crash-timing dynamics don't.
 
 ---
 
@@ -249,15 +265,15 @@ graph TD
 ### Contracts Expiring
 | Year | 3-Year Contracts | 5-Year Contracts | **Total Expiring** |
 |:---|:---:|:---:|:---:|
-| **2026** | $247.8B | $63.7B | **$311.6B** |
-| **2027** | $318.1B | $79.7B | **$397.7B** |
+| **2026** | $247.8B | $63.7B | **$311.5B** |
+| **2027** | $318.1B | $79.7B | **$397.8B** |
 | **Combined** | $565.9B | $143.4B | **$709.3B** |
 
 ### Revenue Loss by Scenario
 | Scenario | 2026 Loss | 2027 Loss | **Combined** |
 |:---|:---:|:---:|:---:|
 | Normal (4% churn) | $12.5B | $15.9B | **$28.4B** |
-| Full Stress (60% downsize) | $186.9B | $238.6B | **$425.6B** |
+| Full Stress (60% downsize) | $186.9B | $238.7B | **$425.6B** |
 
 
 ---
@@ -265,7 +281,7 @@ graph TD
 ## 7. Key Findings & Conclusions
 
 ### Finding 1: The 709.3 Billion Contract Cliff
-Approximately **709.3 Billion** in hyperscaler cloud contracts come up for renewal across 2026–2027. Under stress conditions (60% downsizing ratio derived from the CapEx/RPO overinvestment gap), the maximum revenue lost is **425.6 Billion** over those 8 quarters.
+Approximately **709.3 Billion** in hyperscaler cloud contracts come up for renewal across 2026â€“2027. Under stress conditions (60% downsizing ratio derived from the CapEx/RPO overinvestment gap), the maximum revenue lost is **425.6 Billion** over those 8 quarters.
 
 ### Finding 2: The 58.6% Stranded Compute Crisis
 Due to the **10-quarter (2.5-year) grid connection delays** extracted from LBNL data and the 29% transformer shortage risk, **58.6%** of all built-out compute capacity will sit dark in data centers waiting for power at peak. This triggers massive write-downs on unamortized CapEx.
@@ -285,7 +301,7 @@ The actual engine results show distinct dynamics after resolving the markdown du
 *   **Scenario E (Multiple Compression)**: Ends at **Index 98.82** (reflecting a lower multiple floor of 2.0x EV/Sales, reducing final valuation).
 
 ### Finding 7: Monte Carlo Asymmetry
-The Monte Carlo confidence intervals show strong upside skew (P10 = 88.25, P50 = 112.06, P90 = 296.14). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
+The Monte Carlo confidence intervals show strong upside skew (P10 = 88.53, P50 = 122.74, P90 = 242.90). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
 
 ---
 
