@@ -1,7 +1,7 @@
 # Techno-Economic Systems Model (TESM) Comprehensive Report
 
 **Version**: 3.1 (Fully Reconciled & Floored)  
-**Verification**: [97/97 verification tests passed](file:///C:/Users/NITHING/.gemini/antigravity/brain/d160859e-b61b-4e5d-b3e0-5d69f3cb8085/scratch/verify_engine.js)
+**Verification**: [101/101 verification tests passed](file:///C:/Users/NITHING/.gemini/antigravity/brain/d160859e-b61b-4e5d-b3e0-5d69f3cb8085/scratch/verify_engine.js)
 
 ---
 
@@ -219,12 +219,12 @@ graph TD
 
 | Percentile | Final Index | Cloud Rev | ROIC |
 |:---|:---:|:---:|:---:|
-| **P10** (Downside) | 88.42 | $19.24B | 10.9% |
-| **P50** (Median) | 108.73 | $23.66B | 12.9% |
-| **P90** (Upside) | 462.10 | $72.41B | 24.0% |
+| **P10** (Downside) | 88.25 | $19.20B | 10.9% |
+| **P50** (Median) | 112.06 | $24.38B | 13.3% |
+| **P90** (Upside) | 296.14 | $52.73B | 21.9% |
 
 > [!NOTE]
-> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 462.10) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
+> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 296.14) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
 
 ---
 
@@ -285,7 +285,7 @@ The actual engine results show distinct dynamics after resolving the markdown du
 *   **Scenario E (Multiple Compression)**: Ends at **Index 98.82** (reflecting a lower multiple floor of 2.0x EV/Sales, reducing final valuation).
 
 ### Finding 7: Monte Carlo Asymmetry
-The Monte Carlo confidence intervals show strong upside skew (P10 = 88.42, P50 = 108.73, P90 = 462.10). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
+The Monte Carlo confidence intervals show strong upside skew (P10 = 88.25, P50 = 112.06, P90 = 296.14). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
 
 ---
 
