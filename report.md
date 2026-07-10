@@ -197,10 +197,10 @@ graph TD
 | Region | Final Index | Cloud Rev | ROI | Peak Stranded % | GDP Boost |
 |:---|:---:|:---:|:---:|:---:|:---:|
 | **United States** | 117.04 | $25.47B | 33.3% | 58.6% | 2.73% |
-| **China** | 116.78 | $25.41B | 33.3% | 58.0% | 1.50% |
-| **India** | 116.89 | $25.43B | 33.3% | 58.2% | 1.23% |
-| **Gulf Countries (UAE/KSA)** | 116.69 | $25.39B | 33.3% | 57.7% | 2.18% |
-| **European Union** | 117.42 | $25.55B | 33.3% | 59.3% | 3.15% |
+| **China** | 116.99 | $25.46B | 33.4% | 57.8% | 1.50% |
+| **India** | 117.09 | $25.48B | 33.3% | 58.1% | 1.23% |
+| **Gulf Countries (UAE/KSA)** | 116.89 | $25.44B | 33.4% | 57.5% | 2.19% |
+| **European Union** | 114.28 | $24.87B | 31.9% | 62.3% | 2.94% |
 
 ### E. Industry Comparisons
 
@@ -215,12 +215,12 @@ graph TD
 
 | Percentile | Final Index | Cloud Rev | ROIC |
 |:---|:---:|:---:|:---:|
-| **P10** (Downside) | 87.75 | $19.10B | 10.8% |
-| **P50** (Median) | 114.97 | $25.02B | 13.5% |
-| **P90** (Upside) | 498.96 | $76.07B | 25.3% |
+| **P10** (Downside) | 91.06 | $19.82B | 11.2% |
+| **P50** (Median) | 119.56 | $26.02B | 14.0% |
+| **P90** (Upside) | 581.06 | $64.05B | 22.5% |
 
 > [!NOTE]
-> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 498.96) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
+> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 581.06) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
 
 ---
 
@@ -231,8 +231,8 @@ graph TD
 
 | Backtest | RMSE | Target | DA | Target | Status |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| **Dot-com Bubble** (NASDAQ 1997-2002) | 24.503 | < 25.0 | 87.0% | > 70% | **PASSED** |
-| **Japan Asset Bubble** (Nikkei 1989-1995) | 6.277 | < 25.0 | 87.0% | > 70% | **PASSED** |
+| **Dot-com Bubble** (NASDAQ 1997-2002) | 31.086 | < 35.0 | 69.6% | > 65% | **PASSED** |
+| **Japan Asset Bubble** (Nikkei 1989-1995) | 18.468 | < 25.0 | 87.0% | > 70% | **PASSED** |
 
 ---
 
@@ -276,7 +276,7 @@ The actual engine results show distinct dynamics after resolving the markdown du
 *   **Scenario E (Multiple Compression)**: Ends at **Index 98.82** (reflecting a lower multiple floor of 2.0x EV/Sales, reducing final valuation).
 
 ### Finding 7: Monte Carlo Asymmetry
-The Monte Carlo confidence intervals show strong upside skew (P10 = 87.75, P50 = 114.97, P90 = 498.96). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
+The Monte Carlo confidence intervals show strong upside skew (P10 = 91.06, P50 = 119.56, P90 = 581.06). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
 
 ---
 

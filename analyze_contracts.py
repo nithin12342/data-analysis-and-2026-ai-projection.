@@ -70,9 +70,14 @@ def run_simulation_python(p):
     gpuDeliveryQueue = [0.0] * steps
     
     for i in range(steps):
-        historicalCloudSpend = cloudRevenue * (1 + 0.04 * i)
-        contractQueue3yr[i] = (historicalCloudSpend * p["contractMix3yr"]) / lenShort
-        contractQueue5yr[i] = (historicalCloudSpend * (1 - p["contractMix3yr"])) / lenLong
+        if p.get("realContractSeed") and p["realContractSeed"][i] is not None:
+            # Use real SEC RPO-derived expiration schedule if supplied
+            contractQueue3yr[i] = p["realContractSeed"][i]["q3yr"]
+            contractQueue5yr[i] = p["realContractSeed"][i]["q5yr"]
+        else:
+            historicalCloudSpend = cloudRevenue * (1 + 0.04 * i)
+            contractQueue3yr[i] = (historicalCloudSpend * p["contractMix3yr"]) / lenShort
+            contractQueue5yr[i] = (historicalCloudSpend * (1 - p["contractMix3yr"])) / lenLong
         powerQueue[i] = 0.15
         gpuDeliveryQueue[i] = 0.5
         
@@ -92,7 +97,8 @@ def run_simulation_python(p):
     for t in range(steps):
         # 1. Physical Grid constraints
         constructionDelayMultiplier = 1 + p["transformerShortage"] * 1.5
-        effectivePowerGrowth = min(powerGrowthCap, 0.20 / constructionDelayMultiplier)
+        regionSpeedFactor = p["powerGrowthCap"] / 0.12
+        effectivePowerGrowth = min(powerGrowthCap, (0.20 * regionSpeedFactor) / constructionDelayMultiplier)
         
         gridArrival = powerQueue[t] if t < len(powerQueue) else 0.04
         activePower += gridArrival
