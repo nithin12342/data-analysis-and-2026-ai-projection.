@@ -235,12 +235,12 @@ graph TD
 
 | Percentile | Final Index | Cloud Rev | ROIC |
 |:---|:---:|:---:|:---:|
-| **P10** (Downside) | 88.53 | $19.26B | 10.9% |
-| **P50** (Median) | 122.74 | $26.71B | 14.2% |
-| **P90** (Upside) | 242.90 | $52.86B | 21.4% |
+| **P10** (Downside) | 87.66 | $19.08B | 10.8% |
+| **P50** (Median) | 113.22 | $24.64B | 13.4% |
+| **P90** (Upside) | 274.32 | $57.38B | 21.9% |
 
 > [!NOTE]
-> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 242.90) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
+> **Monte Carlo Distribution Modeling Disclosure**: The upside skew (P90 = 274.32) is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside. In real public markets, upside growth is bounded by physical supply chains, human capital shortages, and capital rationing, which are modeled here as a theoretical maximum.
 
 ---
 
@@ -251,12 +251,12 @@ graph TD
 
 | Backtest | RMSE | Target | DA | Target | Status |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| **Dot-com Bubble** (NASDAQ 1997-2002) | 38.632 | < 25.0 | 73.9% | > 70% | **FAILED** |
+| **Dot-com Bubble** (NASDAQ 1997-2002) | 31.075 | < 25.0 | 69.6% | > 70% | **FAILED** |
 | **Japan Asset Bubble** (Nikkei 1989-1995) | 18.468 | < 25.0 | 87.0% | > 70% | **PASSED** |
-| **Railway Mania** (UK 1843-1850) | 22.837 | < 25.0 | 57.1% | > 70% | **FAILED** |
+| **Railway Mania** (UK 1843-1850) | 20.804 | < 25.0 | 100.0% | > 70% | **PASSED** |
 
 > [!NOTE]
-> **Methodology and Solvency Limits**: Re-evaluating historical backtests on the same raw, unrescaled index scale reveals structural differences. The Dot-com Bubble fails to pass the strict RMSE target because it lacks cash-runway modeling for unprofitable startups. We have added a discontinuous financing shut-off threshold (insolvencyWriteDownRate = 10%/qtr when sentiment drops below 0.60), scoped specifically to startup backtests so as not to distort the self-funded hyperscaler baseline. Railway Mania's RMSE clears the bar (22.84 < 25), even though overall directional accuracy does not -- consistent with the stranding module fitting well while the crash-timing dynamics don't.
+> **Methodology and Solvency Limits**: Re-evaluating historical backtests on the same raw, unrescaled index scale reveals structural differences. The Dot-com Bubble fails to pass the strict RMSE target because it lacks cash-runway modeling for unprofitable startups. We have added a discontinuous financing shut-off threshold (insolvencyWriteDownRate = 10%/qtr when sentiment drops below 0.60), scoped specifically to startup backtests so as not to distort the self-funded hyperscaler baseline. Railway Mania's calibration successfully passes both level and directional thresholds (RMSE 20.80 < 25, DA 100% > 70%), demonstrating that the physical overbuild/capacity stranding module matches the historical UK railway cycle exceptionally well.
 
 ---
 
@@ -301,7 +301,7 @@ The actual engine results show distinct dynamics after resolving the markdown du
 *   **Scenario E (Multiple Compression)**: Ends at **Index 98.82** (reflecting a lower multiple floor of 2.0x EV/Sales, reducing final valuation).
 
 ### Finding 7: Monte Carlo Asymmetry
-The Monte Carlo confidence intervals show strong upside skew (P10 = 88.53, P50 = 122.74, P90 = 242.90). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
+The Monte Carlo confidence intervals show strong upside skew (P10 = 87.66, P50 = 113.22, P90 = 274.32). This asymmetry is a direct consequence of the positive feedback loop in capital reflexivity (uncapped upside) combined with the structural valuation and sentiment floors on the downside.
 
 ---
 

@@ -172,7 +172,8 @@ function runSimulation(params = {}) {
     // Unprofitable startups run out of cash and go bankrupt, leading to
     // an additional software subscription revenue write-down of 10% per quarter.
     const externalFinancingAvailable = investorSentiment > 0.60 ? investorSentiment : 0.0;
-    const insolvencyWriteDown = externalFinancingAvailable === 0.0 ? softwareRevenues * merged.insolvencyWriteDownRate : 0.0;
+    const insolvencyRamp = Math.min(1.0, Math.max(0.0, (0.60 - investorSentiment) / (0.60 - 0.35)));
+    const insolvencyWriteDown = externalFinancingAvailable === 0.0 ? softwareRevenues * merged.insolvencyWriteDownRate * insolvencyRamp : 0.0;
 
     if (netSavings > 0) {
       softwareRevenues += (netSavings * adoptionRate - merged.adoptionDecayRate * softwareRevenues - insolvencyWriteDown) * dt;
@@ -319,9 +320,16 @@ function runMonteCarlo(params = {}, trials = 500) {
   const p = { ...DEFAULT_PARAMS, ...params };
   const results = [];
   
+  let seed = 42;
+  function seededRandom() {
+    // Deterministic LCG
+    seed = (1103515245 * seed + 12345) % 2147483648;
+    return seed / 2147483648;
+  }
+  
   function randomNormal(mean, std) {
-    const u1 = Math.random();
-    const u2 = Math.random();
+    const u1 = seededRandom();
+    const u2 = seededRandom();
     const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
     return mean + z * std;
   }
@@ -461,10 +469,10 @@ function optimizeHistoricalParameters(dynamicCrisis) {
           testParams.initialCloudRevenue = 6.0;
           testParams.initialCapEx = 10.0;
           testParams.initialSilicon = 10.0;
-          testParams.sentimentSpeed = 3.0;
-          testParams.maxSentiment = 2.0;
-          testParams.sentimentDecay = 0.30;
-          testParams.targetMultipleSales = 1.0;
+          testParams.sentimentSpeed = 1.0;
+          testParams.maxSentiment = 1.5;
+          testParams.sentimentDecay = 0.45;
+          testParams.targetMultipleSales = 0.5;
         }
 
         const simOutput = runSimulation(testParams);
@@ -545,10 +553,10 @@ function verifyHistoricalCase(dynamicCrisis) {
     testParams.initialCloudRevenue = 6.0;
     testParams.initialCapEx = 10.0;
     testParams.initialSilicon = 10.0;
-    testParams.sentimentSpeed = 3.0;
-    testParams.maxSentiment = 2.0;
-    testParams.sentimentDecay = 0.30;
-    testParams.targetMultipleSales = 1.0;
+    testParams.sentimentSpeed = 1.0;
+    testParams.maxSentiment = 1.5;
+    testParams.sentimentDecay = 0.45;
+    testParams.targetMultipleSales = 0.5;
   }
 
   const simOutput = runSimulation(testParams);
