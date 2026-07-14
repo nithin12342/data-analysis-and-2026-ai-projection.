@@ -228,7 +228,7 @@ function runSimulation(params = {}) {
     const computeAdditions = gpuDeliveryQueue[t] || 0.2;
     computeSupply += computeAdditions;
     
-    const maxComputeWithPower = activePower * 1.15;
+    const maxComputeWithPower = (activePower + (merged.onsiteGenCapacityMW / 1000.0)) * 1.15;
     const strandedCapacity = Math.max(0, computeSupply - maxComputeWithPower);
     const activeCompute = computeSupply - strandedCapacity;
     activeComputeFraction = activeCompute / (computeSupply + 0.1);

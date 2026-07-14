@@ -169,8 +169,8 @@ def run_simulation(params=None):
             historical_cloud_spend = cloud_revenue * (1.0 + 0.04 * i)
             contract_queue_3yr[i] = (historical_cloud_spend * merged["contractMix3yr"]) / len_short
             contract_queue_5yr[i] = (historical_cloud_spend * (1.0 - merged["contractMix3yr"])) / len_long
-        power_queue[i] = 0.15
-        gpu_delivery_queue[i] = 0.5
+        power_queue[i] = merged.get("baselinePowerGrowth", 0.15)
+        gpu_delivery_queue[i] = merged.get("baselineGpuGrowth", 0.5)
         
     history = {
         "quarters": [],
@@ -237,7 +237,7 @@ def run_simulation(params=None):
         compute_supply += compute_additions
         
         # 3. Stranded Capacity Impairment
-        max_compute_with_power = active_power * 1.15
+        max_compute_with_power = (active_power + (merged["onsiteGenCapacityMW"] / 1000.0)) * 1.15
         stranded_capacity = max(0.0, compute_supply - max_compute_with_power)
         active_compute = compute_supply - stranded_capacity
         active_compute_fraction = active_compute / (compute_supply + 0.1)
