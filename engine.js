@@ -200,6 +200,7 @@ function runSimulation(params = {}) {
 
   let initialValuation = null;
   for (let t = 0; t < steps; t++) {
+    merged.computeDemandMW = activePower * 1000;
     const constructionDelayMultiplier = 1 + merged.transformerShortage * 1.5;
     const regionSpeedFactor = regionConfig.powerGrowthCap / 0.12;
     const basePowerGrowthCap = Math.min(powerGrowthCap, (0.20 * regionSpeedFactor) / constructionDelayMultiplier);
@@ -239,7 +240,7 @@ function runSimulation(params = {}) {
       merged.computeDemandMW * (1 - merged.gridImportFraction)
     );
     
-    // 2. Fuel cost for onsite generation
+    // 2. Fuel cost for onsite generation (converting MW to quarterly MWh: MW * 2190 hours/qtr)
     let onsiteFuelCost = 0;
     for (const [tech, frac] of Object.entries(merged.onsiteGenMix)) {
       const cap = merged.onsiteGenCapacityMW * frac;
@@ -249,23 +250,24 @@ function runSimulation(params = {}) {
       const fuelPrice = merged.FUEL_PRICES_USD_PER_MMBTU[fuelType] || 0; // $/MMBtu
       const hedged = fuelPrice * merged.hedgeRatio + 
                      fuelPrice * (1 - merged.hedgeRatio) * (1 + merged.basisRisk);
-      onsiteFuelCost += cap * merged.onsiteCapacityFactor * hr * hedged / 1e6; // $/MWh -> $/Qtr
+      // cap (MW) * capacityFactor * 2190 (hours/qtr) * (hr / 1000) (MMBtu/MWh) * hedged ($/MMBtu)
+      onsiteFuelCost += cap * merged.onsiteCapacityFactor * 2190 * (hr / 1000) * hedged;
     }
     
-    // 3. Carbon cost
-    const carbonCost = onsiteDispatch * merged.carbonIntensityTonCO2perMWh * merged.carbonPrice;
+    // 3. Carbon cost (converting MW to quarterly MWh)
+    const carbonCost = onsiteDispatch * 2190 * merged.carbonIntensityTonCO2perMWh * merged.carbonPrice;
     
-    // 4. Grid services revenue
-    const gridServicesRev = merged.onsiteGenCapacityMW * merged.gridServicesRevenue / 4; // $/MW-qtr
+    // 4. Grid services revenue ($/MW-yr capacity divided by 4 for quarterly revenue)
+    const gridServicesRev = merged.onsiteGenCapacityMW * merged.gridServicesRevenue / 4; // $/Qtr
     
-    // 5. Net onsite power economics
+    // 5. Net onsite power economics ($/Qtr)
     const onsiteNetCost = onsiteFuelCost + carbonCost - gridServicesRev;
     
-    // 6. Effective grid power price (including onsite)
-    const effectiveGridPrice = merged.gridPowerPrice * merged.gridImportFraction + (onsiteNetCost / Math.max(1, onsiteDispatch)) * (1 - merged.gridImportFraction);
+    // 6. Effective grid power price (including onsite, dividing net cost by quarterly MWh to get $/MWh)
+    const effectiveGridPrice = merged.gridPowerPrice * merged.gridImportFraction + (onsiteNetCost / Math.max(1, onsiteDispatch * 2190)) * (1 - merged.gridImportFraction);
     
-    // 7. Grid defection feedback
-    if (onsiteNetCost < merged.gridPowerPrice * onsiteDispatch * merged.gridDefectionThreshold) {
+    // 7. Grid defection feedback (comparing quarterly costs)
+    if (onsiteNetCost < merged.gridPowerPrice * (onsiteDispatch * 2190) * merged.gridDefectionThreshold) {
       merged.onsiteGenCapacityMW += merged.NEW_ONSITE_BUILD_RATE;
     }
     

@@ -1,1 +1,8 @@
+__pycache__/
+*.pyc
+.gemini/
+.agents/
+.idea/
+.vscode/
+node_modules/
 DATA/
