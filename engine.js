@@ -55,7 +55,72 @@ const DEFAULT_PARAMS = {
   adoptionDecayRate: 0.03,
   capitalReflexivity: 0.30, // Feedback strength of stock index back to CapEx
   nationalStrategicInvestment: 1.5, // Multiplier of government subsidy spending
-  insolvencyWriteDownRate: 0.0 // Default is 0% (only active for startup backtests)
+  insolvencyWriteDownRate: 0.0, // Default is 0% (only active for startup backtests)
+  
+  // §34 Onsite Power Generation & Fuel Price Exposure
+  onsiteGenCapacityMW: 2500,          // Total onsite MW (US hyperscalers 2024)
+  onsiteGenMix: {                     // Technology mix fractions
+    gas_turbine: 0.55,
+    rice: 0.20,
+    bloom_sofc: 0.10,
+    solar_storage: 0.10,
+    smr: 0.05
+  },
+  onsiteCapacityFactor: 0.75,         // Weighted average CF
+  onsiteFuelExposure: 3.5,            // $/MWh per $/MMBtu gas price
+  hedgeRatio: 0.65,                   // Fraction of fuel volume hedged
+  basisRisk: 0.15,                    // Basis differential volatility
+  gridServicesRevenue: 25000,         // $/MW-yr (Reg + capacity)
+  carbonPrice: 0,                     // $/ton CO2 (jurisdiction-weighted)
+  carbonIntensityTonCO2perMWh: 0.28,  // Weighted average from tech mix
+  carbonPriceExposure: 14,            // $/MWh per $50/ton CO2
+  waterIntensityLperMWh: 1.2,         // Average across onsite mix
+  gridServicesRevenue: 25000,         // $/MW-yr (Reg + capacity)
+  gridDefectionThreshold: 0.85,       // If onsite cost < 85% of grid price, build more
+  gridImportFraction: 0.30,           // Fraction of load met by grid (vs onsite)
+  NEW_ONSITE_BUILD_RATE: 150,         // MW/quarter added when grid defection economical
+  ONSITE_UTILIZATION_BONUS: 0.15,     // Power growth cap increase per unit onsite capacity
+  
+  // Fuel prices (updated quarterly from data)
+  FUEL_PRICES_USD_PER_MMBTU: {
+    natural_gas: 4.50,  // Henry Hub current
+    diesel: 18.50,      // Diesel wholesale
+    hydrogen: 16.00,    // Green H2 delivered
+    biogas: 8.00        // Biogas
+  },
+  
+  // Heat rates by technology (Btu/kWh as-operated)
+  HEAT_RATES_BTU_PER_KWH: {
+    gas_turbine: 9500,
+    rice: 8500,
+    bloom_sofc: 6800,
+    hydrogen_fc: 5500,
+    solar_storage: 0,
+    smr: 0
+  },
+  
+  // Emission rates (ton CO2/MWh)
+  EMISSION_RATES_TON_CO2_PER_MWH: {
+    gas_turbine: 0.40,
+    rice: 0.35,
+    bloom_sofc: 0.20,
+    hydrogen_fc: 0.00,
+    solar_storage: 0.00,
+    smr: 0.00
+  },
+  
+  // Water intensity (L/MWh)
+  WATER_INTENSITY_L_PER_MWH: {
+    gas_turbine: 1.5,
+    rice: 1.2,
+    bloom_sofc: 0.5,
+    hydrogen_fc: 0.3,
+    solar_storage: 0.1,
+    smr: 0.8
+  },
+  
+  // Grid power price ($/MWh)
+  gridPowerPrice: 85
 };
 
 function runSimulation(params = {}) {
@@ -118,14 +183,28 @@ function runSimulation(params = {}) {
     revenueQualityHigh: [],
     revenueQualityLow: [],
     gdpBoost: [],
-    siliconSupply: []
+    siliconSupply: [],
+    // §34 Onsite Power tracking
+    onsiteGenCapacityMW: [],
+    onsiteDispatch: [],
+    onsiteFuelCost: [],
+    onsiteNetCost: [],
+    onsiteFuelExposure: [],
+    carbonCost: [],
+    gridServicesRevenue: [],
+    effectiveGridPrice: [],
+    onsiteGenMix: [],
+    carbonIntensity: [],
+    waterIntensity: []
   };
 
   let initialValuation = null;
   for (let t = 0; t < steps; t++) {
     const constructionDelayMultiplier = 1 + merged.transformerShortage * 1.5;
-    const regionSpeedFactor = regionConfig.powerGrowthCap / 0.12; // same factor already used for powerGrowthCap above
-    const effectivePowerGrowth = Math.min(powerGrowthCap, (0.20 * regionSpeedFactor) / constructionDelayMultiplier);
+    const regionSpeedFactor = regionConfig.powerGrowthCap / 0.12;
+    const basePowerGrowthCap = Math.min(powerGrowthCap, (0.20 * regionSpeedFactor) / constructionDelayMultiplier);
+    const effectivePowerGrowthCap = basePowerGrowthCap + 
+      (merged.onsiteGenCapacityMW / (merged.computeDemandMW || 10000)) * merged.ONSITE_UTILIZATION_BONUS;
     
     const gridArrival = powerQueue[t] || 0.04;
     activePower += gridArrival;
@@ -133,7 +212,7 @@ function runSimulation(params = {}) {
     const powerTargetBuild = cloudRevenue * 0.10 * investorSentiment;
     const gridTargetIndex = t + gridConnectionDelay;
     if (gridTargetIndex < steps) {
-      powerQueue[gridTargetIndex] = Math.min(powerTargetBuild * dt, activePower * effectivePowerGrowth * dt);
+      powerQueue[gridTargetIndex] = Math.min(powerTargetBuild * dt, activePower * effectivePowerGrowthCap * dt);
     }
     
     const effectiveSiliconCap = siliconSupply * (1 - merged.hbmBottleneck);
@@ -152,6 +231,45 @@ function runSimulation(params = {}) {
     const strandedCapacity = Math.max(0, computeSupply - maxComputeWithPower);
     const activeCompute = computeSupply - strandedCapacity;
     activeComputeFraction = activeCompute / (computeSupply + 0.1);
+
+    // §34 Onsite Power Generation & Fuel Price Exposure Model
+    // 1. Onsite dispatch (min of onsite capacity * CF, compute demand * (1 - grid fraction))
+    const onsiteDispatch = Math.min(
+      merged.onsiteGenCapacityMW * merged.onsiteCapacityFactor,
+      merged.computeDemandMW * (1 - merged.gridImportFraction)
+    );
+    
+    // 2. Fuel cost for onsite generation
+    let onsiteFuelCost = 0;
+    for (const [tech, frac] of Object.entries(merged.onsiteGenMix)) {
+      const cap = merged.onsiteGenCapacityMW * frac;
+      const hr = merged.HEAT_RATES_BTU_PER_KWH[tech] || 0; // Btu/kWh
+      const fuelType = (tech === "gas_turbine" || tech === "rice" || tech === "bloom_sofc") ? "natural_gas" :
+                       (tech === "hydrogen_fc") ? "hydrogen" : "natural_gas";
+      const fuelPrice = merged.FUEL_PRICES_USD_PER_MMBTU[fuelType] || 0; // $/MMBtu
+      const hedged = fuelPrice * merged.hedgeRatio + 
+                     fuelPrice * (1 - merged.hedgeRatio) * (1 + merged.basisRisk);
+      onsiteFuelCost += cap * merged.onsiteCapacityFactor * hr * hedged / 1e6; // $/MWh -> $/Qtr
+    }
+    
+    // 3. Carbon cost
+    const carbonCost = onsiteDispatch * merged.carbonIntensityTonCO2perMWh * merged.carbonPrice;
+    
+    // 4. Grid services revenue
+    const gridServicesRev = merged.onsiteGenCapacityMW * merged.gridServicesRevenue / 4; // $/MW-qtr
+    
+    // 5. Net onsite power economics
+    const onsiteNetCost = onsiteFuelCost + carbonCost - gridServicesRev;
+    
+    // 6. Effective grid power price (including onsite)
+    const effectiveGridPrice = merged.gridPowerPrice * merged.gridImportFraction + (onsiteNetCost / Math.max(1, onsiteDispatch)) * (1 - merged.gridImportFraction);
+    
+    // 7. Grid defection feedback
+    if (onsiteNetCost < merged.gridPowerPrice * onsiteDispatch * merged.gridDefectionThreshold) {
+      merged.onsiteGenCapacityMW += merged.NEW_ONSITE_BUILD_RATE;
+    }
+    
+    // 8. Onsite power growth contribution is factored directly into the cap at the beginning of the loop.
 
     const costReductionRate = 0.38;
     const openSourcePressure = merged.priceCompression * merged.openSourcePower;
@@ -271,6 +389,18 @@ function runSimulation(params = {}) {
     history.revenueQualityLow.push(revenueQualityLow);
     history.gdpBoost.push(gdpGrowthPct * 100);
     history.siliconSupply.push(siliconSupply);
+    // §34 Onsite Power tracking
+    history.onsiteGenCapacityMW.push(merged.onsiteGenCapacityMW);
+    history.onsiteDispatch.push(onsiteDispatch);
+    history.onsiteFuelCost.push(onsiteFuelCost);
+    history.onsiteNetCost.push(onsiteNetCost);
+    history.onsiteFuelExposure.push(merged.onsiteFuelExposure);
+    history.carbonCost.push(carbonCost);
+    history.gridServicesRevenue.push(gridServicesRev);
+    history.effectiveGridPrice.push(effectiveGridPrice);
+    history.onsiteGenMix.push({...merged.onsiteGenMix});
+    history.carbonIntensity.push(merged.carbonIntensityTonCO2perMWh);
+    history.waterIntensity.push(merged.waterIntensityLperMWh);
   }
 
   return history;

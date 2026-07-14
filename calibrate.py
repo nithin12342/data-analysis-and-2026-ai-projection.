@@ -48,6 +48,7 @@ REGULATORY_DIR = os.path.join(DATA_DIR, "regulatory")
 LABOR_DIR = os.path.join(DATA_DIR, "labor")
 UNIT_ECONOMICS_DIR = os.path.join(DATA_DIR, "unit_economics")
 STRESS_DIR = os.path.join(DATA_DIR, "stress_scenarios")
+POWER_DIR = os.path.join(DATA_DIR, "power")
 
 print("=" * 70)
 print("TESM Data Ingestion & Calibration Pipeline v3.0")
@@ -532,20 +533,81 @@ def ingest_stress_scenarios(data_dir):
             metrics[key] = df.to_dict(orient="records")
     return metrics
 
-# --- 10. EXPORT PARAMETER OVERRIDES FILE ---
-print(f"\n[10/10] Generating parameter overrides...")
 
-power_growth_cap = round(max(0.03, 1.0 - (withdrawal_rate / 100.0)), 2)
+def ingest_onsite_power_data(data_dir):
+    """Load onsite power generation data: capacity, heat rates, fuel prices, hedge ratios."""
+    metrics = {}
+    files = {
+        "capacity": "onsite_gen_capacity.csv",
+        "heat_rates": "heat_rates.csv",
+        "fuel_prices": "fuel_prices.csv",
+        "hedge_ratios": "hedge_ratios.csv",
+        "grid_services": "grid_services_revenue.csv",
+        "permits": "permits.csv",
+        "carbon_prices": "carbon_prices.csv",
+        "water_intensity": "water_intensity.csv",
+        "smr_pipeline": "smr_pipeline.csv"
+    }
+    for key, fname in files.items():
+        path = os.path.join(data_dir, fname)
+        if os.path.exists(path):
+            df = pd.read_csv(path)
+            metrics[key] = df.to_dict(orient="records")
+            print(f"   Onsite power {key}: {len(df)} records loaded")
+        else:
+            print(f"   Onsite power {key}: NOT FOUND")
+    
+    # Compute derived calibration parameters
+    if "capacity" in metrics and metrics["capacity"]:
+        df_cap = pd.DataFrame(metrics["capacity"])
+        total_mw = df_cap["capacity_mw"].sum()
+        metrics["total_onsite_mw"] = total_mw
+        
+        # Compute weighted average capacity factor
+        if "capacity_factor" in df_cap.columns:
+            weighted_cf = (df_cap["capacity_mw"] * df_cap["capacity_factor"]).sum() / total_mw
+            metrics["weighted_capacity_factor"] = round(weighted_cf, 3)
+        
+        # Compute technology mix
+        if "technology" in df_cap.columns:
+            tech_mix = df_cap.groupby("technology")["capacity_mw"].sum() / total_mw
+            metrics["tech_mix"] = tech_mix.to_dict()
+    
+    if "heat_rates" in metrics and metrics["heat_rates"]:
+        df_hr = pd.DataFrame(metrics["heat_rates"])
+        # Weighted average heat rate by technology
+        if "heat_rate_btu_kwh" in df_hr.columns:
+            avg_hr = df_hr["heat_rate_btu_kwh"].mean()
+            metrics["avg_heat_rate_btu_kwh"] = round(avg_hr)
+    
+    if "fuel_prices" in metrics and metrics["fuel_prices"]:
+        df_fuel = pd.DataFrame(metrics["fuel_prices"])
+        if "price_usd_mmbtu" in df_fuel.columns:
+            current_price = df_fuel["price_usd_mmbtu"].iloc[-1] if len(df_fuel) > 0 else 4.5
+            metrics["current_gas_price_usd_mmbtu"] = current_price
+    
+    if "hedge_ratios" in metrics and metrics["hedge_ratios"]:
+        df_hedge = pd.DataFrame(metrics["hedge_ratios"])
+        if "hedge_ratio" in df_hedge.columns:
+            avg_hedge = df_hedge["hedge_ratio"].mean()
+            metrics["avg_hedge_ratio"] = round(avg_hedge, 2)
+    
+    if "grid_services" in metrics and metrics["grid_services"]:
+        df_gs = pd.DataFrame(metrics["grid_services"])
+        if "price_usd_mw_yr" in df_gs.columns:
+            avg_gs = df_gs["price_usd_mw_yr"].mean()
+            metrics["avg_grid_services_revenue_usd_mw_yr"] = round(avg_gs)
+    
+    print(f"   Derived: total_onsite_mw={metrics.get('total_onsite_mw', 0)}, "
+          f"weighted_cf={metrics.get('weighted_capacity_factor', 0)}, "
+          f"avg_hr={metrics.get('avg_heat_rate_btu_kwh', 0)}, "
+          f"gas_price=${metrics.get('current_gas_price_usd_mmbtu', 0)}/MMBtu, "
+          f"hedge_ratio={metrics.get('avg_hedge_ratio', 0)}, "
+          f"grid_services=${metrics.get('avg_grid_services_revenue_usd_mw_yr', 0)}/MW-yr")
+    
+    return metrics
 
-calibrated_overrides = {
-    "gridConnectionDelay": int(np.ceil(mean_queue_quarters)),
-    "powerGrowthCap": power_growth_cap,
-    "transformerShortage": round(withdrawal_rate / 200.0, 2),
-    "downsizingRatio": downsizing_ratio,
-    "siliconSupply": silicon_supply_metric,
-    "wacc": 0.085,
-    "capitalReflexivity": capital_reflexivity
-}
+# (Overrides generation block relocated downstream to line 698)
 
 # Build the quarterly time-series data for the JS frontend
 quarterly_ts_data = []
@@ -580,10 +642,60 @@ labor_metrics = ingest_labor_data(LABOR_DIR)
 unit_econ_metrics = ingest_unit_economics(UNIT_ECONOMICS_DIR)
 stress_metrics = ingest_stress_scenarios(STRESS_DIR)
 
+print(f"\n[10/10] Ingesting onsite power generation data...")
+power_metrics = ingest_onsite_power_data(POWER_DIR)
+
 # --- 10. EXPORT PARAMETER OVERRIDES FILE ---
 print(f"\n[10/10] Generating parameter overrides...")
 
 power_growth_cap = round(max(0.03, 1.0 - (withdrawal_rate / 100.0)), 2)
+
+calibrated_overrides = {
+    "gridConnectionDelay": int(np.ceil(mean_queue_quarters)),
+    "powerGrowthCap": power_growth_cap,
+    "transformerShortage": round(withdrawal_rate / 200.0, 2),
+    "downsizingRatio": downsizing_ratio,
+    "siliconSupply": silicon_supply_metric,
+    "wacc": 0.085,
+    "capitalReflexivity": capital_reflexivity
+}
+
+# Add onsite power generation parameters if available
+if 'power_metrics' in locals() and power_metrics:
+    if "total_onsite_mw" in power_metrics:
+        calibrated_overrides["onsiteGenCapacityMW"] = power_metrics["total_onsite_mw"]
+    if "weighted_capacity_factor" in power_metrics:
+        calibrated_overrides["onsiteCapacityFactor"] = power_metrics["weighted_capacity_factor"]
+    if "tech_mix" in power_metrics:
+        calibrated_overrides["onsiteGenMix"] = power_metrics["tech_mix"]
+    if "avg_heat_rate_btu_kwh" in power_metrics and "current_gas_price_usd_mmbtu" in power_metrics:
+        # Compute fuel exposure: $/MWh per $/MMBtu = heat_rate / 1e6 * capacity_factor * mix_factor
+        hr = power_metrics["avg_heat_rate_btu_kwh"]
+        gas_price = power_metrics["current_gas_price_usd_mmbtu"]
+        cf = power_metrics.get("weighted_capacity_factor", 0.75)
+        # $/MWh per $/MMBtu = (heat_rate * cf) / 1000
+        calibrated_overrides["onsiteFuelExposure"] = round((hr * cf) / 1000, 1)
+    if "avg_hedge_ratio" in power_metrics:
+        calibrated_overrides["hedgeRatio"] = power_metrics["avg_hedge_ratio"]
+    if "avg_grid_services_revenue_usd_mw_yr" in power_metrics:
+        calibrated_overrides["gridServicesRevenue"] = power_metrics["avg_grid_services_revenue_usd_mw_yr"]
+    if "tech_mix" in power_metrics:
+        # Estimate carbon intensity from tech mix
+        tech_mix = power_metrics["tech_mix"]
+        # Emission rates (ton CO2/MWh): gas_turbine=0.4, rice=0.35, sofc=0.2, solar=0, smr=0, hydrogen=0
+        emission_rates = {"gas_turbine": 0.4, "rice": 0.35, "bloom_sofc": 0.2, "hydrogen_fc": 0, "solar_storage": 0, "smr": 0}
+        weighted_emissions = sum(tech_mix.get(k, 0) * v for k, v in emission_rates.items())
+        calibrated_overrides["carbonIntensityTonCO2perMWh"] = round(weighted_emissions, 3)
+        calibrated_overrides["carbonPriceExposure"] = round(weighted_emissions * 50, 1)  # $50/ton CO2
+    
+    # Water intensity
+    tech_mix = power_metrics.get("tech_mix", {})
+    water_rates = {"gas_turbine": 1.5, "rice": 1.2, "bloom_sofc": 0.5, "hydrogen_fc": 0.3, "solar_storage": 0.1, "smr": 0.8}
+    weighted_water = sum(tech_mix.get(k, 0) * v for k, v in water_rates.items())
+    calibrated_overrides["waterIntensityLperMWh"] = round(weighted_water, 1)
+    
+    # Grid defection threshold
+    calibrated_overrides["gridDefectionThreshold"] = 0.85  # If onsite cost < 85% of grid price, build more
 
 # Merge all new metrics into calibrated overrides
 all_metrics = {
@@ -598,7 +710,8 @@ all_metrics = {
     "regulatoryMetrics": regulatory_metrics,
     "laborMetrics": labor_metrics,
     "unitEconomicsMetrics": unit_econ_metrics,
-    "stressScenarioMetrics": stress_metrics
+    "stressScenarioMetrics": stress_metrics,
+    "powerMetrics": power_metrics
 }
 
 # Build the quarterly time-series data for the JS frontend
@@ -649,7 +762,8 @@ window.TESM_DATA_CATEGORIES = {{
   "regulatory": {json.dumps(regulatory_metrics, indent=2)},
   "labor": {json.dumps(labor_metrics, indent=2)},
   "unitEconomics": {json.dumps(unit_econ_metrics, indent=2)},
-  "stressScenarios": {json.dumps(stress_metrics, indent=2)}
+  "stressScenarios": {json.dumps(stress_metrics, indent=2)},
+  "power": {json.dumps(power_metrics, indent=2)}
 }};
 
 // Apply values to the default parameters template block

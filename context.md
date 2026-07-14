@@ -1916,6 +1916,160 @@ def assemble_model_inputs(as_of_date: str) -> ModelInputs:
 *End of Appendix — This specification enables reproducible, auditable, publication-grade calibration of the TESM framework.*
 
 
+---
+
+# §34 Onsite Power Generation & Fuel Price Exposure Model
+
+**Objective:** Model how datacenter onsite power generation (gas turbines, reciprocating engines, fuel cells, SMRs, solar+storage, hydrogen) creates direct exposure to fuel commodity prices, and how this interacts with grid connectivity, regulatory frameworks, and AI workload economics.
+
+## 34.1 Technology Taxonomy & Deployment Status
+
+| Technology | Typical Capacity | CapEx ($/kW) | O&M ($/MWh) | Heat Rate (Btu/kWh) | Fuel Types | Deployment Stage | Key Vendors |
+|------------|------------------|--------------|-------------|---------------------|------------|------------------|-------------|
+| **Aeroderivative Gas Turbine** | 25-100 MW | 1,200-1,800 | 8-15 | 9,000-11,000 | Gas, H2-blend | Commercial | GE Vernova, Siemens, Mitsubishi |
+| **Reciprocating Engine (RICE)** | 2-20 MW | 1,000-1,500 | 10-20 | 8,000-9,500 | Gas, Diesel, H2 | Commercial | Wärtsilä, MAN, Caterpillar, Rolls-Royce |
+| **Solid Oxide Fuel Cell (SOFC)** | 0.2-4 MW | 4,000-7,000 | 5-10 | 6,500-8,000 | Gas, Biogas, H2 | Early Commercial | Bloom Energy, FuelCell Energy, Ceres |
+| **PEM Fuel Cell** | 0.1-2 MW | 3,000-5,000 | 3-8 | 5,500-7,000 | H2 | Pilot/Demo | Plug Power, Ballard, Toyota |
+| **Small Modular Reactor (SMR)** | 50-300 MW | 5,000-8,000 | 15-25 | N/A | Uranium | Licensing/FOAK | NuScale, TerraPower, X-energy, GE Hitachi |
+| **Solar PV + Battery** | 10-500 MW | 1,000-1,800 | 5-15 | N/A | Sunlight | Commercial | NextEra, Fluence, Tesla, Fluence |
+| **Hydrogen Turbine** | 50-100 MW | 1,500-2,500 | 10-20 | 9,500-12,000 | H2 (green/blue) | Demo | GE, Siemens, Mitsubishi |
+| **Microgrid Controller** | N/A | 200-500/kW | 2-5 | N/A | Multi-fuel | Commercial | Schneider, Siemens, ABB, Eaton |
+
+**Data Required per Technology per Region:**
+- Installed capacity (MW) by hyperscaler/colocation provider
+- Capacity factor (%) by season/workload type
+- Fuel procurement strategy (spot, term, hedged, indexed)
+- Heat rate degradation curve over lifetime
+- Startup/shutdown time and ramp rate (critical for AI workload variability)
+
+## 34.2 Fuel Price Exposure Model
+
+**Core Equations:**
+
+```
+Onsite_Fuel_Cost_t = Σ_tech [ Capacity_tech × CF_tech_t × Heat_Rate_tech × Fuel_Price_fuel,t × (1 + Degradation_tech,t) ]
+
+Fuel_Price_Exposure_β = ∂Onsite_Fuel_Cost / ∂Fuel_Price = Σ_tech [ Capacity_tech × CF_tech × Heat_Rate_tech ]
+
+Hedged_Fraction_h = Volume_Hedged_h / Total_Fuel_Volume_h
+Effective_Exposure = Fuel_Price_Exposure_β × (1 - Hedged_Fraction) + Basis_Risk
+```
+
+**Required Data:**
+| Variable | Source | Frequency | Granularity |
+|----------|--------|-----------|-------------|
+| Henry Hub / TTF / JKM / Citygate prices | ICE, Platts, EIA | Daily | Hub-level |
+| Basis differentials (citygate - hub) | Platts, S&P Global | Daily | City/utility |
+| Hyperscaler gas procurement volumes | FERC Form 552, EIA-176, earnings calls | Quarterly | Company × region |
+| Hedge ratios (swaps, collars, physical) | 10-K derivative disclosures, investor presentations | Quarterly | Company |
+| Fuel cell / turbine heat rates (as-operated) | EPA CAMD, EIA-923, vendor specs | Annual | Unit-level |
+| Hydrogen delivered cost (grey/blue/green) | DOE H2A, BloombergNEF, IEA | Quarterly | Region × production pathway |
+
+## 34.3 Economic Challenges
+
+| Challenge | Mechanism | Data Needed |
+|-----------|-----------|-------------|
+| **CapEx Stranding Risk** | Onsite gen built for AI load; if demand drops, assets idle | DC utilization forecasts, asset specificity, resale market |
+| **Fuel Price Volatility** | Gas/power price correlation with AI demand (both driven by macro) | Historical β of gas price to cloud revenue; covariance matrix |
+| **Heat Rate Degradation** | Efficiency drops 0.5-1.5%/yr → higher $/MWh over time | Vendor degradation curves, EPA CAMD unit-level data |
+| **Opportunity Cost of Capital** | $5-8M/MW for onsite vs grid connection + PPA | WACC by technology, project finance structures |
+| **Grid Defection vs. Grid Services** | Onsite gen can provide frequency regulation, capacity market revenue | ISO/RTO market prices (RegA/RegD, capacity auction clearing) |
+| **Carbon Cost Pass-Through** | Scope 1 emissions from onsite gen → carbon pricing exposure | Carbon price forecasts (EU ETS, CCA, RGGI, CA Cap-and-Trade) |
+
+## 34.4 Legal & Regulatory Challenges
+
+| Challenge | Jurisdiction Variation | Data Needed |
+|-----------|------------------------|-------------|
+| **Air Permitting (NSR/Title V)** | US: 12-36 months; EU: IED permit; China: 营业执照 + 排污许可 | Permit timelines, BACT/LAER standards, NOx/SOx/CO2 limits |
+| **Interconnection Agreements** | FERC Order 2023 reforms; ISO-specific (CAISO, PJM, ERCOT) | Queue position, study costs, network upgrade allocations |
+| **Net Metering / Export Rules** | Varies by state/country; some prohibit export from onsite gen | Compensation rates, size caps, time-of-use factors |
+| **Hydrogen Regulations** | 45V tax credit (US); IPCEI (EU); GB/T standards (China) | Eligibility criteria, carbon intensity thresholds, certification |
+| **Nuclear Licensing (SMR)** | NRC Part 50/52 (US); ONR (UK); NRA (Japan); NNSA (China) | Design certification status, site licensing timeline, cost |
+| **Carbon Border Adjustment** | EU CBAM (2026+); UK CBAM (2027+); US Clean Competition Act | Embedded emissions methodology, reporting requirements |
+| **Renewable Portfolio Standards** | State RPS (US); RED III (EU); Green Certificates (China) | Compliance cost, REC prices, eligibility of onsite gen |
+
+## 34.5 Ecological Challenges
+
+| Challenge | Metric | Data Needed |
+|-----------|--------|-------------|
+| **Water Consumption** | L/kWh (evaporative cooling); mative water rights trading, drought risk | USGS Water Use; state water boards; WRI Aqueduct |
+| **Land Use & Biodiversity** | Acres/MW; habitat fragmentation; endangered species | USFWS IPaC; state natural heritage programs |
+| **Air Quality (NOx/SOx/PM2.5)** | Emissions rate (lb/MWh); local nonattainment status | EPA CAMD; state SIPs; CAAQS/NAAQS designations |
+| **Noise & Visual Impact** | dB at property line; viewshed analysis | Local ordinances; FERC environmental assessments |
+| **End-of-Life / Circularity** | Turbine/engine/fuel cell recycling rates; critical mineral recovery | Vendor take-back programs; DOE critical materials institute |
+
+---
+
+## 34.6 Integration with TESM Core Model
+
+**New State Variables (add to engine.js):**
+```javascript
+// Onsite generation portfolio
+onsiteGenCapacityMW: 2500,          // Total onsite MW (US hyperscalers 2024)
+onsiteGenMix: {                     // Technology mix fractions
+  gas_turbine: 0.55,
+  rice: 0.20,
+  sofc: 0.10,
+  solar_storage: 0.10,
+  smr: 0.05
+},
+onsiteCapacityFactor: 0.75,         // Weighted average CF
+onsiteFuelExposure: 3.5,            // $/MWh per $/MMBtu gas price
+hedgeRatio: 0.65,                   // Fraction of fuel volume hedged
+basisRisk: 0.15,                    // Basis differential volatility
+gridServicesRevenue: 25000,         // $/MW-yr (Reg + capacity)
+carbonPrice: 0,                     // $/ton CO2 (jurisdiction-weighted)
+onsiteNetCost: 0,                   // Computed quarterly
+effectivePowerGrowthCap: 0          // Adjusted for onsite contribution
+```
+
+**New Quarterly Calculations (add to simulation loop):**
+```javascript
+// 1. Onsite dispatch
+const onsiteDispatch = Math.min(
+  state.onsiteGenCapacityMW * state.onsiteCapacityFactor,
+  state.computeDemandMW * (1 - state.gridImportFraction)
+);
+
+// 2. Fuel cost for onsite generation
+let onsiteFuelCost = 0;
+for (const [tech, frac] of Object.entries(state.onsiteGenMix)) {
+  const cap = state.onsiteGenCapacityMW * frac;
+  const hr = HEAT_RATES[tech];              // Btu/kWh
+  const fuelPrice = FUEL_PRICES[FUEL_BY_TECH[tech]]; // $/MMBtu
+  const hedged = fuelPrice * state.hedgeRatio + 
+                 fuelPrice * (1 - state.hedgeRatio) * (1 + state.basisRisk);
+  onsiteFuelCost += cap * state.onsiteCapacityFactor * hr * hedged / 1e6;
+}
+
+// 3. Carbon cost
+const carbonCost = onsiteDispatch * EMISSION_RATES * state.carbonPrice;
+
+// 4. Grid services revenue
+const gridServicesRev = state.onsiteGenCapacityMW * state.gridServicesRevenue;
+
+// 5. Net onsite power economics
+const onsiteNetCost = onsiteFuelCost + carbonCost - gridServicesRev;
+
+// 6. Grid defection feedback
+if (onsiteNetCost < state.gridPowerPrice * onsiteDispatch) {
+  state.onsiteGenCapacityMW += NEW_ONSITE_BUILD_RATE;
+}
+
+// 7. Update effective power growth cap
+state.effectivePowerGrowthCap = state.powerGrowthCap + 
+  (state.onsiteGenCapacityMW / state.totalDemandMW) * ONSITE_UTILIZATION_BONUS;
+```
+
+**Calibration Targets (from PixelRAG data pipeline):**
+- `onsiteGenCapacityMW` ≈ 2,500 MW (US hyperscalers 2024)
+- `onsiteFuelExposure` ≈ $3-5/MWh per $/MMBtu gas price
+- `hedgeRatio` ≈ 0.6-0.7
+- `gridServicesRevenue` ≈ $15-30k/MW-yr
+- Historical backtest: 2021-2024 gas price spikes → cloud price passthrough
+- Validate Winter Storm Uri (Feb 2021) / Europe 2022 gas crisis response
+
+
 
 
 
