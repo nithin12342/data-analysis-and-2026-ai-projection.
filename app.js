@@ -136,6 +136,21 @@ document.addEventListener("DOMContentLoaded", () => {
         { name: "Peak Productivity GDP Boost", value: `${Math.max(...sim.gdpBoost).toFixed(2)}%` },
         { name: "Q80 Productivity GDP Boost", value: `${sim.gdpBoost[79].toFixed(2)}%` }
       ]
+    },
+    onsite: {
+      title: "Onsite Generation & Grid Defection Economics",
+      equation: "EffectivePowerPrice = GridPrice * ImportFraction + (OnsiteNetCost / Dispatch) * (1 - ImportFraction)",
+      description: "Models onsite generation (Bloom SOFC, gas turbines, hydrogen fuel cells) to bypass transmission constraints. If net onsite costs drop below the grid defection threshold, hyperscalers build more onsite MW, bringing blended electricity costs down from $85/MWh.",
+      getInputs: (p, sim) => [
+        { name: "Onsite Capacity Q80", value: `${sim.onsiteGenCapacityMW[79].toFixed(0)} MW` },
+        { name: "Capacity Factor", value: `${(p.onsiteCapacityFactor * 100).toFixed(1)}%` },
+        { name: "Defection Threshold", value: `${(p.gridDefectionThreshold * 100).toFixed(0)}%` }
+      ],
+      getOutputs: (p, sim) => [
+        { name: "Onsite Dispatch Q80", value: `${sim.onsiteDispatch[79].toFixed(0)} MW` },
+        { name: "Blended Power Price Q80", value: `$${sim.effectiveGridPrice[79].toFixed(2)}/MWh` },
+        { name: "Fuel & Carbon Cost Q80", value: `$${((sim.onsiteFuelCost[79] + sim.carbonCost[79]) / 1e6).toFixed(2)}M/qtr` }
+      ]
     }
   };
 
