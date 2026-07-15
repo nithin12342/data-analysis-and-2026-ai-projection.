@@ -50,6 +50,12 @@ ENTERPRISE_CONTRACTS_PATH = os.path.join(DATA_DIR, "enterprise_contracts.csv")
 PRODUCTIVITY_PATH = os.path.join(DATA_DIR, "productivity", "meta_analysis_studies.csv")
 CALIBRATION_PARAMS_PATH = os.path.join(DATA_DIR, "calibration_parameters.csv")
 
+# Additional data paths for previously unused datasets
+CHINA_BENCHMARKS_PATH = os.path.join(DATA_DIR, "china_benchmarks.csv")
+CHINA_API_PRICING_PATH = os.path.join(DATA_DIR, "china_api_pricing.csv")
+PRODUCTIVITY_ROOT_PATH = os.path.join(DATA_DIR, "productivity_meta_analysis.csv")
+MODULE_31_STRESS_PATH = os.path.join(DATA_DIR, "module_31_black_swan_stress_test.csv")
+
 print("=" * 70)
 print("TESM Data Ingestion & Calibration Pipeline v4.0 - Fully Data-Driven")
 print(f"Processing {len(SEC_QUARTERS)} SEC DERA quarters: {SEC_QUARTERS[0]} -> {SEC_QUARTERS[-1]}")
@@ -224,6 +230,38 @@ if os.path.exists(CALIBRATION_PARAMS_PATH):
 else:
     calibration_params = pd.DataFrame()
     print(f"   Calibration params: NOT FOUND")
+
+# Chinese AI benchmarks
+if os.path.exists(CHINA_BENCHMARKS_PATH):
+    china_benchmarks = pd.read_csv(CHINA_BENCHMARKS_PATH)
+    print(f"   China benchmarks: {len(china_benchmarks)} records")
+else:
+    china_benchmarks = pd.DataFrame()
+    print(f"   China benchmarks: NOT FOUND")
+
+# Chinese API pricing
+if os.path.exists(CHINA_API_PRICING_PATH):
+    china_api_pricing = pd.read_csv(CHINA_API_PRICING_PATH)
+    print(f"   China API pricing: {len(china_api_pricing)} records")
+else:
+    china_api_pricing = pd.DataFrame()
+    print(f"   China API pricing: NOT FOUND")
+
+# Productivity root (duplicate check)
+if os.path.exists(PRODUCTIVITY_ROOT_PATH):
+    productivity_root = pd.read_csv(PRODUCTIVITY_ROOT_PATH)
+    print(f"   Productivity root: {len(productivity_root)} records")
+else:
+    productivity_root = pd.DataFrame()
+    print(f"   Productivity root: NOT FOUND")
+
+# Module 31 Black Swan stress test
+if os.path.exists(MODULE_31_STRESS_PATH):
+    module_31_stress = pd.read_csv(MODULE_31_STRESS_PATH)
+    print(f"   Module 31 stress test: {len(module_31_stress)} records")
+else:
+    module_31_stress = pd.DataFrame()
+    print(f"   Module 31 stress test: NOT FOUND")
 
 # --- 4. PARSE SEC DERA FINANCIALS ---
 print(f"\n[4/5] Scanning {len(SEC_QUARTERS)} corporate SEC financial directories...")
