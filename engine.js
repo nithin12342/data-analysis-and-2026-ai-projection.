@@ -574,6 +574,7 @@ function runSimulation(params = {}) {
     const reflexivityBoost = merged.capitalReflexivity * (investorSentiment - 1) * dt;
     
     const sentimentSpeed = merged.sentimentSpeed !== undefined ? merged.sentimentSpeed : 1.0;
+    const maxSentiment = merged.maxSentiment !== undefined ? merged.maxSentiment : 1.6;
     const roicScore = Math.min(1.0, Math.max(-1.0, (roic - merged.wacc) / 0.04));
     const growthScore = Math.min(1.0, Math.max(-1.0, (qtrGrowth - 0.12) / 0.08));
     const sentimentScore = Math.min(roicScore, growthScore);
