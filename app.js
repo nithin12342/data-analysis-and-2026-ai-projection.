@@ -5,11 +5,49 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const engine = window.TESMEngine;
-  if (!engine) {
-    console.error("TESM simulation engine not loaded!");
-    return;
-  }
+  const engine = {
+    DEFAULT_PARAMS: {
+      horizon: 80, wacc: 0.085, activeRegion: "us", activeIndustry: "software",
+      tcoMultiplier: 1.5, complianceFriction: 0.15, pppAdjustment: 0.65,
+      priceCompression: 0.45, openSourcePower: 0.60, powerGrowthCap: 0.12,
+      gridConnectionDelay: 6, averageContractLength: 12, downsizingRatio: 0.35,
+      contractMix3yr: 0.70, baseMultipleSales: 8.0, targetMultipleSales: 3.5,
+      elasticityCoefficient: 1.25, ONSITE_UTILIZATION_BONUS: 0.15,
+      onsiteGenCapacityMW: 2500, onsiteCapacityFactor: 0.75, gridDefectionThreshold: 0.85
+    },
+    runSimulation: async (params) => {
+      const res = await fetch('/api/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      });
+      return res.json();
+    },
+    generateScenarioMatrix: async (params) => {
+      const res = await fetch('/api/matrix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      });
+      return res.json();
+    },
+    runMonteCarlo: async (params, trials) => {
+      const res = await fetch('/api/montecarlo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...params, trials })
+      });
+      return res.json();
+    },
+    verifyHistoricalCase: async (crisis) => {
+      const res = await fetch('/api/historical', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ crisis })
+      });
+      return res.json();
+    }
+  };
 
   // Active state
   let currentParams = { ...engine.DEFAULT_PARAMS };
@@ -237,9 +275,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Generate and update the 31 Scenario Matrix Grid
-  function updateScenarioMatrix() {
+  async function updateScenarioMatrix() {
     matrixContainer.innerHTML = "";
-    const matrix = engine.generateScenarioMatrix(currentParams);
+    const matrix = await engine.generateScenarioMatrix(currentParams);
     
     Object.keys(matrix).forEach(name => {
       const sim = matrix[name];
@@ -385,10 +423,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Render detail in explorer
-  function renderFormulaDetail() {
+  async function renderFormulaDetail() {
     const formula = formulas[activeFormulaId];
     if (!formula) return;
-    const sim = engine.runSimulation(currentParams);
+    const sim = await engine.runSimulation(currentParams);
     
     let tableRows = "";
     
@@ -419,7 +457,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Render Main Chart
-  function renderCharts() {
+  // Render Main Chart
+  async function renderCharts() {
     if (mainChart) {
       mainChart.destroy();
     }
@@ -430,7 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     const ctx = document.getElementById("main-chart-canvas").getContext("2d");
-    const sim = engine.runSimulation(currentParams);
+    const sim = await engine.runSimulation(currentParams);
     let labels = sim.quarters.map(q => `Q${q}`);
     
     let dataSets = [];
@@ -488,7 +527,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       ];
     } else if (currentTab === "montecarlo") {
-      const mc = engine.runMonteCarlo(currentParams, 200);
+      const mc = await engine.runMonteCarlo(currentParams, 200);
       dataSets = [
         {
           label: "Index Value (90th Percentile)",
@@ -517,8 +556,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ];
     } else if (currentTab === "historical") {
       // Run the backtest engine verification
-      const dotcomVerify = engine.verifyHistoricalCase("dotcom");
-      const japanVerify = engine.verifyHistoricalCase("japan");
+      const dotcomVerify = await engine.verifyHistoricalCase("dotcom");
+      const japanVerify = await engine.verifyHistoricalCase("japan");
       
       // Select active data set based on the user's dropdown region config
       const activeVerify = (currentParams.activeRegion === "china" || currentParams.activeRegion === "eu") ? japanVerify : dotcomVerify;
@@ -574,12 +613,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Update All Components
-  function updateDashboard() {
-    const sim = engine.runSimulation(currentParams);
+  async function updateDashboard() {
+    const sim = await engine.runSimulation(currentParams);
     updateStatsCards(sim);
-    renderCharts();
-    renderFormulaDetail();
-    updateScenarioMatrix();
+    await renderCharts();
+    await renderFormulaDetail();
+    await updateScenarioMatrix();
   }
 
   // Initial load

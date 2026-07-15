@@ -324,7 +324,9 @@ def verify_historical_case(dynamic_crisis):
         "rmse": res["rmse"],
         "directionalAccuracyPct": res["directionalAccuracy"] * 100.0,
         "calibrationPassed": res["targetPassed"],
-        "optimizedParams": opt_params
+        "optimizedParams": opt_params,
+        "simulatedTrail": list(simulated),
+        "actualTrail": list(actual)
     }
 
 
