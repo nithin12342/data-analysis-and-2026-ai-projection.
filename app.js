@@ -249,12 +249,19 @@ document.addEventListener("DOMContentLoaded", () => {
       let statusClass = "status-green";
       let statusText = "Stable Growth";
       
+      const indexQ60 = sim.indexVal[60] || 100;
+      const indexQ80 = sim.indexVal[79] || 100;
+      const lateGrowthAnn = Math.pow(indexQ80 / Math.max(0.1, indexQ60), 1 / 5) - 1;
+      
       if (finalIndex < 50) {
         statusClass = "status-red";
         statusText = "Severe Crash";
-      } else if (finalIndex < 100 || finalROIC < currentParams.wacc) {
+      } else if (finalIndex < 100) {
         statusClass = "status-yellow";
         statusText = "Deflationary";
+      } else if (lateGrowthAnn < 0.025 || finalROIC < currentParams.wacc) {
+        statusClass = "status-purple";
+        statusText = "Stagnant / Flat";
       }
       
       const cell = document.createElement("div");

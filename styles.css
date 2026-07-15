@@ -355,6 +355,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .status-green { color: var(--accent-green); }
 .status-yellow { color: var(--accent-amber); }
 .status-red { color: var(--accent-red); }
+.status-purple { color: var(--accent-purple); }
 
 /* Detailed Calculations Explorer */
 .explorer-panel {
