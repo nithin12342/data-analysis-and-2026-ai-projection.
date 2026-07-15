@@ -249,9 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let statusClass = "status-green";
       let statusText = "Stable Growth";
       
-      const indexQ60 = sim.indexVal[60] || 100;
-      const indexQ80 = sim.indexVal[79] || 100;
-      const lateGrowthAnn = Math.pow(indexQ80 / Math.max(0.1, indexQ60), 1 / 5) - 1;
+      const overallCAGR = Math.pow(finalIndex / 100, 1 / 20) - 1;
       
       if (finalIndex < 50) {
         statusClass = "status-red";
@@ -259,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (finalIndex < 100) {
         statusClass = "status-yellow";
         statusText = "Deflationary";
-      } else if (lateGrowthAnn < 0.07 || finalROIC < currentParams.wacc) {
+      } else if (overallCAGR < 0.04 || finalROIC < currentParams.wacc) {
         statusClass = "status-purple";
         statusText = "Stagnant / Flat";
       }
