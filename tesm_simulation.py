@@ -373,9 +373,15 @@ def run_simulation(params=None):
             sentiment_decay = merged.get("sentimentDecay", 0.15)
             investor_sentiment = max(0.35, investor_sentiment + sentiment_decay * sentiment_score * sentiment_speed * dt)
             
+        index_momentum = 0.0
+        if len(history["indexVal"]) >= 3:
+            index_momentum = max(0.0, (history["indexVal"][-1] / history["indexVal"][-3]) - 1.0)
+            
+        speculative_multiplier = 1.0 + merged.get("capitalReflexivity", 0.5) * 4.0 * index_momentum
+        
         multiple_sales = max(
             merged["targetMultipleSales"],
-            merged["baseMultipleSales"] * investor_sentiment * (1.0 + max(-0.4, qtr_growth))
+            merged["baseMultipleSales"] * investor_sentiment * (1.0 + max(-0.4, qtr_growth)) * speculative_multiplier
         )
         
         market_valuation = cloud_revenue * multiple_sales
