@@ -296,11 +296,11 @@ def run_simulation(params=None):
         regulatory_friction_coeff = 1.0 + (merged["complianceFriction"] + industry_config["complianceCost"]) * 3.0
         adoption_rate = max(0.01, (0.20 if net_savings > 0 else 0.01) / regulatory_friction_coeff)
         
-        external_financing_available = investor_sentiment if investor_sentiment > 0.60 else 0.0
+        external_financing_available = investor_sentiment * min(1.0, max(0.0, (investor_sentiment - 0.40) / 0.20))
         insolvency_ramp = min(1.0, max(0.0, (0.60 - investor_sentiment) / 0.25))
         insolvency_writedown = (
-            software_revenues * merged["insolvencyWriteDownRate"] * insolvency_ramp 
-            if external_financing_available == 0.0 else 0.0
+            software_revenues * merged["insolvencyWriteDownRate"] * insolvency_ramp * 
+            (1.0 - min(1.0, max(0.0, external_financing_available / (investor_sentiment or 0.1))))
         )
         
         if net_savings > 0:
@@ -322,9 +322,11 @@ def run_simulation(params=None):
         expiring_3yr = contract_queue_3yr[t] if t < len(contract_queue_3yr) else 0.1
         expiring_5yr = contract_queue_5yr[t] if t < len(contract_queue_5yr) else 0.05
         
-        renewal_multiplier = 0.96
-        if net_roi < merged["wacc"]:
-            renewal_multiplier = max(0.30, 1.0 - merged["downsizingRatio"])
+        spread_legacy = net_roi - merged["wacc"]
+        scaling_factor_legacy = min(1.0, max(-1.0, spread_legacy / 0.04))
+        min_mult_legacy = max(0.30, 1.0 - merged["downsizingRatio"])
+        max_mult_legacy = 0.96
+        renewal_multiplier = min_mult_legacy + (max_mult_legacy - min_mult_legacy) * 0.5 * (1.0 + scaling_factor_legacy)
             
         renewed_3yr = expiring_3yr * renewal_multiplier
         renewed_5yr = expiring_5yr * renewal_multiplier
@@ -362,11 +364,15 @@ def run_simulation(params=None):
         sentiment_speed = merged.get("sentimentSpeed", 1.0)
         max_sentiment = merged.get("maxSentiment", 1.6)
         
-        if roic > merged["wacc"] and qtr_growth > 0.12:
-            investor_sentiment = min(max_sentiment, investor_sentiment + (0.06 + reflexivity_boost) * sentiment_speed * dt)
+        roic_score = min(1.0, max(-1.0, (roic - merged["wacc"]) / 0.04))
+        growth_score = min(1.0, max(-1.0, (qtr_growth - 0.12) / 0.08))
+        sentiment_score = min(roic_score, growth_score)
+        
+        if sentiment_score > 0.0:
+            investor_sentiment = min(max_sentiment, investor_sentiment + (0.06 + reflexivity_boost) * sentiment_score * sentiment_speed * dt)
         else:
             sentiment_decay = merged.get("sentimentDecay", 0.15)
-            investor_sentiment = max(0.35, investor_sentiment - sentiment_decay * sentiment_speed * dt)
+            investor_sentiment = max(0.35, investor_sentiment + sentiment_decay * sentiment_score * sentiment_speed * dt)
             
         multiple_sales = max(
             merged["targetMultipleSales"],

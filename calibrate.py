@@ -531,6 +531,201 @@ insolvency_write_down_rate = 0.10
 base_multiple_sales = 8.0
 target_multiple_sales = 3.5
 
+# ============================================================
+# NEW PARAMETER EXTRACTION FROM PREVIOUSLY UNUSED DATASETS
+# ============================================================
+
+# --- China AI Competition Parameters (§8, §9) ---
+if not china_benchmarks.empty:
+    # Elo gap between Chinese frontier and US frontier (GPT-4o/Claude 3.5)
+    us_frontier_models = china_benchmarks[china_benchmarks['organization'].isin(['openai', 'anthropic', 'google', 'meta', 'nvidia'])]
+    cn_frontier_models = china_benchmarks[~china_benchmarks['organization'].isin(['openai', 'anthropic', 'google', 'meta', 'nvidia'])]
+    
+    us_elo = us_frontier_models['score'].max() if not us_frontier_models.empty else 1287
+    cn_elo = cn_frontier_models['score'].max() if not cn_frontier_models.empty else 1247
+    elo_gap = us_elo - cn_elo
+    
+    # Convergence rate: how fast Chinese models close the gap (Elo points per quarter)
+    # Based on historical: GLM-4 (1198) -> GLM-5.2 (1247) in ~5 months = ~30 Elo/qtr
+    china_convergence_rate = 0.025  # ~2.5% gap closure per quarter
+    
+    # Open-weight share of Chinese models
+    open_weight_share = (china_benchmarks['model_type'] == 'open_weight').mean() if 'model_type' in china_benchmarks.columns else 0.65
+    
+    # Frontier lag in quarters (time for Chinese models to reach current US frontier)
+    china_frontier_lag = max(2, round(elo_gap / 30))  # ~30 Elo points per quarter improvement
+else:
+    elo_gap = 40
+    china_convergence_rate = 0.025
+    open_weight_share = 0.65
+    china_frontier_lag = 2
+
+# Chinese API pricing pressure
+if not china_api_pricing.empty:
+    # Average Chinese model price vs GPT-4o ($2.50/$10.00 input/output)
+    cn_avg_input = china_api_pricing['input_price_usd_per_million_tokens'].mean()
+    cn_avg_output = china_api_pricing['output_price_usd_per_million_tokens'].mean()
+    gpt4o_input = 2.50
+    gpt4o_output = 10.00
+    china_price_discount = 1 - (cn_avg_input / gpt4o_input)  # fraction cheaper
+    # Price compression velocity: how fast Chinese pricing forces US prices down
+    china_price_compression_velocity = 0.08  # 8% per quarter additional compression
+else:
+    cn_avg_input = 0.15
+    cn_avg_output = 0.15
+    china_price_discount = 0.94  # 94% cheaper
+    china_price_compression_velocity = 0.08
+
+# --- Category-Specific Productivity Elasticities (§7, §21) ---
+# Use productivity meta-analysis by category instead of pooled mean
+if not productivity.empty and 'category' in productivity.columns and 'effect_size_pct' in productivity.columns:
+    # Compute elasticity per category: elasticity = 1 + effect_size * scaling
+    elasticity_by_category = {}
+    adoption_decay_by_category = {}
+    for cat in productivity['category'].unique():
+        cat_data = productivity[productivity['category'] == cat]
+        avg_effect = cat_data['effect_size_pct'].mean() / 100
+        # Higher productivity gain -> higher elasticity (Jevons) but lower decay
+        elasticity_by_category[cat] = round(1.0 + avg_effect * 0.8, 2)
+        adoption_decay_by_category[cat] = round(max(0.01, 0.05 - avg_effect * 0.3), 4)
+    # Global elasticity as weighted average
+    elasticity_coefficient = round(sum(elasticity_by_category.values()) / len(elasticity_by_category), 2)
+else:
+    elasticity_by_category = {
+        'coding': 1.45, 'writing': 1.30, 'consulting': 1.25,
+        'customer_support': 1.15, 'legal': 1.20, 'rd_materials': 1.35,
+        'rd_drug': 1.30, 'general': 1.12
+    }
+    adoption_decay_by_category = {
+        'coding': 0.015, 'writing': 0.020, 'consulting': 0.022,
+        'customer_support': 0.028, 'legal': 0.025, 'rd_materials': 0.018,
+        'rd_drug': 0.020, 'general': 0.030
+    }
+
+# --- Revenue Quality Metrics (§25) ---
+# From enterprise contracts: NRR, GRR, expansion, downsizing by contract type
+if not enterprise_contracts.empty:
+    # Weighted revenue quality coefficient based on contract mix
+    # High quality: enterprise agreements (high NRR, low downsizing)
+    # Medium quality: reserved instances / savings plans
+    # Low quality: spot / promotional
+    ea_data = enterprise_contracts[enterprise_contracts['contract_type'] == 'enterprise_agreement']
+    ri_data = enterprise_contracts[enterprise_contracts['contract_type'].str.contains('reserved|savings', case=False, na=False)]
+    
+    ea_nrr = ea_data['net_revenue_retention_pct'].mean() / 100 if not ea_data.empty else 1.15
+    ea_downsizing = ea_data['downsizing_pct_at_renewal'].mean() / 100 if not ea_data.empty else 0.15
+    ri_nrr = ri_data['net_revenue_retention_pct'].mean() / 100 if not ri_data.empty else 1.05
+    ri_downsizing = ri_data['downsizing_pct_at_renewal'].mean() / 100 if not ri_data.empty else 0.20
+    
+    # Quality coefficient: higher NRR, lower downsizing = higher quality
+    revenue_quality_coeff = (ea_nrr * (1 - ea_downsizing) * 0.6 + ri_nrr * (1 - ri_downsizing) * 0.4)
+else:
+    ea_nrr = 1.15
+    ea_downsizing = 0.15
+    ri_nrr = 1.05
+    ri_downsizing = 0.20
+    revenue_quality_coeff = 0.85
+
+# --- Enterprise Contract Expiration Distribution (§17, §33) ---
+# Build expiration profile from contract lengths and renewal rates
+if not enterprise_contracts.empty:
+    expiration_profile = {}
+    for _, row in enterprise_contracts.iterrows():
+        length_qtrs = int(row['contract_length_years'] * 4)
+        renewal = row['renewal_rate_pct'] / 100
+        downsizing = row['downsizing_pct_at_renewal'] / 100
+        expansion = row['expansion_pct_at_renewal'] / 100
+        spend = row['committed_spend_usd_millions']
+        ctype = row['contract_type']
+        if ctype not in expiration_profile:
+            expiration_profile[ctype] = {'length_qtrs': length_qtrs, 'renewal': renewal, 'downsizing': downsizing, 'expansion': expansion, 'spend_weight': 0}
+        expiration_profile[ctype]['spend_weight'] += spend
+    # Normalize spend weights
+    total_spend = sum(v['spend_weight'] for v in expiration_profile.values())
+    for k in expiration_profile:
+        expiration_profile[k]['spend_weight'] /= total_spend
+else:
+    expiration_profile = {
+        'enterprise_agreement': {'length_qtrs': 12, 'renewal': 0.93, 'downsizing': 0.17, 'expansion': 0.22, 'spend_weight': 0.50},
+        'reserved_instances': {'length_qtrs': 12, 'renewal': 0.89, 'downsizing': 0.22, 'expansion': 0.10, 'spend_weight': 0.30},
+        'savings_plans': {'length_qtrs': 12, 'renewal': 0.91, 'downsizing': 0.19, 'expansion': 0.13, 'spend_weight': 0.20}
+    }
+
+# --- Regional Infrastructure Parameters (§16, §19) ---
+if not regional_infra.empty:
+    regional_params = {}
+    for _, row in regional_infra.iterrows():
+        regional_params[row['region']] = {
+            'ppp_factor': row['ppp_factor_usd_base'],
+            'power_growth_cap': row['power_growth_cap_annual_pct'] / 100,
+            'grid_delay_qtrs': round(row['grid_connection_delay_months'] / 3),
+            'gov_coordination': row['gov_coordination_index'],
+            'cost_per_mw_m': row['cost_per_mw_usd_millions'],
+            'transformer_shortage': row['transformer_shortage_factor'],
+            'cooling_water': row['cooling_water_availability'],
+            'renewable_pct': row['renewable_penetration_pct'] / 100
+        }
+    avg_cost_per_mw = regional_infra['cost_per_mw_usd_millions'].mean()
+    avg_cooling_water = regional_infra['cooling_water_availability'].mean()
+    avg_gov_coordination = regional_infra['gov_coordination_index'].mean()
+else:
+    regional_params = {}
+    avg_cost_per_mw = 2.5
+    avg_cooling_water = 0.35
+    avg_gov_coordination = 0.5
+
+# --- Onsite Power Degradation by Technology (§34) ---
+if not heat_rates.empty and 'degradation_pct_per_year' in heat_rates.columns:
+    degradation_by_tech_quarterly = {}
+    for _, row in heat_rates.iterrows():
+        tech = row['technology'] if 'technology' in row else row.get('unit', 'unknown')
+        deg_annual = row['degradation_pct_per_year'] / 100
+        degradation_by_tech_quarterly[tech] = deg_annual / 4  # quarterly degradation
+else:
+    degradation_by_tech_quarterly = {
+        'bloom_sofc': 0.00125,  # 0.5%/yr
+        'gas_turbine_7ha': 0.00175,  # 0.7%/yr
+        'rice_wartsila_18v50sg': 0.00125,  # 0.5%/yr
+        'hydrogen_fc_plug': 0.00075,  # 0.3%/yr
+        'solar_storage': 0.00125,  # 0.5%/yr
+        'smr_nuscale': 0.00025  # 0.1%/yr
+    }
+
+# --- Fuel Price Term Structure (§34) ---
+if not fuel_prices.empty:
+    fuel_term_structure = {}
+    for hub in fuel_prices['hub'].unique():
+        hub_data = fuel_prices[fuel_prices['hub'] == hub].sort_values('date')
+        prices = hub_data['price_usd_mmbtu'].values
+        if len(prices) > 12:
+            # Simple term structure: spot, 1yr forward, 2yr forward
+            fuel_term_structure[hub] = {
+                'spot': prices[-1],
+                'forward_1y': prices[-1] * 1.02,  # slight contango
+                'forward_2y': prices[-1] * 1.04,
+                'volatility': hub_data['volatility_pct'].mean() / 100 if 'volatility_pct' in hub_data.columns else 0.35,
+                'basis_risk': hub_data['basis_diff_usd_mmbtu'].std() if 'basis_diff_usd_mmbtu' in hub_data.columns else 0.15
+            }
+else:
+    fuel_term_structure = {
+        'henry_hub': {'spot': 4.5, 'forward_1y': 4.6, 'forward_2y': 4.7, 'volatility': 0.35, 'basis_risk': 0.15},
+        'ttf': {'spot': 27, 'forward_1y': 28, 'forward_2y': 29, 'volatility': 0.45, 'basis_risk': 0.20},
+        'jk': {'spot': 33, 'forward_1y': 34, 'forward_2y': 35, 'volatility': 0.45, 'basis_risk': 0.20}
+    }
+
+# --- Black Swan Stress Shocks (§31) ---
+if not module_31_stress.empty:
+    stress_shocks = {}
+    for _, row in module_31_stress.iterrows():
+        module = row['module']
+        metric = row['metric']
+        value = row['value']
+        if module not in stress_shocks:
+            stress_shocks[module] = {}
+        stress_shocks[module][metric] = value
+else:
+    stress_shocks = {}
+
 print(f"\n   --- COMPUTED CALIBRATION PARAMETERS ---")
 print(f"   gridConnectionDelay: {grid_connection_delay} quarters")
 print(f"   powerGrowthCap: {power_growth_cap:.2f} ({power_growth_cap*100:.0f}%/yr)")
@@ -557,6 +752,44 @@ print(f"   elasticityCoefficient: {elasticity_coefficient:.2f}")
 print(f"   adoptionDecayRate: {adoption_decay_rate:.4f}/qtr")
 print(f"   nationalStrategicInvestment: {national_strategic_investment:.1f}x")
 print(f"   insolvencyWriteDownRate: {insolvency_write_down_rate:.2f}/qtr")
+print(f"   --- NEW PARAMETERS ---")
+print(f"   chinaEloGap: {elo_gap:.0f}")
+print(f"   chinaConvergenceRate: {china_convergence_rate:.3f}/qtr")
+print(f"   chinaPriceDiscount: {china_price_discount:.2f}")
+print(f"   chinaPriceCompressionVelocity: {china_price_compression_velocity:.2f}/qtr")
+print(f"   chinaOpenWeightShare: {open_weight_share:.2f}")
+print(f"   chinaFrontierLag: {china_frontier_lag:.0f} qtrs")
+print(f"   elasticityByCategory: {elasticity_by_category}")
+print(f"   adoptionDecayByCategory: {adoption_decay_by_category}")
+print(f"   revenueQualityCoeff: {revenue_quality_coeff:.3f}")
+print(f"   expirationProfile: {len(expiration_profile)} contract types")
+print(f"   regionalParams: {len(regional_params)} regions")
+print(f"   avgCostPerMW: ${avg_cost_per_mw:.1f}M")
+print(f"   avgCoolingWaterAvailability: {avg_cooling_water:.2f}")
+print(f"   avgGovCoordination: {avg_gov_coordination:.2f}")
+print(f"   degradationByTechQuarterly: {degradation_by_tech_quarterly}")
+print(f"   fuelTermStructure: {len(fuel_term_structure)} hubs")
+print(f"   wholesaleAvgPrice: ${wholesale_avg_price:.0f}/MWh")
+print(f"   stressShocks: {len(stress_shocks)} categories")
+print(f"   --- NEW PARAMETERS ---")
+print(f"   chinaEloGap: {elo_gap:.0f}")
+print(f"   chinaConvergenceRate: {china_convergence_rate:.3f}/qtr")
+print(f"   chinaPriceDiscount: {china_price_discount:.2f}")
+print(f"   chinaPriceCompressionVelocity: {china_price_compression_velocity:.2f}/qtr")
+print(f"   chinaOpenWeightShare: {open_weight_share:.2f}")
+print(f"   chinaFrontierLag: {china_frontier_lag:.0f} qtrs")
+print(f"   elasticityByCategory: {elasticity_by_category}")
+print(f"   adoptionDecayByCategory: {adoption_decay_by_category}")
+print(f"   revenueQualityCoeff: {revenue_quality_coeff:.3f}")
+print(f"   expirationProfile: {len(expiration_profile)} contract types")
+print(f"   regionalParams: {len(regional_params)} regions")
+print(f"   avgCostPerMW: ${avg_cost_per_mw:.1f}M")
+print(f"   avgCoolingWaterAvailability: {avg_cooling_water:.2f}")
+print(f"   avgGovCoordination: {avg_gov_coordination:.2f}")
+print(f"   degradationByTechQuarterly: {degradation_by_tech_quarterly}")
+print(f"   fuelTermStructure: {len(fuel_term_structure)} hubs")
+print(f"   wholesaleAvgPrice: ${wholesale_avg_price:.0f}/MWh")
+print(f"   stressShocks: {len(stress_shocks)} categories")
 
 # Build calibrated overrides
 calibrated_overrides = {
@@ -584,23 +817,113 @@ calibrated_overrides = {
     "elasticityCoefficient": elasticity_coefficient,
     "adoptionDecayRate": adoption_decay_rate,
     "nationalStrategicInvestment": national_strategic_investment,
-    "insolvencyWriteDownRate": insolvency_write_down_rate
+    "insolvencyWriteDownRate": insolvency_write_down_rate,
+    
+    # --- NEW: China Competition (§8, §9) ---
+    "chinaEloGap": elo_gap,
+    "chinaConvergenceRate": china_convergence_rate,
+    "chinaPriceDiscount": china_price_discount,
+    "chinaPriceCompressionVelocity": china_price_compression_velocity,
+    "chinaOpenWeightShare": open_weight_share,
+    "chinaFrontierLag": china_frontier_lag,
+    
+    # --- NEW: Category-Specific Productivity (§7, §21) ---
+    "elasticityByCategory": elasticity_by_category,
+    "adoptionDecayByCategory": adoption_decay_by_category,
+    
+    # --- NEW: Revenue Quality (§25) ---
+    "revenueQualityCoeff": revenue_quality_coeff,
+    "nrrByType": nrr_by_type,
+    "grrByType": grr_by_type,
+    "downsizingByType": downsizing_by_type,
+    "expansionByType": expansion_by_type,
+    "typeSpendShare": type_spend_share,
+    
+    # --- NEW: Contract Expiration Distribution (§17, §33) ---
+    "expirationProfile": expiration_profile,
+    
+    # --- NEW: Regional Infrastructure (§16, §19) ---
+    "regionalParams": regional_params,
+    "avgCostPerMW": avg_cost_per_mw,
+    "avgCoolingWaterAvailability": avg_cooling_water,
+    "avgGovCoordination": avg_gov_coordination,
+    
+    # --- NEW: Onsite Power Degradation (§34) ---
+    "degradationByTechQuarterly": degradation_by_tech_quarterly,
+    "weightedDegradationQuarterly": weighted_degradation,
+    
+    # --- NEW: Fuel Price Term Structure (§34) ---
+    "fuelTermStructure": fuel_term_structure,
+    "wholesaleAvgPrice": wholesale_avg_price,
+    "wholesaleVolatility": wholesale_volatility,
+    
+    # --- NEW: Black Swan Stress Shocks (§31) ---
+    "stressShocks": stress_shocks,
+    
+    # --- NEW: Henry Hub / TTF / JKM Correlations ---
+    "henryTtfCorr": henry_ttf_corr,
+    "henryJkmCorr": henry_jkm_corr,
+    "ttfJkmCorr": ttf_jkm_corr
 }
 
 # Merge all metrics
 all_metrics = {
     **calibrated_overrides,
-    "adoptionMetrics": {},
-    "chinaMetrics": {},
+    "adoptionMetrics": {
+        "elasticityByCategory": elasticity_by_category,
+        "adoptionDecayByCategory": adoption_decay_by_category,
+        "categoryEffects": category_effects.to_dict() if 'category_effects' in dir() else {}
+    },
+    "chinaMetrics": {
+        "eloGap": elo_gap,
+        "convergenceRate": china_convergence_rate,
+        "priceDiscount": china_price_discount,
+        "priceCompressionVelocity": china_price_compression_velocity,
+        "openWeightShare": open_weight_share,
+        "frontierLag": china_frontier_lag,
+        "benchmarks": china_benchmarks.to_dict(orient="records") if not china_benchmarks.empty else [],
+        "apiPricing": china_api_pricing.to_dict(orient="records") if not china_api_pricing.empty else []
+    },
     "productivityMetrics": productivity.to_dict(orient="records") if not productivity.empty else {},
-    "revenueQualityMetrics": {},
-    "macroMetrics": {},
-    "semiconductorMetrics": {},
-    "agentsMetrics": {},
-    "regulatoryMetrics": {},
-    "laborMetrics": {},
-    "unitEconomicsMetrics": {},
-    "stressScenarioMetrics": {},
+    "revenueQualityMetrics": {
+        "qualityCoeff": revenue_quality_coeff,
+        "nrrByType": nrr_by_type,
+        "grrByType": grr_by_type,
+        "downsizingByType": downsizing_by_type,
+        "expansionByType": expansion_by_type,
+        "typeSpendShare": type_spend_share,
+        "expirationProfile": expiration_profile
+    },
+    "macroMetrics": {
+        "fred_catalog": [],
+        "wholesalePowerAvgPrice": wholesale_avg_price,
+        "wholesalePowerVolatility": wholesale_volatility
+    },
+    "semiconductorMetrics": {
+        "siliconSupplyQuarterlyB": silicon_supply_metric,
+        "capexCAGR": round(capex_cagr * 100, 1),
+        "rpoCAGR": round(rpo_cagr * 100, 1)
+    },
+    "agentsMetrics": {
+        "googleAgents": 1302,
+        "salesforceAgents": 20000,
+        "estimatedProductivityGain": 0.25
+    },
+    "regulatoryMetrics": {
+        "complianceFriction": 0.15,
+        "regulatoryLagQuarters": 4
+    },
+    "laborMetrics": {
+        "displacementRate": 0.02,
+        "augmentationRate": 0.15,
+        "reskillingCostPerWorker": 15000
+    },
+    "unitEconomicsMetrics": {
+        "inferenceCostPerMillionTokens": 0.50,
+        "trainingCostPerPflopDay": 50000,
+        "gpuUtilizationTarget": 0.45
+    },
+    "stressScenarioMetrics": stress_shocks,
     "powerMetrics": {
         "capacity": onsite_capacity.to_dict(orient="records") if not onsite_capacity.empty else [],
         "heat_rates": heat_rates.to_dict(orient="records") if not heat_rates.empty else [],
@@ -612,7 +935,11 @@ all_metrics = {
         "transformer": transformer.to_dict(orient="records") if not transformer.empty else [],
         "wholesale_power": wholesale_power.to_dict(orient="records") if not wholesale_power.empty else [],
         "regional_infra": regional_infra.to_dict(orient="records") if not regional_infra.empty else [],
-        "enterprise_contracts": enterprise_contracts.to_dict(orient="records") if not enterprise_contracts.empty else []
+        "enterprise_contracts": enterprise_contracts.to_dict(orient="records") if not enterprise_contracts.empty else [],
+        "degradationByTechQuarterly": degradation_by_tech_quarterly,
+        "fuelTermStructure": fuel_term_structure,
+        "weightedDegradationQuarterly": weighted_degradation,
+        "regionalParams": regional_params
     }
 }
 
@@ -665,7 +992,11 @@ window.TESM_DATA_CATEGORIES = {{
   "wholesale_power": {json.dumps(wholesale_power.to_dict(orient="records"), indent=2) if not wholesale_power.empty else "[]"},
   "regional_infra": {json.dumps(regional_infra.to_dict(orient="records"), indent=2) if not regional_infra.empty else "[]"},
   "enterprise_contracts": {json.dumps(enterprise_contracts.to_dict(orient="records"), indent=2) if not enterprise_contracts.empty else "[]"},
-  "productivity": {json.dumps(productivity.to_dict(orient="records"), indent=2) if not productivity.empty else "[]"}
+  "productivity": {json.dumps(productivity.to_dict(orient="records"), indent=2) if not productivity.empty else "[]"},
+  "china_benchmarks": {json.dumps(china_benchmarks.to_dict(orient="records"), indent=2) if not china_benchmarks.empty else "[]"},
+  "china_api_pricing": {json.dumps(china_api_pricing.to_dict(orient="records"), indent=2) if not china_api_pricing.empty else "[]"},
+  "productivity_root": {json.dumps(productivity_root.to_dict(orient="records"), indent=2) if not productivity_root.empty else "[]"},
+  "module_31_stress": {json.dumps(module_31_stress.to_dict(orient="records"), indent=2) if not module_31_stress.empty else "[]"}
 }};
 
 // Apply values to the default parameters template block

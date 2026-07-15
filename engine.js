@@ -120,7 +120,72 @@ const DEFAULT_PARAMS = {
   },
   
   // Grid power price ($/MWh)
-  gridPowerPrice: 85
+  gridPowerPrice: 85,
+  
+  // ===== NEW PARAMETERS FROM CALIBRATION =====
+  
+  // §8 Chinese AI Competition
+  chinaEloGap: 40,
+  chinaConvergenceRate: 0.025,          // Gap closure per quarter
+  chinaPriceDiscount: 0.94,             // Chinese models 94% cheaper than GPT-4o
+  chinaPriceCompressionVelocity: 0.08,  // Additional price compression per quarter
+  chinaOpenWeightShare: 0.65,           // Fraction of Chinese models that are open-weight
+  chinaFrontierLag: 2,                  // Quarters behind US frontier
+  
+  // §7, §21 Category-Specific Productivity & Jevons Elasticity
+  elasticityByCategory: {
+    coding: 1.45, writing: 1.30, consulting: 1.25,
+    customer_support: 1.15, legal: 1.20, rd_materials: 1.35,
+    rd_drug: 1.30, general: 1.12
+  },
+  adoptionDecayByCategory: {
+    coding: 0.015, writing: 0.020, consulting: 0.022,
+    customer_support: 0.028, legal: 0.025, rd_materials: 0.018,
+    rd_drug: 0.020, general: 0.030
+  },
+  
+  // §25 Revenue Quality
+  revenueQualityCoeff: 0.85,
+  
+  // §17, §33 Enterprise Contract Expiration Profile
+  expirationProfile: {
+    enterprise_agreement: {length_qtrs: 12, renewal: 0.93, downsizing: 0.17, expansion: 0.22, spend_weight: 0.50},
+    reserved_instances: {length_qtrs: 12, renewal: 0.89, downsizing: 0.22, expansion: 0.10, spend_weight: 0.30},
+    savings_plans: {length_qtrs: 12, renewal: 0.91, downsizing: 0.19, expansion: 0.13, spend_weight: 0.20}
+  },
+  
+  // §16, §19 Regional Infrastructure Parameters
+  regionalParams: {
+    us: {ppp_factor: 1.0, power_growth_cap: 0.12, grid_delay_qtrs: 8, gov_coordination: 0.5, cost_per_mw_m: 2.5, transformer_shortage: 0.2, cooling_water: 0.35, renewable_pct: 0.22},
+    china: {ppp_factor: 0.55, power_growth_cap: 0.24, grid_delay_qtrs: 4, gov_coordination: 0.95, cost_per_mw_m: 1.1, transformer_shortage: 0.1, cooling_water: 0.15, renewable_pct: 0.35},
+    india: {ppp_factor: 0.45, power_growth_cap: 0.18, grid_delay_qtrs: 6, gov_coordination: 0.7, cost_per_mw_m: 1.3, transformer_shortage: 0.15, cooling_water: 0.10, renewable_pct: 0.25},
+    gulf: {ppp_factor: 0.8, power_growth_cap: 0.26, grid_delay_qtrs: 2, gov_coordination: 0.85, cost_per_mw_m: 1.7, transformer_shortage: 0.05, cooling_water: 0.05, renewable_pct: 0.05},
+    eu: {ppp_factor: 1.15, power_growth_cap: 0.05, grid_delay_qtrs: 16, gov_coordination: 0.3, cost_per_mw_m: 3.1, transformer_shortage: 0.25, cooling_water: 0.4, renewable_pct: 0.45}
+  },
+  avgCostPerMW: 2.5,
+  avgCoolingWaterAvailability: 0.35,
+  avgGovCoordination: 0.5,
+  
+  // §34 Onsite Power Degradation by Technology
+  degradationByTechQuarterly: {
+    bloom_sofc: 0.00125,        // 0.5%/yr
+    gas_turbine_7ha: 0.00175,   // 0.7%/yr
+    rice_wartsila_18v50sg: 0.00125, // 0.5%/yr
+    hydrogen_fc_plug: 0.00075,  // 0.3%/yr
+    solar_storage: 0.00125,     // 0.5%/yr
+    smr_nuscale: 0.00025        // 0.1%/yr
+  },
+  
+  // §34 Fuel Price Term Structure
+  fuelTermStructure: {
+    henry_hub: {spot: 4.5, forward_1y: 4.6, forward_2y: 4.7, volatility: 0.35, basis_risk: 0.15},
+    ttf: {spot: 27, forward_1y: 28, forward_2y: 29, volatility: 0.45, basis_risk: 0.20},
+    jk: {spot: 33, forward_1y: 34, forward_2y: 35, volatility: 0.45, basis_risk: 0.20}
+  },
+  wholesaleAvgPrice: 85,
+  
+  // §31 Black Swan Stress Shocks
+  stressShocks: {}
 };
 
 function runSimulation(params = {}) {
@@ -195,23 +260,43 @@ function runSimulation(params = {}) {
     effectiveGridPrice: [],
     onsiteGenMix: [],
     carbonIntensity: [],
-    waterIntensity: []
+    waterIntensity: [],
+    // NEW tracking
+    chinaEloGap: [],
+    chinaPriceDiscount: [],
+    effectiveElasticity: [],
+    weightedAdoptionDecay: [],
+    revenueQualityCoeff: [],
+    regionalPowerGrowthCap: [],
+    onsiteDegradedHeatRates: [],
+    currentFuelPrices: [],
+    stressShockImpacts: []
   };
 
   let initialValuation = null;
   for (let t = 0; t < steps; t++) {
     merged.computeDemandMW = activePower * 1000;
-    const constructionDelayMultiplier = 1 + merged.transformerShortage * 1.5;
+    // Use regional transformer shortage
+    const regionalTransformerShortage = merged.regionalParams && merged.regionalParams[merged.activeRegion] 
+      ? (merged.regionalParams[merged.activeRegion].transformer_shortage || merged.transformerShortage)
+      : merged.transformerShortage;
+    const constructionDelayMultiplier = 1 + regionalTransformerShortage * 1.5;
     const regionSpeedFactor = regionConfig.powerGrowthCap / 0.12;
     const basePowerGrowthCap = Math.min(powerGrowthCap, (0.20 * regionSpeedFactor) / constructionDelayMultiplier);
-    const effectivePowerGrowthCap = basePowerGrowthCap + 
+    // Preliminary effectivePowerGrowthCap for power queue (refined later with regional params)
+    let effectivePowerGrowthCap = basePowerGrowthCap + 
       (merged.onsiteGenCapacityMW / (merged.computeDemandMW || 10000)) * merged.ONSITE_UTILIZATION_BONUS;
+    
+    // Regional grid delay (needed for power queue targeting)
+    const regionalGridDelay = merged.regionalParams && merged.regionalParams[merged.activeRegion] 
+      ? (merged.regionalParams[merged.activeRegion].grid_delay_qtrs || gridConnectionDelay)
+      : gridConnectionDelay;
     
     const gridArrival = powerQueue[t] || 0.04;
     activePower += gridArrival;
     
     const powerTargetBuild = cloudRevenue * 0.10 * investorSentiment;
-    const gridTargetIndex = t + gridConnectionDelay;
+    const gridTargetIndex = t + regionalGridDelay;
     if (gridTargetIndex < steps) {
       powerQueue[gridTargetIndex] = Math.min(powerTargetBuild * dt, activePower * effectivePowerGrowthCap * dt);
     }
@@ -233,6 +318,25 @@ function runSimulation(params = {}) {
     const activeCompute = computeSupply - strandedCapacity;
     activeComputeFraction = activeCompute / (computeSupply + 0.1);
 
+    // ===== PRE-COMPUTE: Degraded Heat Rates & Fuel Prices (needed for onsite fuel cost) =====
+    // Onsite Power Degradation (§34) - compute before onsite fuel cost
+    let degradedHeatRates = {};
+    for (const [tech, hr] of Object.entries(merged.HEAT_RATES_BTU_PER_KWH)) {
+      const degRate = merged.degradationByTechQuarterly[tech] || 0;
+      degradedHeatRates[tech] = hr * (1 + degRate * t);  // Cumulative degradation
+    }
+    
+    // Fuel Price Term Structure (§34) - compute before onsite fuel cost
+    let currentFuelPrices = {};
+    for (const [hub, struct] of Object.entries(merged.fuelTermStructure)) {
+      const spot = struct.spot;
+      const forward = struct.forward_1y;
+      const vol = struct.volatility;
+      const drift = (forward - spot) / 4; // quarterly drift toward 1yr forward
+      const currentPrice = spot + drift * t + Math.sin(t * 0.5) * vol * spot * 0.1; // seasonal + trend
+      currentFuelPrices[hub] = Math.max(currentPrice, spot * 0.5); // floor at 50% of spot
+    }
+
     // §34 Onsite Power Generation & Fuel Price Exposure Model
     // 1. Onsite dispatch (min of onsite capacity * CF, compute demand * (1 - grid fraction))
     const onsiteDispatch = Math.min(
@@ -240,14 +344,18 @@ function runSimulation(params = {}) {
       merged.computeDemandMW * (1 - merged.gridImportFraction)
     );
     
-    // 2. Fuel cost for onsite generation (converting MW to quarterly MWh: MW * 2190 hours/qtr)
+    // 2. Fuel cost for onsite generation using DEGRADED heat rates and TERM STRUCTURE fuel prices
     let onsiteFuelCost = 0;
     for (const [tech, frac] of Object.entries(merged.onsiteGenMix)) {
       const cap = merged.onsiteGenCapacityMW * frac;
-      const hr = merged.HEAT_RATES_BTU_PER_KWH[tech] || 0; // Btu/kWh
+      // Use degraded heat rate for this quarter
+      const hr = degradedHeatRates[tech] || merged.HEAT_RATES_BTU_PER_KWH[tech] || 0; // Btu/kWh
       const fuelType = (tech === "gas_turbine" || tech === "rice" || tech === "bloom_sofc") ? "natural_gas" :
                        (tech === "hydrogen_fc") ? "hydrogen" : "natural_gas";
-      const fuelPrice = merged.FUEL_PRICES_USD_PER_MMBTU[fuelType] || 0; // $/MMBtu
+      // Use term structure price (Henry Hub for natural gas)
+      const hub = fuelType === "natural_gas" ? "henry_hub" : 
+                  fuelType === "hydrogen" ? "jk" : "henry_hub";  // JKM for H2 proxy
+      const fuelPrice = currentFuelPrices[hub]?.spot || merged.FUEL_PRICES_USD_PER_MMBTU[fuelType] || 0; // $/MMBtu
       const hedged = fuelPrice * merged.hedgeRatio + 
                      fuelPrice * (1 - merged.hedgeRatio) * (1 + merged.basisRisk);
       // cap (MW) * capacityFactor * 2190 (hours/qtr) * (hr / 1000) (MMBtu/MWh) * hedged ($/MMBtu)
@@ -273,33 +381,106 @@ function runSimulation(params = {}) {
     
     // 8. Onsite power growth contribution is factored directly into the cap at the beginning of the loop.
 
-    const costReductionRate = 0.38;
-    const openSourcePressure = merged.priceCompression * merged.openSourcePower;
-    const tokenPrice = Math.max(0.005, Math.pow(1 - (costReductionRate + openSourcePressure) * dt, t));
+    // ===== NEW: China Competition Dynamics (§8, §9) =====
+    // Chinese model quality convergence reduces Western pricing power
+    let chinaEloGap = merged.chinaEloGap;
+    let chinaPriceDiscount = merged.chinaPriceDiscount;
+    if (t > 0) {
+      // Chinese models close the Elo gap each quarter
+      chinaEloGap = Math.max(0, chinaEloGap * (1 - merged.chinaConvergenceRate));
+      // As gap closes, Chinese pricing forces Western API prices down
+      chinaPriceDiscount = Math.min(0.98, chinaPriceDiscount + merged.chinaPriceCompressionVelocity * dt);
+    }
     
-    const volumeExpansion = Math.pow(1 / tokenPrice, merged.elasticityCoefficient - 1);
-    const demandVolume = activeCompute * volumeExpansion;
+    // ===== NEW: Category-Specific Elasticity & Adoption (§7, §21) =====
+    // Weighted average elasticity based on workload mix
+    // Assume workload distribution: coding 20%, writing 15%, consulting 15%, support 20%, legal 10%, R&D 15%, general 5%
+    const workloadMix = {
+      coding: 0.20, writing: 0.15, consulting: 0.15,
+      customer_support: 0.20, legal: 0.10, rd_materials: 0.10,
+      rd_drug: 0.05, general: 0.05
+    };
+    let weightedElasticity = 0;
+    for (const [cat, weight] of Object.entries(workloadMix)) {
+      weightedElasticity += (merged.elasticityByCategory[cat] || merged.elasticityCoefficient) * weight;
+    }
+    const effectiveElasticity = weightedElasticity;
 
-    const baseSavings = demandVolume * 0.25; 
+    // ===== NEW: Revenue Quality from Contract Mix (§25) =====
+    // Use revenueQualityCoeff based on contract type mix
+    const revenueQualityCoeff = merged.revenueQualityCoeff;
+
+    // ===== NEW: Contract Expiration Distribution (§17, §33) =====
+    // Use expirationProfile for more realistic renewal dynamics
+    // This replaces the simple 3yr/5yr queue with type-specific queues
+    const expirationProfile = merged.expirationProfile;
+    
+    // ===== NEW: Regional Infrastructure Constraints (§16, §19) =====
+    // Apply regional parameters if activeRegion is in regionalParams
+    // regionalTransformerShortage already computed at top of loop
+    // regionalGridDelay already computed at top of loop
+    let regionalPowerGrowthCap = powerGrowthCap;
+    let regionalCoolingWater = merged.avgCoolingWaterAvailability;
+    let regionalGovCoordination = merged.avgGovCoordination;
+    
+    if (merged.regionalParams && merged.regionalParams[merged.activeRegion]) {
+      const rp = merged.regionalParams[merged.activeRegion];
+      regionalPowerGrowthCap = rp.power_growth_cap || powerGrowthCap;
+      // regionalGridDelay already computed at top of loop
+      // regionalTransformerShortage already computed at top of loop
+      regionalCoolingWater = rp.cooling_water || merged.avgCoolingWaterAvailability;
+      regionalGovCoordination = rp.gov_coordination || merged.avgGovCoordination;
+    }
+    
+    // Adjust power growth cap by cooling water availability and gov coordination
+    const waterConstraint = 1 + (regionalCoolingWater - 0.35) * 0.5;  // More water = easier expansion
+    const govConstraint = 0.5 + regionalGovCoordination * 0.5;       // Better coordination = easier expansion
+    effectivePowerGrowthCap = regionalPowerGrowthCap * waterConstraint * govConstraint + 
+      (merged.onsiteGenCapacityMW / (merged.computeDemandMW || 10000)) * merged.ONSITE_UTILIZATION_BONUS;
+    
+    // ===== NEW: China Competition Effects on Pricing (§8) =====
+    const chinaCompetitionFactor = 1 - chinaPriceDiscount;  // 0 = no competition, 1 = full parity
+    const openSourcePressure = merged.priceCompression * merged.openSourcePower * (1 + chinaCompetitionFactor);
+    
+    // Cost reduction includes AI efficiency gains + China competition + open source
+    const costReductionRate = 0.38 + openSourcePressure;  // Base 38% + competitive pressure
+    
+    // Token price with China competition accelerating price decline
+    const tokenPrice = Math.max(0.005, Math.pow(1 - costReductionRate * dt, t));
+    
+    // ===== NEW: Effective Elasticity (Category-Weighted) (§21) =====
+    const volumeExpansion = Math.pow(1 / tokenPrice, effectiveElasticity - 1);
+    const demandVolume = activeCompute * volumeExpansion;
+    
+    // ===== NEW: China Competition Reduces Western Base Savings (§8) =====
+    const baseSavings = demandVolume * 0.25 * (1 - chinaCompetitionFactor * 0.3);  // 30% max erosion from Chinese competition
     const tcoCost = demandVolume * (industryConfig.complianceCost * merged.tcoMultiplier + industryConfig.liabilityRisk * 0.4);
     const netSavings = baseSavings - tcoCost;
     
     const regulatoryFrictionCoeff = 1 + (merged.complianceFriction + industryConfig.complianceCost) * 3;
+    
+    // ===== NEW: Category-Weighted Adoption Decay (§7, §21) =====
+    let weightedAdoptionDecay = 0;
+    for (const [cat, weight] of Object.entries(workloadMix)) {
+      weightedAdoptionDecay += (merged.adoptionDecayByCategory[cat] || merged.adoptionDecayRate) * weight;
+    }
+    const effectiveAdoptionDecay = weightedAdoptionDecay;
+    
     const adoptionRate = Math.max(0.01, (netSavings > 0 ? 0.20 : 0.01) / regulatoryFrictionCoeff);
     
-    // Financing/solvency mechanic: when investor sentiment drops below 0.60,
-    // the capital markets IPO/refinancing window closes discontinuously.
+    // Financing/solvency mechanic: when investor sentiment drops,
+    // the capital markets IPO/refinancing window closes continuously.
     // Unprofitable startups run out of cash and go bankrupt, leading to
-    // an additional software subscription revenue write-down of 10% per quarter.
-    const externalFinancingAvailable = investorSentiment > 0.60 ? investorSentiment : 0.0;
+    // an additional software subscription revenue write-down.
+    const externalFinancingAvailable = investorSentiment * Math.min(1.0, Math.max(0.0, (investorSentiment - 0.40) / 0.20));
     const insolvencyRamp = Math.min(1.0, Math.max(0.0, (0.60 - investorSentiment) / (0.60 - 0.35)));
-    const insolvencyWriteDown = externalFinancingAvailable === 0.0 ? softwareRevenues * merged.insolvencyWriteDownRate * insolvencyRamp : 0.0;
+    const insolvencyWriteDown = softwareRevenues * merged.insolvencyWriteDownRate * insolvencyRamp * (1.0 - Math.min(1.0, Math.max(0.0, externalFinancingAvailable / (investorSentiment || 0.1))));
 
     if (netSavings > 0) {
-      softwareRevenues += (netSavings * adoptionRate - merged.adoptionDecayRate * softwareRevenues - insolvencyWriteDown) * dt;
+      softwareRevenues += (netSavings * adoptionRate - effectiveAdoptionDecay * softwareRevenues - insolvencyWriteDown) * dt;
     } else {
       // Accelerate dis-adoption/cancellation when netSavings is negative (buyers cancel losing subscriptions)
-      const cancellationRate = merged.adoptionDecayRate + Math.min(0.20, -netSavings / (cloudRevenue + 0.1));
+      const cancellationRate = effectiveAdoptionDecay + Math.min(0.20, -netSavings / (cloudRevenue + 0.1));
       softwareRevenues += (netSavings * adoptionRate - cancellationRate * softwareRevenues - insolvencyWriteDown) * dt;
     }
     softwareRevenues = Math.max(0.0, softwareRevenues);
@@ -310,16 +491,57 @@ function runSimulation(params = {}) {
     const netROI = softwareRevenues / (cloudRevenue + 0.1);
     const cloudDemandTarget = softwareRevenues * 0.65;
     const newBookings = cloudDemandTarget * dt;
-    const newBookings3yr = newBookings * merged.contractMix3yr;
-    const newBookings5yr = newBookings * (1 - merged.contractMix3yr);
     
+    // ===== NEW: Contract Renewal Using Expiration Profile (§17, §33) =====
+    // Distribute new bookings across contract types per spend weights
+    let newBookingsByType = {};
+    let renewedByType = {};
+    let totalExpiring = 0;
+    
+    for (const [ctype, profile] of Object.entries(merged.expirationProfile)) {
+      const weight = profile.spend_weight || 0;
+      const length = profile.length_qtrs || merged.averageContractLength;
+      const renewal = profile.renewal || 0.9;
+      const downsizing = profile.downsizing || merged.downsizingRatio;
+      const expansion = profile.expansion || 0.2;
+      
+      // Expiring contracts for this type (from queue)
+      const expiring = (contractQueue3yr[t] || 0) * weight * 0.7 + (contractQueue5yr[t] || 0) * weight * 0.3;
+      totalExpiring += expiring;
+      
+      // New bookings for this type
+      newBookingsByType[ctype] = newBookings * weight;
+      
+      // Renewal multiplier based on ROI vs WACC
+      const spread = netROI - merged.wacc;
+      const scalingFactor = Math.min(1.0, Math.max(-1.0, spread / 0.04));
+      const minMult = Math.max(0.30, 1.0 - downsizing);
+      const maxMult = renewal * (1 + expansion);
+      let renewalMult = minMult + (maxMult - minMult) * 0.5 * (1.0 + scalingFactor);
+      
+      renewedByType[ctype] = expiring * renewalMult;
+      
+      // Re-queue expirations
+      if (t + length < steps) {
+        const requeueAmount = (newBookingsByType[ctype] + renewedByType[ctype]) / length;
+        contractQueue3yr[t + length] += requeueAmount * 0.7;
+        contractQueue5yr[t + length] += requeueAmount * 0.3;
+      }
+    }
+    
+    // Legacy queue handling for backward compatibility
     const expiring3yr = contractQueue3yr[t] || 0.1;
     const expiring5yr = contractQueue5yr[t] || 0.05;
     
-    let renewalMultiplier = 0.96;
-    if (netROI < merged.wacc) {
-      renewalMultiplier = Math.max(0.30, 1.0 - merged.downsizingRatio);
-    }
+    // Ensure legacy newBookings variables are defined (backward compat when no expirationProfile)
+    const newBookings3yr = merged.contractMix3yr !== undefined ? newBookings * merged.contractMix3yr : newBookings * 0.7;
+    const newBookings5yr = merged.contractMix3yr !== undefined ? newBookings * (1 - merged.contractMix3yr) : newBookings * 0.3;
+    
+    const spreadLegacy = netROI - merged.wacc;
+    const scalingFactorLegacy = Math.min(1.0, Math.max(-1.0, spreadLegacy / 0.04));
+    const minMultLegacy = Math.max(0.30, 1.0 - merged.downsizingRatio);
+    const maxMultLegacy = 0.96;
+    let renewalMultiplier = minMultLegacy + (maxMultLegacy - minMultLegacy) * 0.5 * (1.0 + scalingFactorLegacy);
     
     const renewed3yr = expiring3yr * renewalMultiplier;
     const renewed5yr = expiring5yr * renewalMultiplier;
@@ -331,7 +553,9 @@ function runSimulation(params = {}) {
       contractQueue5yr[t + lenLong] = (newBookings5yr + renewed5yr) / lenLong;
     }
     
-    cloudRevenue = cloudRevenue + (newBookings - (expiring3yr + expiring5yr) + (renewed3yr + renewed5yr)) * dt;
+    // Cloud revenue: new bookings minus expiring plus renewed (from profile)
+    const totalRenewed = Object.values(renewedByType).reduce((a, b) => a + b, 0);
+    cloudRevenue = cloudRevenue + (newBookings - totalExpiring + totalRenewed) * dt;
     
     const stateSubsidy = 0.8 * merged.nationalStrategicInvestment * dt;
     const hardwareCapEx = cloudRevenue * (0.26 + 0.12 * investorSentiment) * dt + stateSubsidy;
@@ -350,12 +574,15 @@ function runSimulation(params = {}) {
     const reflexivityBoost = merged.capitalReflexivity * (investorSentiment - 1) * dt;
     
     const sentimentSpeed = merged.sentimentSpeed !== undefined ? merged.sentimentSpeed : 1.0;
-    const maxSentiment = merged.maxSentiment !== undefined ? merged.maxSentiment : 1.6;
-    if (roic > merged.wacc && qtrGrowth > 0.12) {
-      investorSentiment = Math.min(maxSentiment, investorSentiment + (0.06 + reflexivityBoost) * sentimentSpeed * dt);
+    const roicScore = Math.min(1.0, Math.max(-1.0, (roic - merged.wacc) / 0.04));
+    const growthScore = Math.min(1.0, Math.max(-1.0, (qtrGrowth - 0.12) / 0.08));
+    const sentimentScore = Math.min(roicScore, growthScore);
+    
+    if (sentimentScore > 0) {
+      investorSentiment = Math.min(maxSentiment, investorSentiment + (0.06 + reflexivityBoost) * sentimentScore * sentimentSpeed * dt);
     } else {
       const sentimentDecay = merged.sentimentDecay !== undefined ? merged.sentimentDecay : 0.15;
-      investorSentiment = Math.max(0.35, investorSentiment - sentimentDecay * sentimentSpeed * dt);
+      investorSentiment = Math.max(0.35, investorSentiment + sentimentDecay * sentimentScore * sentimentSpeed * dt);
     }
     
     const multipleSales = Math.max(
@@ -371,7 +598,8 @@ function runSimulation(params = {}) {
     const cycleVal = 1 + seasonalityCycle * Math.sin(2 * Math.PI * (t / 4.0) - Math.PI / 3);
     const indexVal = merged.initialIndex * (marketValuation / (initialValuation || 1.0)) * cycleVal;
     
-    const qualityCoeff = Math.min(0.90, Math.max(0.20, netROI * industryConfig.switchingCost));
+    // ===== NEW: Revenue Quality from Contract Mix (§25) =====
+    const qualityCoeff = merged.revenueQualityCoeff;
     const revenueQualityHigh = cloudRevenue * qualityCoeff;
     const revenueQualityLow = cloudRevenue * (1 - qualityCoeff);
 
@@ -403,6 +631,16 @@ function runSimulation(params = {}) {
     history.onsiteGenMix.push({...merged.onsiteGenMix});
     history.carbonIntensity.push(merged.carbonIntensityTonCO2perMWh);
     history.waterIntensity.push(merged.waterIntensityLperMWh);
+    // NEW tracking
+    history.chinaEloGap.push(chinaEloGap);
+    history.chinaPriceDiscount.push(chinaPriceDiscount);
+    history.effectiveElasticity.push(effectiveElasticity);
+    history.weightedAdoptionDecay.push(effectiveAdoptionDecay);
+    history.revenueQualityCoeff.push(qualityCoeff);
+    history.regionalPowerGrowthCap.push(effectivePowerGrowthCap);
+    history.onsiteDegradedHeatRates.push({...degradedHeatRates});
+    history.currentFuelPrices.push({...currentFuelPrices});
+    history.stressShockImpacts.push({});  // Placeholder for stress shock impacts
   }
 
   return history;
