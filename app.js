@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (finalIndex < 100) {
         statusClass = "status-yellow";
         statusText = "Deflationary";
-      } else if (lateGrowthAnn < 0.025 || finalROIC < currentParams.wacc) {
+      } else if (lateGrowthAnn < 0.07 || finalROIC < currentParams.wacc) {
         statusClass = "status-purple";
         statusText = "Stagnant / Flat";
       }

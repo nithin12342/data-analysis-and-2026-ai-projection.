@@ -223,10 +223,10 @@ function runSimulation(params = {}) {
       contractQueue3yr[i] = merged.realContractSeed[i].q3yr;
       contractQueue5yr[i] = merged.realContractSeed[i].q5yr;
     } else {
-      // Fallback: synthetic 4%/step growth assumption — NOT real data, used only when no seed is provided
-      const historicalCloudSpend = cloudRevenue * (1 + 0.04 * i);
-      contractQueue3yr[i] = (historicalCloudSpend * merged.contractMix3yr) / lenShort;
-      contractQueue5yr[i] = (historicalCloudSpend * (1 - merged.contractMix3yr)) / lenLong;
+      // Fallback: only seed the initial window (before simulation bookings start to expire)
+      const historicalCloudSpend = cloudRevenue;
+      contractQueue3yr[i] = i < lenShort ? (historicalCloudSpend * merged.contractMix3yr) / lenShort : 0.0;
+      contractQueue5yr[i] = i < lenLong ? (historicalCloudSpend * (1 - merged.contractMix3yr)) / lenLong : 0.0;
     }
     powerQueue[i] = 0.15;
     gpuDeliveryQueue[i] = 0.5;
@@ -283,9 +283,8 @@ function runSimulation(params = {}) {
     const constructionDelayMultiplier = 1 + regionalTransformerShortage * 1.5;
     const regionSpeedFactor = regionConfig.powerGrowthCap / 0.12;
     const basePowerGrowthCap = Math.min(powerGrowthCap, (0.20 * regionSpeedFactor) / constructionDelayMultiplier);
-    // Preliminary effectivePowerGrowthCap for power queue (refined later with regional params)
-    let effectivePowerGrowthCap = basePowerGrowthCap + 
-      (merged.onsiteGenCapacityMW / (merged.computeDemandMW || 10000)) * merged.ONSITE_UTILIZATION_BONUS;
+    // Preliminary effectivePowerGrowthCap for power queue
+    let effectivePowerGrowthCap = basePowerGrowthCap;
     
     // Regional grid delay (needed for power queue targeting)
     const regionalGridDelay = merged.regionalParams && merged.regionalParams[merged.activeRegion] 
@@ -376,7 +375,7 @@ function runSimulation(params = {}) {
     
     // 7. Grid defection feedback (comparing quarterly costs)
     if (onsiteNetCost < merged.gridPowerPrice * (onsiteDispatch * 2190) * merged.gridDefectionThreshold) {
-      merged.onsiteGenCapacityMW += merged.NEW_ONSITE_BUILD_RATE;
+      merged.onsiteGenCapacityMW += merged.NEW_ONSITE_BUILD_RATE * investorSentiment;
     }
     
     // 8. Onsite power growth contribution is factored directly into the cap at the beginning of the loop.
@@ -435,8 +434,7 @@ function runSimulation(params = {}) {
     // Adjust power growth cap by cooling water availability and gov coordination
     const waterConstraint = 1 + (regionalCoolingWater - 0.35) * 0.5;  // More water = easier expansion
     const govConstraint = 0.5 + regionalGovCoordination * 0.5;       // Better coordination = easier expansion
-    effectivePowerGrowthCap = regionalPowerGrowthCap * waterConstraint * govConstraint + 
-      (merged.onsiteGenCapacityMW / (merged.computeDemandMW || 10000)) * merged.ONSITE_UTILIZATION_BONUS;
+    effectivePowerGrowthCap = regionalPowerGrowthCap * waterConstraint * govConstraint;
     
     // ===== NEW: China Competition Effects on Pricing (§8) =====
     const chinaCompetitionFactor = 1 - chinaPriceDiscount;  // 0 = no competition, 1 = full parity

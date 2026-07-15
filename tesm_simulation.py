@@ -166,9 +166,9 @@ def run_simulation(params=None):
             contract_queue_3yr[i] = merged["realContractSeed"][i].get("q3yr", 0.0)
             contract_queue_5yr[i] = merged["realContractSeed"][i].get("q5yr", 0.0)
         else:
-            historical_cloud_spend = cloud_revenue * (1.0 + 0.04 * i)
-            contract_queue_3yr[i] = (historical_cloud_spend * merged["contractMix3yr"]) / len_short
-            contract_queue_5yr[i] = (historical_cloud_spend * (1.0 - merged["contractMix3yr"])) / len_long
+            historical_cloud_spend = cloud_revenue
+            contract_queue_3yr[i] = (historical_cloud_spend * merged["contractMix3yr"]) / len_short if i < len_short else 0.0
+            contract_queue_5yr[i] = (historical_cloud_spend * (1.0 - merged["contractMix3yr"])) / len_long if i < len_long else 0.0
         power_queue[i] = merged.get("baselinePowerGrowth", 0.15)
         gpu_delivery_queue[i] = merged.get("baselineGpuGrowth", 0.5)
         
@@ -182,6 +182,7 @@ def run_simulation(params=None):
         "netEnterpriseROI": [],
         "roic": [],
         "wacc": [],
+        "investorSentiment": [],
         "marketValuation": [],
         "indexVal": [],
         "multipleSales": [],
@@ -209,9 +210,7 @@ def run_simulation(params=None):
         region_speed_factor = region_config["powerGrowthCap"] / 0.12
         base_power_growth_cap = min(power_growth_cap, (0.20 * region_speed_factor) / construction_delay_multiplier)
         
-        effective_power_growth_cap = base_power_growth_cap + (
-            (merged["onsiteGenCapacityMW"] / (merged["computeDemandMW"] or 10000.0)) * merged["ONSITE_UTILIZATION_BONUS"]
-        )
+        effective_power_growth_cap = base_power_growth_cap
         
         grid_arrival = power_queue[t] if t < len(power_queue) else 0.04
         active_power += grid_arrival
@@ -275,7 +274,7 @@ def run_simulation(params=None):
         ) * (1.0 - merged["gridImportFraction"])
         
         if onsite_net_cost < merged["gridPowerPrice"] * (onsite_dispatch * 2190.0) * merged["gridDefectionThreshold"]:
-            merged["onsiteGenCapacityMW"] += merged["NEW_ONSITE_BUILD_RATE"]
+            merged["onsiteGenCapacityMW"] += merged["NEW_ONSITE_BUILD_RATE"] * investor_sentiment
             
         # 5. Jevons Paradox & Pricing Elasticity Model
         cost_reduction_rate = 0.38
@@ -405,6 +404,7 @@ def run_simulation(params=None):
         history["marketValuation"].append(market_valuation)
         history["indexVal"].append(index_val)
         history["multipleSales"].append(multiple_sales)
+        history["investorSentiment"].append(investor_sentiment)
         history["revenueQualityHigh"].append(rev_quality_high)
         history["revenueQualityLow"].append(rev_quality_low)
         history["gdpBoost"].append(gdp_growth_pct * 100.0)
