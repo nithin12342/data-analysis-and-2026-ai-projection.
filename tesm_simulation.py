@@ -444,9 +444,8 @@ def generate_scenario_matrix(params=None):
         return [c for c in result if len(c) > 0]
         
     combos = get_combinations(keys)
-    combinations = {"baseline": run_simulation(scenario_defs["baseline"])}
-    
     base_params = dict(params) if params else {}
+    combinations = {"baseline": run_simulation(base_params)}
     
     for combo in combos:
         name = "+".join(combo)

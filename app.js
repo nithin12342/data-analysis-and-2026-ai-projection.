@@ -579,11 +579,11 @@ document.addEventListener("DOMContentLoaded", () => {
     updateStatsCards(sim);
     renderCharts();
     renderFormulaDetail();
+    updateScenarioMatrix();
   }
 
   // Initial load
   initControls();
-  updateScenarioMatrix();
   setupFormulaExplorer();
   updateDashboard();
 });

@@ -656,7 +656,7 @@ function generateScenarioMatrix(params = {}) {
   };
 
   const keys = ['A', 'B', 'C', 'D', 'E'];
-  const combinations = { baseline: runSimulation(scenarioDefs.baseline) };
+  const combinations = { baseline: runSimulation(Object.assign({}, params, scenarioDefs.baseline)) };
   
   function getCombinations(arr) {
     const result = [[]];
