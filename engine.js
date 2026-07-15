@@ -400,8 +400,9 @@ function runSimulation(params = {}) {
       rd_drug: 0.05, general: 0.05
     };
     let weightedElasticity = 0;
+    const elasticityScale = merged.elasticityCoefficient / 1.25;
     for (const [cat, weight] of Object.entries(workloadMix)) {
-      weightedElasticity += (merged.elasticityByCategory[cat] || merged.elasticityCoefficient) * weight;
+      weightedElasticity += ((merged.elasticityByCategory[cat] || 1.25) * elasticityScale) * weight;
     }
     const effectiveElasticity = weightedElasticity;
 
