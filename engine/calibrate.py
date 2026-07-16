@@ -1084,10 +1084,11 @@ if (window.TESMEngine) {{
 }}
 """
 
-with open("param_overrides.js", "w") as f:
+overrides_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "param_overrides.js")
+with open(overrides_path, "w") as f:
     f.write(overrides_js_content)
 
 print(f"\n{'=' * 70}")
-print("[SUCCESS] Calibration complete. Overrides saved to: param_overrides.js")
+print(f"[SUCCESS] Calibration complete. Overrides saved to: {overrides_path}")
 print(f"{'=' * 70}")
 print(dumps_native(calibrated_overrides, indent=2))

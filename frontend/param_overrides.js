@@ -14,7 +14,7 @@
  * - Productivity meta-analysis (Peng 2023, Noy 2023, Brynjolfsson 2023, etc.)
  * - Enterprise contract surveys (Flexera, KeyBanc, Gartner, Morgan Stanley)
  *
- * Generated: 2026-07-16 11:18:36
+ * Generated: 2026-07-16 12:14:23
  */
 
 window.TESM_CALIBRATED_OVERRIDES = {
@@ -5045,7 +5045,7 @@ window.TESM_CALIBRATION_META = {
   "lbnlGridProjects": 10775,
   "lbnlMeanQueueDays": 831,
   "lbnlWithdrawalRate": 57.38,
-  "generatedAt": "2026-07-16 11:18:36"
+  "generatedAt": "2026-07-16 12:14:23"
 };
 
 window.TESM_DATA_CATEGORIES = {

@@ -3,6 +3,9 @@ import socketserver
 import json
 import os
 import urllib.parse
+import sys
+# Add parent directory and engine folder to Python path to import tesm_simulation and historical_validation
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'engine'))
 from tesm_simulation import run_simulation, generate_scenario_matrix, run_monte_carlo
 from historical_validation import verify_historical_case
 
@@ -67,4 +70,6 @@ def run_server():
             print("\nShutting down server.")
 
 if __name__ == "__main__":
+    # Ensure working directory is the frontend directory so local files are served correctly
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     run_server()
