@@ -6,7 +6,7 @@ __pycache__/
 .vscode/
 node_modules/
 DATA/
-*.duckdb
 *.log
-databases/
 to_delete/
+**/*.db-wal
+**/*.wal
