@@ -3,6 +3,19 @@ import json
 import pandas as pd
 import numpy as np
 
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (np.integer, np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+def dumps_native(obj, indent=None):
+    return json.dumps(obj, cls=NumpyEncoder, indent=indent)
+
 # Define paths
 DATA_DIR = "DATA"
 USITC_PATH = os.path.join(DATA_DIR, "DataWeb-Query-Export.xlsx")
@@ -36,11 +49,11 @@ REVENUE_TAGS = [
 
 # New CSV data paths
 TECH_PARAMS_PATH = os.path.join(DATA_DIR, "technology_parameters.csv")
-FUEL_PRICES_PATH = os.path.join(DATA_DIR, "fuel_prices.csv")
-GRID_SERVICES_PATH = os.path.join(DATA_DIR, "grid_services_revenue.csv")
+FUEL_PRICES_PATH = os.path.join(DATA_DIR, "power", "fuel_prices.csv")
+GRID_SERVICES_PATH = os.path.join(DATA_DIR, "power", "grid_services_revenue.csv")
 HEAT_RATES_PATH = os.path.join(DATA_DIR, "heat_rates.csv")
-ONSITE_CAPACITY_PATH = os.path.join(DATA_DIR, "onsite_gen_capacity.csv")
-HEDGE_RATIOS_PATH = os.path.join(DATA_DIR, "hedge_ratios.csv")
+ONSITE_CAPACITY_PATH = os.path.join(DATA_DIR, "power", "onsite_gen_capacity.csv")
+HEDGE_RATIOS_PATH = os.path.join(DATA_DIR, "power", "hedge_ratios.csv")
 CARBON_PRICES_PATH = os.path.join(DATA_DIR, "carbon_prices.csv")
 GRID_DELAYS_PATH = os.path.join(DATA_DIR, "grid_connection_delays.csv")
 TRANSFORMER_PATH = os.path.join(DATA_DIR, "transformer_shortage.csv")
@@ -211,6 +224,10 @@ else:
 if os.path.exists(ENTERPRISE_CONTRACTS_PATH):
     enterprise_contracts = pd.read_csv(ENTERPRISE_CONTRACTS_PATH)
     print(f"   Enterprise contracts: {len(enterprise_contracts)} records")
+    if 'avg_contract_length_years' in enterprise_contracts.columns and 'contract_length_years' not in enterprise_contracts.columns:
+        enterprise_contracts.rename(columns={'avg_contract_length_years': 'contract_length_years'}, inplace=True)
+    if 'committed_spend_usd_millions' not in enterprise_contracts.columns:
+        enterprise_contracts['committed_spend_usd_millions'] = 1.0
 else:
     enterprise_contracts = pd.DataFrame()
     print(f"   Enterprise contracts: NOT FOUND")
@@ -619,12 +636,31 @@ if not enterprise_contracts.empty:
     
     # Quality coefficient: higher NRR, lower downsizing = higher quality
     revenue_quality_coeff = (ea_nrr * (1 - ea_downsizing) * 0.6 + ri_nrr * (1 - ri_downsizing) * 0.4)
+    
+    nrr_by_type = {}
+    grr_by_type = {}
+    downsizing_by_type = {}
+    expansion_by_type = {}
+    type_spend_share = {}
+    
+    for ctype in enterprise_contracts['contract_type'].unique():
+        ctype_data = enterprise_contracts[enterprise_contracts['contract_type'] == ctype]
+        nrr_by_type[ctype] = ctype_data['net_revenue_retention_pct'].mean() / 100 if 'net_revenue_retention_pct' in ctype_data.columns else 1.10
+        grr_by_type[ctype] = ctype_data['gross_revenue_retention_pct'].mean() / 100 if 'gross_revenue_retention_pct' in ctype_data.columns else 0.95
+        downsizing_by_type[ctype] = ctype_data['downsizing_pct_at_renewal'].mean() / 100 if 'downsizing_pct_at_renewal' in ctype_data.columns else 0.15
+        expansion_by_type[ctype] = ctype_data['expansion_pct_at_renewal'].mean() / 100 if 'expansion_pct_at_renewal' in ctype_data.columns else 0.20
+        type_spend_share[ctype] = len(ctype_data) / len(enterprise_contracts)
 else:
     ea_nrr = 1.15
     ea_downsizing = 0.15
     ri_nrr = 1.05
     ri_downsizing = 0.20
     revenue_quality_coeff = 0.85
+    nrr_by_type = {'enterprise_agreement': 1.15, 'reserved_instances': 1.05}
+    grr_by_type = {'enterprise_agreement': 0.98, 'reserved_instances': 0.95}
+    downsizing_by_type = {'enterprise_agreement': 0.15, 'reserved_instances': 0.20}
+    expansion_by_type = {'enterprise_agreement': 0.25, 'reserved_instances': 0.10}
+    type_spend_share = {'enterprise_agreement': 0.60, 'reserved_instances': 0.40}
 
 # --- Enterprise Contract Expiration Distribution (§17, §33) ---
 # Build expiration profile from contract lengths and renewal rates
@@ -691,6 +727,19 @@ else:
         'smr_nuscale': 0.00025  # 0.1%/yr
     }
 
+# Compute weighted degradation
+if 'tech_mix_dict' in locals() and tech_mix_dict:
+    weighted_degradation = 0.0
+    for tech, mix in tech_mix_dict.items():
+        matched_deg = 0.00125  # fallback
+        for k, v in degradation_by_tech_quarterly.items():
+            if k in tech or tech in k:
+                matched_deg = v
+                break
+        weighted_degradation += mix * matched_deg
+else:
+    weighted_degradation = sum(degradation_by_tech_quarterly.values()) / len(degradation_by_tech_quarterly) if degradation_by_tech_quarterly else 0.00125
+
 # --- Fuel Price Term Structure (§34) ---
 if not fuel_prices.empty:
     fuel_term_structure = {}
@@ -713,6 +762,34 @@ else:
         'jk': {'spot': 33, 'forward_1y': 34, 'forward_2y': 35, 'volatility': 0.45, 'basis_risk': 0.20}
     }
 
+# Calculate wholesale average price and volatility
+if not wholesale_power.empty and 'price_usd_per_mwh' in wholesale_power.columns:
+    wholesale_avg_price = wholesale_power['price_usd_per_mwh'].mean()
+    wholesale_volatility = (wholesale_power['price_usd_per_mwh'].std() / wholesale_avg_price) if wholesale_avg_price > 0 else 0.25
+else:
+    wholesale_avg_price = 45.0
+    wholesale_volatility = 0.25
+# Calculate correlations between fuel hubs
+if not fuel_prices.empty and 'hub' in fuel_prices.columns and 'price_usd_mmbtu' in fuel_prices.columns:
+    try:
+        pivoted_prices = fuel_prices.pivot(index='date', columns='hub', values='price_usd_mmbtu')
+        corr_matrix = pivoted_prices.corr()
+        henry_col = [c for c in corr_matrix.columns if 'henry' in c]
+        ttf_col = [c for c in corr_matrix.columns if 'ttf' in c]
+        jkm_col = [c for c in corr_matrix.columns if 'jkm' in c or 'jk' in c]
+        
+        henry_ttf_corr = round(corr_matrix.loc[henry_col[0], ttf_col[0]], 3) if henry_col and ttf_col else 0.45
+        henry_jkm_corr = round(corr_matrix.loc[henry_col[0], jkm_col[0]], 3) if henry_col and jkm_col else 0.40
+        ttf_jkm_corr = round(corr_matrix.loc[ttf_col[0], jkm_col[0]], 3) if ttf_col and jkm_col else 0.85
+    except Exception as e:
+        print(f"Error calculating correlation: {e}")
+        henry_ttf_corr = 0.45
+        henry_jkm_corr = 0.40
+        ttf_jkm_corr = 0.85
+else:
+    henry_ttf_corr = 0.45
+    henry_jkm_corr = 0.40
+    ttf_jkm_corr = 0.85
 # --- Black Swan Stress Shocks (§31) ---
 if not module_31_stress.empty:
     stress_shocks = {}
@@ -963,9 +1040,9 @@ overrides_js_content = f"""/**
  * Generated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}
  */
 
-window.TESM_CALIBRATED_OVERRIDES = {json.dumps(all_metrics, indent=2)};
+window.TESM_CALIBRATED_OVERRIDES = {dumps_native(all_metrics, indent=2)};
 
-window.TESM_QUARTERLY_TIMESERIES = {json.dumps(quarterly_ts_data, indent=2)};
+window.TESM_QUARTERLY_TIMESERIES = {dumps_native(quarterly_ts_data, indent=2)};
 
 window.TESM_CALIBRATION_META = {{
   "secQuartersProcessed": {len(quarterly_results)},
@@ -980,23 +1057,23 @@ window.TESM_CALIBRATION_META = {{
 }};
 
 window.TESM_DATA_CATEGORIES = {{
-  "technology": {json.dumps(tech_params.to_dict(orient="records"), indent=2) if not tech_params.empty else "[]"},
-  "fuel_prices": {json.dumps(fuel_prices.to_dict(orient="records"), indent=2) if not fuel_prices.empty else "[]"},
-  "grid_services": {json.dumps(grid_services.to_dict(orient="records"), indent=2) if not grid_services.empty else "[]"},
-  "heat_rates": {json.dumps(heat_rates.to_dict(orient="records"), indent=2) if not heat_rates.empty else "[]"},
-  "onsite_capacity": {json.dumps(onsite_capacity.to_dict(orient="records"), indent=2) if not onsite_capacity.empty else "[]"},
-  "hedge_ratios": {json.dumps(hedge_ratios.to_dict(orient="records"), indent=2) if not hedge_ratios.empty else "[]"},
-  "carbon_prices": {json.dumps(carbon_prices.to_dict(orient="records"), indent=2) if not carbon_prices.empty else "[]"},
-  "grid_delays": {json.dumps(grid_delays.to_dict(orient="records"), indent=2) if not grid_delays.empty else "[]"},
-  "transformer_shortage": {json.dumps(transformer.to_dict(orient="records"), indent=2) if not transformer.empty else "[]"},
-  "wholesale_power": {json.dumps(wholesale_power.to_dict(orient="records"), indent=2) if not wholesale_power.empty else "[]"},
-  "regional_infra": {json.dumps(regional_infra.to_dict(orient="records"), indent=2) if not regional_infra.empty else "[]"},
-  "enterprise_contracts": {json.dumps(enterprise_contracts.to_dict(orient="records"), indent=2) if not enterprise_contracts.empty else "[]"},
-  "productivity": {json.dumps(productivity.to_dict(orient="records"), indent=2) if not productivity.empty else "[]"},
-  "china_benchmarks": {json.dumps(china_benchmarks.to_dict(orient="records"), indent=2) if not china_benchmarks.empty else "[]"},
-  "china_api_pricing": {json.dumps(china_api_pricing.to_dict(orient="records"), indent=2) if not china_api_pricing.empty else "[]"},
-  "productivity_root": {json.dumps(productivity_root.to_dict(orient="records"), indent=2) if not productivity_root.empty else "[]"},
-  "module_31_stress": {json.dumps(module_31_stress.to_dict(orient="records"), indent=2) if not module_31_stress.empty else "[]"}
+  "technology": {dumps_native(tech_params.to_dict(orient="records"), indent=2) if not tech_params.empty else "[]"},
+  "fuel_prices": {dumps_native(fuel_prices.to_dict(orient="records"), indent=2) if not fuel_prices.empty else "[]"},
+  "grid_services": {dumps_native(grid_services.to_dict(orient="records"), indent=2) if not grid_services.empty else "[]"},
+  "heat_rates": {dumps_native(heat_rates.to_dict(orient="records"), indent=2) if not heat_rates.empty else "[]"},
+  "onsite_capacity": {dumps_native(onsite_capacity.to_dict(orient="records"), indent=2) if not onsite_capacity.empty else "[]"},
+  "hedge_ratios": {dumps_native(hedge_ratios.to_dict(orient="records"), indent=2) if not hedge_ratios.empty else "[]"},
+  "carbon_prices": {dumps_native(carbon_prices.to_dict(orient="records"), indent=2) if not carbon_prices.empty else "[]"},
+  "grid_delays": {dumps_native(grid_delays.to_dict(orient="records"), indent=2) if not grid_delays.empty else "[]"},
+  "transformer_shortage": {dumps_native(transformer.to_dict(orient="records"), indent=2) if not transformer.empty else "[]"},
+  "wholesale_power": {dumps_native(wholesale_power.to_dict(orient="records"), indent=2) if not wholesale_power.empty else "[]"},
+  "regional_infra": {dumps_native(regional_infra.to_dict(orient="records"), indent=2) if not regional_infra.empty else "[]"},
+  "enterprise_contracts": {dumps_native(enterprise_contracts.to_dict(orient="records"), indent=2) if not enterprise_contracts.empty else "[]"},
+  "productivity": {dumps_native(productivity.to_dict(orient="records"), indent=2) if not productivity.empty else "[]"},
+  "china_benchmarks": {dumps_native(china_benchmarks.to_dict(orient="records"), indent=2) if not china_benchmarks.empty else "[]"},
+  "china_api_pricing": {dumps_native(china_api_pricing.to_dict(orient="records"), indent=2) if not china_api_pricing.empty else "[]"},
+  "productivity_root": {dumps_native(productivity_root.to_dict(orient="records"), indent=2) if not productivity_root.empty else "[]"},
+  "module_31_stress": {dumps_native(module_31_stress.to_dict(orient="records"), indent=2) if not module_31_stress.empty else "[]"}
 }};
 
 // Apply values to the default parameters template block
@@ -1012,4 +1089,4 @@ with open("param_overrides.js", "w") as f:
 print(f"\n{'=' * 70}")
 print("[SUCCESS] Calibration complete. Overrides saved to: param_overrides.js")
 print(f"{'=' * 70}")
-print(json.dumps(calibrated_overrides, indent=2))
+print(dumps_native(calibrated_overrides, indent=2))
