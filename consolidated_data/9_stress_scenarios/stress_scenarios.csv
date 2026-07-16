@@ -1,0 +1,21 @@
+scenario_id,scenario_name,category,probability_annual,gdp_shock_pct,unemployment_delta_pct,credit_spread_mult,equity_shock_pct,energy_shock_pct,semiconductor_shock_pct,regulation_shock,cyber_shock,ai_safety_shock,duration_quarters,correlation_structure,source
+s1,Global Recession,macroeconomic,0.15,-4.0,3.5,2.5,-35,20,0,0,0,0,8,regional_correlation,IMF/NBER
+s2,Energy Crisis,supply_shock,0.05,-2.0,1.5,1.8,-20,150,0,0,0,0,6,regional_EU_heavy,IEA/OECD
+s3,Semiconductor Supply Disruption,supply_shock,0.03,-1.5,1.0,1.5,-25,30,-40,0,0,0,8,TSMC_concentration,SemiAnalysis
+s4,Taiwan Strait Conflict,geopolitical,0.015,-8.0,5.0,4.0,-50,200,-80,1,0,0,12,global_correlation,CSIS/RAND
+s5,Major Cyber Incident,cyber,0.02,-0.5,0.3,1.3,-15,50,0,0,1,0,4,cloud_concentration,Verizon DBIR/Ponemon
+s6,AI Safety Event,technology,0.01,-0.3,0.2,1.2,-10,20,0,0,0,1,8,regulatory_response,Expert elicitation
+s7,Financial Crisis,financial,0.03,-5.0,4.0,3.0,-45,50,0,0,0,0,10,global_correlation,BIS/IMF
+s8,Regulatory Shock,policy,0.05,-1.0,0.5,1.5,-20,30,0,1,0,0,6,jurisdiction_specific,Legal analysis
+s9,Algorithmic Breakthrough (positive),technology,0.02,0.5,-0.5,0.8,15,-20,10,0,0,0,4,innovation_diffusion,Patent analysis
+s10,Hardware Breakthrough (positive),technology,0.03,0.3,-0.3,0.9,10,-15,20,0,0,0,4,manufacturing_roadmap,IRDS/TSMC
+s11,Quantum Crypto Break,technology,0.005,-1.0,0.5,1.4,-20,30,0,0,0,0,20,NIST timeline,NIST
+s12,Fusion Energy Commercialization,energy,0.005,0.2,-0.2,0.7,5,-50,0,0,0,0,40,ITER/DOE,DOE/IAEA
+s13,Stagflation Scenario,macroeconomic,0.08,-1.0,2.0,2.0,-15,80,0,0,0,0,12,supply_demand_mismatch,1970s analogue
+s14,China Tech Crackdown,geopolitical,0.10,-0.5,0.5,1.3,-30,20,-20,1,0,0,8,policy_correlation,Policy analysis
+s15,US Election Policy Shift,policy,0.20,-0.3,0.2,1.1,-5,10,0,1,0,0,4,election_cycle,Historical
+s16,Combined Severe (s1+s3+s4),combined,0.005,-12.0,7.0,5.0,-60,250,-90,1,0,0,16,worst_case,NBER composite
+s17,Combined Mild (s1+s8),combined,0.02,-2.5,1.0,1.8,-25,35,0,1,0,0,10,policy_recession_overlap,Historical
+s18,AI Winter (demand collapse),technology,0.04,-1.5,1.0,1.5,-40,10,0,0,0,1,12,adoption_S_curve,Expert survey
+s19,Green Transition Stranded Assets,energy,0.06,-0.8,0.5,1.4,-15,40,0,1,0,0,12,policy_tech_mismatch,IEA
+s20,Pandemic Recurrence,health,0.02,-3.0,2.5,2.0,-20,50,0,0,0,0,8,global_correlation,WHO

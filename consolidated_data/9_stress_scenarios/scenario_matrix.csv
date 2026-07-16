@@ -1,0 +1,28 @@
+scenario_name,description,probability,pA_agentic_tco,pB_ppp_pricing,pC_phys_infra,pD_contract_cliff,pE_val_multiple,horizon_years,key_assumptions
+baseline,"Baseline: all perspectives at median",0.35,1.0,1.0,1.0,1.0,1.0,5,current trends persist
+optimistic,"Optimistic: favorable on all fronts",0.10,0.8,0.8,0.8,0.8,0.8,5,productivity gains accelerate; infra constraints ease
+pessimistic,"Pessimistic: adverse on all fronts",0.15,1.5,1.5,1.5,1.5,1.5,5,TCO inflation; pricing pressure; infra bottlenecks; contract churn; multiple compression
+severe,"Severe: worst-case combination",0.05,2.0,2.0,2.0,2.0,2.0,5,all adverse factors compound simultaneously
+perspective_a_only,"Perspective A: Agentic TCO & Regulatory Friction",0.05,1.5,1.0,1.0,1.0,1.0,5,TCO multiplier 1.5x; compliance costs rise
+perspective_b_only,"Perspective B: PPP-Driven Global Pricing Competition",0.05,1.0,1.5,1.0,1.0,1.0,5,pricing compression 30-50%
+perspective_c_only,"Perspective C: Physical Infrastructure Stranding",0.05,1.0,1.0,1.5,1.0,1.0,5,grid delays; transformer shortage; utilization <40%
+perspective_d_only,"Perspective D: Enterprise Contract Renewal Cliff",0.05,1.0,1.0,1.0,1.5,1.0,5,contract non-renewal 20-30%; downsizing 40%
+perspective_e_only,"Perspective E: Valuation Multiple Compression",0.05,1.0,1.0,1.0,1.0,1.5,5,ROIC < WACC; multiple de-rating 30-50%
+ab_combo,"A + B: TCO Pressure + Pricing Pressure",0.03,1.5,1.5,1.0,1.0,1.0,5,combined margin squeeze
+ac_combo,"A + C: TCO + Infra Stranding",0.03,1.5,1.0,1.5,1.0,1.0,5,capex impaired by both opex and asset stranding
+ad_combo,"A + D: TCO + Contract Cliff",0.03,1.5,1.0,1.0,1.5,1.0,5,TCO rise coincides with renewal downsizing
+ae_combo,"A + E: TCO + Multiple Compression",0.03,1.5,1.0,1.0,1.0,1.5,5,higher costs + lower multiples
+bc_combo,"B + C: Pricing + Infra Stranding",0.03,1.0,1.5,1.5,1.0,1.0,5,margin compression + asset impairment
+bd_combo,"B + D: Pricing + Contract Cliff",0.03,1.0,1.5,1.0,1.5,1.0,5,renewal pressure + price cuts
+be_combo,"B + E: Pricing + Multiple Compression",0.03,1.0,1.5,1.0,1.0,1.5,5,lower revenue + lower multiples
+cd_combo,"C + D: Infra Stranding + Contract Cliff",0.03,1.0,1.0,1.5,1.5,1.0,5,capex hit + revenue decline
+ce_combo,"C + E: Infra Stranding + Multiple Compression",0.03,1.0,1.0,1.5,1.0,1.5,5,asset impairment + lower multiples
+de_combo,"D + E: Contract Cliff + Multiple Compression",0.03,1.0,1.0,1.0,1.5,1.5,5,revenue decline + multiple de-rating
+abc_combo,"A + B + C: TCO + Pricing + Infra",0.02,1.5,1.5,1.5,1.0,1.0,5,three-way pressure
+abd_combo,"A + B + D: TCO + Pricing + Contract",0.02,1.5,1.5,1.0,1.5,1.0,5,margin + revenue pressure
+abe_combo,"A + B + E: TCO + Pricing + Multiple",0.02,1.5,1.5,1.0,1.0,1.5,5,margin + revenue + valuation pressure
+acd_combo,"A + C + D: TCO + Infra + Contract",0.02,1.5,1.0,1.5,1.5,1.0,5,capex + opex + revenue pressure
+bcd_combo,"B + C + D: Pricing + Infra + Contract",0.02,1.0,1.5,1.5,1.5,1.0,5,revenue + capex pressure
+cde_combo,"C + D + E: Infra + Contract + Multiple",0.02,1.0,1.0,1.5,1.5,1.5,5,asset + revenue + valuation pressure
+abcd_combo,"A + B + C + D: Four pressures",0.01,1.5,1.5,1.5,1.5,1.0,5,all but valuation
+abcde_combo,"All Five Perspectives: Perfect Storm",0.005,2.0,2.0,2.0,2.0,2.0,5,all factors at severe stress simultaneously

@@ -1,0 +1,21 @@
+study,category,task_type,model,n_sample,effect_size_pct,ci_low,ci_high,quality_score,publication_year,doi
+peng_2023,coding,http_server_implementation,github_copilot,95,55.8,21,89,0.9,2023,10.48550/arXiv.2302.06590
+noy_zhang_2023,writing,professional_writing_tasks,chatgpt,444,37,28,46,0.95,2023,10.1126/science.adh2586
+dellacqua_2023,consulting,complex_consulting_tasks,gpt4,758,12,8,16,0.9,2023,SSRN.4573321
+brynjolfsson_2023,customersupport,customer_support_issues,gpt_based_assistant,5179,14,10,18,0.95,2023,NBER.w31161
+cui_2024,customersupport,customer_support_agents,gpt_based_assistant,5000,15,12,18,0.9,2024,QJE.2024
+kanazawa_2023,legal,legal_document_review,gpt4,200,25,18,32,0.85,2023,SSRN
+agrawal_2023,consulting,strategy_consulting_tasks,gpt4,300,20,15,25,0.85,2023,SSRN
+wang_2023,materials,materials_discovery_experiments,gpt_based,150,40,30,50,0.8,2023,SSRN
+liu_2024,pharma,drug_discovery_screening,gpt_based,200,35,25,45,0.8,2024,SSRN
+moradi_2023,coding,programming_tasks,github_copilot,100,45,35,55,0.85,2023,SSRN
+tabachnyk_2022,coding,code_generation_tasks,codex,150,50,40,60,0.8,2022,SSRN
+cui_2025,coding,software_development_tasks,github_copilot,4867,26.08,6.5,45.7,0.95,2025,SSRN.4945566
+microsoft_2024,coding,copilot_developer_survey,github_copilot,2000,26,20,32,0.8,2024,Microsoft Research
+google_2024,coding,copilot_internal_study,github_copilot,1663,12.92,8.5,17.3,0.85,2024,Microsoft Research
+accenture_2024,coding,copilot_field_study,github_copilot,311,7.51,3.2,11.8,0.8,2024,Accenture Research
+dora_2025,devops,ai_assisted_development,various,1500,25,18,32,0.85,2025,DORA Report
+stack_overflow_2025,coding,developer_survey_ai_usage,various,50000,0,0,0,0.7,2025,Stack Overflow
+peng_2023_quality,coding,code_quality_security,github_copilot,95,26,15,37,0.9,2023,10.48550/arXiv.2302.06590
+brynjolfsson_2023_quality,customersupport,conversation_quality,gpt_based_assistant,5179,5,2,8,0.95,2023,NBER.w31161
+noy_zhang_2023_quality,writing,output_quality,chatgpt,444,18,12,24,0.95,2023,10.1126/science.adh2586

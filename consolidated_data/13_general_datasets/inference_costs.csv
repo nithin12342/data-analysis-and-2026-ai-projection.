@@ -1,0 +1,26 @@
+model,provider,input_price_per_1m_tokens,output_price_per_1m_tokens,cached_input_price_per_1m_tokens,context_window_tokens,max_output_tokens,throughput_tokens_per_sec,avg_latency_ms,hardware,utilization_pct,hw_cost_per_hour,effective_input_per_1m,effective_output_per_1m,date,source
+gpt-4o,openai,5.00,15.00,2.50,128000,4096,80,12.5,h100,70,4.50,6.43,19.29,2025-01-01,openai_pricing
+gpt-4o-mini,openai,0.15,0.60,0.075,128000,16384,120,8.3,h100,70,4.50,0.18,0.71,2025-01-01,openai_pricing
+gpt-4-turbo,openai,10.00,30.00,5.00,128000,4096,60,16.7,h100,70,4.50,13.17,39.52,2025-01-01,openai_pricing
+gpt-3.5-turbo,openai,0.50,1.50,0.25,16385,4096,100,10.0,h100,70,4.50,0.64,1.93,2025-01-01,openai_pricing
+claude-3.5-opus,anthropic,15.00,75.00,3.75,200000,8192,50,20.0,h100,70,4.50,19.29,96.43,2025-01-01,anthropic_pricing
+claude-3.5-sonnet,anthropic,3.00,15.00,0.75,200000,8192,70,14.3,h100,70,4.50,3.86,19.29,2025-01-01,anthropic_pricing
+claude-3.5-haiku,anthropic,0.25,1.25,0.0625,200000,8192,100,10.0,h100,70,4.50,0.32,1.61,2025-01-01,anthropic_pricing
+gemini-1.5-pro,google,1.25,5.00,0.3125,2000000,8192,60,16.7,tpu_v5,70,3.50,1.79,7.14,2025-01-01,google_pricing
+gemini-1.5-flash,google,0.075,0.30,0.01875,1000000,8192,100,10.0,tpu_v5,70,3.50,0.11,0.43,2025-01-01,google_pricing
+gemini-1.5-flash-8b,google,0.0375,0.15,0.009375,1000000,8192,150,6.7,tpu_v5,70,3.50,0.05,0.21,2025-01-01,google_pricing
+llama-3.1-405b,meta,0.00,0.00,0.00,128000,8192,40,25.0,h100,70,4.50,0.00,0.00,2025-01-01,meta_blog
+llama-3.1-70b,meta,0.00,0.00,0.00,128000,8192,60,16.7,h100,70,4.50,0.00,0.00,2025-01-01,meta_blog
+llama-3.1-8b,meta,0.00,0.00,0.00,128000,8192,150,6.7,h100,70,4.50,0.00,0.00,2025-01-01,meta_blog
+mistral-large, mistral, 3.00,9.00,0.75,128000,8192,50,20.0,h100,70,4.50,3.86,11.57,2025-01-01,mistral_pricing
+mistral-small, mistral, 0.15,0.60,0.0375,128000,8192,80,12.5,h100,70,4.50,0.18,0.71,2025-01-01,mistral_pricing
+mixtral-8x7b, mistral, 0.50,1.50,0.125,128000,8192,60,16.7,h100,70,4.50,0.64,1.93,2025-01-01,mistral_pricing
+deepseek-v3,deepseek,0.14,0.28,0.07,128000,8192,80,12.5,h800,70,3.50,0.18,0.36,2025-01-01,deepseek_pricing
+deepseek-r1,deepseek,0.14,2.19,0.07,128000,8192,60,16.7,h800,70,3.50,0.18,2.81,2025-01-01,deepseek_pricing
+qwen-max,alibaba,1.60,6.40,0.40,32768,8192,70,14.3,h100,70,4.50,2.06,8.23,2025-01-01,alibaba_pricing
+qwen-plus,alibaba,0.40,1.60,0.10,32768,8192,90,11.1,h100,70,4.50,0.51,2.06,2025-01-01,alibaba_pricing
+qwen-turbo,alibaba,0.05,0.20,0.0125,32768,8192,120,8.3,h100,70,4.50,0.06,0.26,2025-01-01,alibaba_pricing
+glm-5.2,zhipu,0.60,2.20,0.15,1000000,8192,70,14.3,h100,70,4.50,0.77,2.81,2025-01-01,zhipu_pricing
+glm-4.5,zhipu,0.60,2.20,0.15,200000,8192,70,14.3,h100,70,4.50,0.77,2.81,2025-01-01,zhipu_pricing
+kimi-k2,moonshot,0.60,2.50,0.15,1000000,8192,60,16.7,h100,70,4.50,0.77,3.19,2025-01-01,moonshot_pricing
+yi-large,01.ai,0.00,0.00,0.00,200000,8192,60,16.7,h100,70,4.50,0.00,0.00,2025-01-01,yi_pricing

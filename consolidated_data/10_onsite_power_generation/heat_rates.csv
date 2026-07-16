@@ -1,0 +1,17 @@
+unit,technology,fuel_type,heat_rate_btu_per_kwh_hhv,heat_rate_btu_per_kwh_lhv,electrical_efficiency_lhv_pct,date,degradation_pct_per_year,source,source_url,notes
+bloom_es5,sofc,natural_gas,6800,6324,65,2024-01,0.5,Bloom Energy ES6.5 Datasheet,https://www.bloomenergy.com/wp-content/uploads/bloom-energy-server-datasheet-feb-2026.pdf,"HHV 5811-7127 Btu/kWh range; midpoint 6800"
+bloom_es5,sofc,natural_gas,6850,6371,64.5,2025-01,0.5,Bloom Energy ES6.5 Datasheet,https://www.bloomenergy.com/wp-content/uploads/bloom-energy-server-datasheet-feb-2026.pdf,Degradation +50 Btu/kWh/yr
+bloom_es5,sofc,natural_gas,6900,6417,64,2026-01,0.5,Bloom Energy ES6.5 Datasheet,https://www.bloomenergy.com/wp-content/uploads/bloom-energy-server-datasheet-feb-2026.pdf,Degradation +50 Btu/kWh/yr
+bloom_es5,sofc,natural_gas,6950,6463,63.5,2027-01,0.5,Bloom Energy ES6.5 Datasheet,https://www.bloomenergy.com/wp-content/uploads/bloom-energy-server-datasheet-feb-2026.pdf,Degradation +50 Btu/kWh/yr
+bloom_es5,sofc,natural_gas,7000,6510,63,2028-01,0.5,Bloom Energy ES6.5 Datasheet,https://www.bloomenergy.com/wp-content/uploads/bloom-energy-server-datasheet-feb-2026.pdf,Degradation +50 Btu/kWh/yr
+ge_7ha,gas_turbine,natural_gas,9500,8835,43.2,2024-01,0.7,GE Vernova 7HA.03 Specs,https://www.gevernova.com/content/dam/gepower-new/global/en_US/downloads/gas-new-site/products/gas-turbines/7ha.03-takeaway.pdf,"SC Net Heat Rate LHV 7897 Btu/kWh; HHV approx"
+ge_7ha,gas_turbine,natural_gas,9600,8928,42.8,2025-01,0.7,GE Vernova 7HA.03 Specs,https://www.gevernova.com/content/dam/gepower-new/global/en_US/downloads/gas-new-site/products/gas-turbines/7ha.03-takeaway.pdf,Degradation
+ge_7ha,gas_turbine,natural_gas,9700,9021,42.4,2026-01,0.7,GE Vernova 7HA.03 Specs,https://www.gevernova.com/content/dam/gepower-new/global/en_US/downloads/gas-new-site/products/gas-turbines/7ha.03-takeaway.pdf,Degradation
+siemens_hl,gas_turbine,natural_gas,9000,8370,45.8,2024-01,0.6,Siemens Energy HL-Class,https://assets.siemens-energy.com/dam/6a81abd9-6c46-42c9-9034-b036013f322b/210923-HL-ClassFactSheet-05-pdf_Original%20file.pdf,"GT Heat Rate <8333 kJ/kWh = 7898 Btu/kWh LHV"
+siemens_hl,gas_turbine,natural_gas,9100,8463,45.3,2025-01,0.6,Siemens Energy HL-Class,https://assets.siemens-energy.com/dam/6a81abd9-6c46-42c9-9034-b036013f322b/210923-HL-ClassFactSheet-05-pdf_Original%20file.pdf,Degradation
+mitsubishi_m501jac,gas_turbine,natural_gas,9500,8835,43.2,2024-01,0.7,MHI M501JAC Specs,https://power.mhi.com/products/gasturbines/lineup/m501j/,"Simple cycle heat rate 7775 Btu/kWh LHV per Gas Turbine World"
+wartsila_18v50,rice,natural_gas,8500,7905,48.5,2024-01,0.5,Wärtsilä 50SG Datasheet,https://www.wartsila.com/docs/default-source/energy-docs/technology-products/product-leaflets/wartsila-50sg.pdf,"Heat rate 7207 kJ/kWh = 6834 Btu/kWh LHV at generator terminals"
+wartsila_18v50,rice,natural_gas,8600,7998,48.0,2025-01,0.5,Wärtsilä 50SG Datasheet,https://www.wartsila.com/docs/default-source/energy-docs/technology-products/product-leaflets/wartsila-50sg.pdf,Degradation
+plug_power_gen,solid_oxide,hydrogen,6200,5500,55,2024-01,0.3,Plug Power GenSure / DOE H2A,https://www.plugpower.com/wp-content/uploads/2016/03/GenSure_E-1000x_Spec012916.pdf,"PEM FC ~55% LHV; HHV = LHV/0.885"
+ballard_fc,hydrogen,hydrogen,6200,5500,55,2024-01,0.3,Ballard Fuel Cells / DOE,https://www.ballard.com/,PEM FC system
+caterpillar_fc,hydrogen,hydrogen,6200,5500,55,2024-01,0.3,Caterpillar / DOE,https://www.cat.com/,PEM FC system

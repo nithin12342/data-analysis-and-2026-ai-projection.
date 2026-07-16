@@ -1,0 +1,28 @@
+company,region,technology,capacity_mw,cod_year,capacity_factor,heat_rate_btu_per_kwh,fuel_type,deployment_source,source_url,notes
+microsoft,us,bloom_sofc,20,2024,0.90,6800,natural_gas,Bloom Energy 10-K / Microsoft sustainability,https://www.bloomenergy.com/,Bloom Energy Server ES-5/ES-6 at Microsoft datacenters
+microsoft,us,bloom_sofc,20,2025,0.90,6800,natural_gas,Bloom Energy 10-K / Microsoft sustainability,https://www.bloomenergy.com/,Planned deployment
+microsoft,us,bloom_sofc,20,2026,0.90,6800,natural_gas,Bloom Energy 10-K / Microsoft sustainability,https://www.bloomenergy.com/,Planned deployment
+microsoft,us,hydrogen_fc,3,2022,0.85,5500,hydrogen,Plug Power / Microsoft,https://www.plugpower.com/,GenSure E-1000x at Microsoft datacenter
+microsoft,us,hydrogen_fc,1.5,2021,0.85,5500,hydrogen,Ballard / Caterpillar / Microsoft,https://www.ballard.com/,Early pilot deployment
+microsoft,us,gas_turbine,198,2008,0.75,9500,natural_gas,Chicago 3x66MW,https://www.gevernova.com/,GE Frame 6B at Microsoft Chicago (3x66MW)
+google,us,bloom_sofc,50,2024,0.90,6800,natural_gas,Bloom Energy / Intel PPA,https://www.bloomenergy.com/,Bloom Energy Servers at Google/Intel sites
+google,us,bloom_sofc,50,2025,0.90,6800,natural_gas,Bloom Energy / Intel PPA,https://www.bloomenergy.com/,Planned expansion
+google,us,bloom_sofc,50,2026,0.90,6800,natural_gas,Bloom Energy / Intel PPA,https://www.bloomenergy.com/,Planned expansion
+google,us,gas_turbine,300,2025,0.75,9500,natural_gas,Grid connection queue,https://www.caiso.com/,CAISO queue data for Google datacenter backup
+aws,us,bloom_sofc,24.3,2024,0.90,6800,natural_gas,Bloom Energy Oregon 3 sites,https://www.bloomenergy.com/,Bloom Energy 10-K: 73MW Oregon (3x24.3MW)
+aws,us,bloom_sofc,24.3,2024,0.90,6800,natural_gas,Bloom Energy Oregon 3 sites,https://www.bloomenergy.com/,Bloom Energy 10-K: 73MW Oregon (3x24.3MW)
+aws,us,bloom_sofc,24.3,2024,0.90,6800,natural_gas,Bloom Energy Oregon 3 sites,https://www.bloomenergy.com/,Bloom Energy 10-K: 73MW Oregon (3x24.3MW)
+aws,us,bloom_sofc,20,2024,0.90,6800,natural_gas,Bloom Energy Silicon Valley PPA,https://www.bloomenergy.com/,Bloom Energy 10-K: 60MW SV (3x20MW)
+aws,us,bloom_sofc,20,2025,0.90,6800,natural_gas,Bloom Energy Silicon Valley PPA,https://www.bloomenergy.com/,Planned expansion
+aws,us,bloom_sofc,20,2026,0.90,6800,natural_gas,Bloom Energy Silicon Valley PPA,https://www.bloomenergy.com/,Planned expansion
+oracle,us,bloom_sofc,1200,2024,0.90,6800,natural_gas,Bloom Energy 10-K Oracle 1.2GW,https://www.sec.gov/Archives/edgar/data/1664703/000162828025016212/a202410kars.pdf,Bloom Energy 10-K: Oracle 1.2GW commitment 2024
+oracle,us,bloom_sofc,1600,2025,0.90,6800,natural_gas,Bloom Energy 10-K Oracle 1.6GW,https://www.sec.gov/Archives/edgar/data/1664703/000162828025016212/a202410kars.pdf,Bloom Energy 10-K: Oracle 1.6GW commitment 2025
+oracle,us,bloom_sofc,1600,2026,0.90,6800,natural_gas,Bloom Energy 10-K Oracle 1.6GW,https://www.sec.gov/Archives/edgar/data/1664703/000162828025016212/a202410kars.pdf,Bloom Energy 10-K: Oracle 1.6GW commitment 2026
+intel,us,bloom_sofc,50,2014,0.90,6800,natural_gas,Bloom Energy Intel 2014,https://www.bloomenergy.com/,Early Bloom deployment at Intel
+intel,us,bloom_sofc,100,2024,0.90,6800,natural_gas,Bloom Energy Intel 2024,https://www.bloomenergy.com/,Recent expansion
+coreweave,us,bloom_sofc,100,2026,0.90,6800,natural_gas,Bloom Energy CoreWeave 2026,https://www.bloomenergy.com/,Bloom Energy 10-K: CoreWeave 100MW 2026
+equinix,us,bloom_sofc,50,2024,0.90,6800,natural_gas,Bloom Energy Equinix 2024,https://www.bloomenergy.com/,Bloom Energy 10-K: Equinix 50MW 2024
+digital_realty,us,bloom_sofc,30,2024,0.90,6800,natural_gas,Bloom Energy DLR 2024,https://www.bloomenergy.com/,Bloom Energy 10-K: Digital Realty 30MW 2024
+cyrusone,us,bloom_sofc,25,2024,0.90,6800,natural_gas,Bloom Energy ConEx 2024,https://www.bloomenergy.com/,Bloom Energy 10-K: CyrusOne 25MW 2024
+meta,us,gas_turbine,200,2023,0.75,9500,natural_gas,Meta datacenter backup,https://sustainability.fb.com/,Meta sustainability report - backup generation
+meta,us,solar_storage,150,2024,0.25,0,sunlight,Meta renewable procurement,https://sustainability.fb.com/,Solar + storage for datacenter load matching

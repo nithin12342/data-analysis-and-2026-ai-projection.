@@ -1,0 +1,18 @@
+provider,gpu_type,hourly_price_usd,annual_price_usd_1yr,annual_price_usd_3yr,memory_gb,memory_bandwidth_gbps,tflops_fp16,tflops_bf16,nvlink_gbps,form_factor,date,source
+aws,p5.48xlarge (8x H100),30.60,268056,718960,640,3350,3958,7916,900,8x GPU server,2026-01-01,AWS pricing
+aws,p4d.24xlarge (8x A100),32.77,287065,769500,640,1555,312,624,600,8x GPU server,2026-01-01,AWS pricing
+aws,p4de.24xlarge (8x A100 80GB),40.96,358810,961920,640,1555,312,624,600,8x GPU server,2026-01-01,AWS pricing
+azure,ND96asr_v4 (8x A100),30.00,262800,702000,640,1555,312,624,600,8x GPU server,2026-01-01,Azure pricing
+azure,ND96amsr_A100_v4 (8x A100 80GB),37.50,328500,877500,640,1555,312,624,600,8x GPU server,2026-01-01,Azure pricing
+gcp,a2-ultragpu-8g (8x A100),33.00,289080,773760,640,1555,312,624,600,8x GPU server,2026-01-01,GCP pricing
+gcp,a3-highgpu-8g (8x H100),31.00,271560,726720,640,3350,3958,7916,900,8x GPU server,2026-01-01,GCP pricing
+lambda,8x H100,18.00,157680,422400,640,3350,3958,7916,900,8x GPU server,2026-01-01,Lambda Labs
+lambda,8x A100 80GB,12.00,105120,281280,640,1555,312,624,600,8x GPU server,2026-01-01,Lambda Labs
+runpod,8x H100 SXM,15.00,131400,352000,640,3350,3958,7916,900,8x GPU server,2026-01-01,RunPod
+runpod,8x A100 80GB,10.00,87600,234400,640,1555,312,624,600,8x GPU server,2026-01-01,RunPod
+coreweave,8x H100,14.00,122640,328640,640,3350,3958,7916,900,8x GPU server,2026-01-01,CoreWeave
+coreweave,8x A100 80GB,9.00,78840,210960,640,1555,312,624,600,8x GPU server,2026-01-01,CoreWeave
+onprem,h100_80gb_sxm,25000,25000,25000,80,3350,3958,7916,900,GPU card,2026-01-01,NVIDIA list price
+onprem,h100_80gb_pcie,25000,25000,25000,80,2000,3958,7916,600,GPU card,2026-01-01,NVIDIA list price
+onprem,a100_80gb_sxm,10000,10000,10000,80,1555,312,624,600,GPU card,2026-01-01,NVIDIA list price
+onprem,a100_80gb_pcie,10000,10000,10000,80,1555,312,624,600,GPU card,2026-01-01,NVIDIA list price

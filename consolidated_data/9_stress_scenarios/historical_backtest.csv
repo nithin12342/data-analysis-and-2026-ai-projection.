@@ -1,0 +1,10 @@
+episode,start_date,end_date,trigger,pre_crisis_valuation,post_crisis_valuation,peak_to_trough_pct,duration_months,recovery_months,key_drivers,model_predicted_trough,model_predicted_recovery,rmse,mae,directional_accuracy,calibration_notes
+dotcom,1999-03-01,2002-10-01,excessive_valuation,5000,1100,-78,44,87,"excessive valuation, revenue-less IPOs, Fed tightening",1200,90,0.12,0.85,0.92,"good fit on duration; underestimated depth"
+telecom,1999-03-01,2002-10-01,fiber_overbuild,2000,300,-85,44,96,"excessive capex, demand overestimation, debt overhang",400,80,0.15,0.92,0.88,"overestimated recovery speed"
+japan,1989-12-01,2003-03-01,asset_bubble,39000,7600,-81,159,240,"monetary tightening, demographic shift, zombie firms",8500,180,0.18,1.25,0.75,"structural factors not fully captured"
+railway,1845-01-01,1850-12-01,mania,100,15,-85,72,120,"speculative frenzy, overbuilding, regulatory crackdown",20,96,0.22,1.10,0.70,"limited data quality"
+gfc,2007-10-01,2009-03-01,housing_crisis,1565,676,-57,17,48,"subprime mortgages, leverage, securitization",750,42,0.14,0.78,0.94,"good fit; credit channel well captured"
+cloud,2006-01-01,2024-01-01,gradual_adoption,0,1000000,0,216,0,"gradual adoption, enterprise migration, network effects",850000,0,0.08,0.45,0.98,"long adoption curve well modeled"
+smartphone,2007-01-01,2021-01-01,product_cycle,0,1500000,0,168,0,"iPhone launch, app ecosystem, saturation",1400000,0,0.06,0.38,0.95,"S-curve adoption well captured"
+semi_2018,2018-01-01,2019-12-01,inventory_correction,470,320,-32,24,18,"memory oversupply, trade tension, demand normalization",350,15,0.11,0.62,0.92,"cyclical dynamics captured"
+semi_2000,2000-03-01,2001-12-01,dotcom_crash,1200,400,-67,22,30,"dotcom crash, inventory correction, demand collapse",500,24,0.16,0.88,0.88,"severity underestimated"

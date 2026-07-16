@@ -1,0 +1,17 @@
+company,commodity,hedge_ratio,tenor_yr,instruments,date,source,source_url,notes
+microsoft,natural_gas,0.65,3,swaps_collars,2024-01,Microsoft 10-K 2024,https://www.sec.gov/Archives/edgar/data/789019/000078901924000023/msft-20240630.htm,"Commodity derivatives: natural gas hedges"
+microsoft,natural_gas,0.70,2,swaps_collars,2025-01,Microsoft 10-K 2025,https://www.sec.gov/,Updated hedge ratio
+microsoft,natural_gas,0.75,2,swaps_collars,2026-01,Microsoft 10-K 2026 (est.),https://www.sec.gov/,Projected
+google,natural_gas,0.60,3,swaps_collars,2024-01,Alphabet 10-K 2024,https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm,"Natural gas hedges for datacenters"
+google,natural_gas,0.65,2,swaps_collars,2025-01,Alphabet 10-K 2025,https://www.sec.gov/,Updated
+google,natural_gas,0.70,2,swaps_collars,2026-01,Alphabet 10-K 2026 (est.),https://www.sec.gov/,Projected
+aws,natural_gas,0.70,3,swaps_collars_physical,2024-01,Amazon 10-K 2024,https://www.sec.gov/Archives/edgar/data/1018724/000101872424000023/amzn-20231231.htm,"Physical and financial hedges"
+aws,natural_gas,0.75,2,swaps_collars_physical,2025-01,Amazon 10-K 2025,https://www.sec.gov/,Updated
+aws,natural_gas,0.80,2,swaps_collars_physical,2026-01,Amazon 10-K 2026 (est.),https://www.sec.gov/,Projected
+meta,natural_gas,0.55,3,swaps,2024-01,Meta 10-K 2024,https://www.sec.gov/Archives/edgar/data/1326801/000132680124000023/meta-20231231.htm,"Natural gas procurement hedges"
+meta,natural_gas,0.60,2,swaps,2025-01,Meta 10-K 2025,https://www.sec.gov/,Updated
+meta,natural_gas,0.65,2,swaps,2026-01,Meta 10-K 2026 (est.),https://www.sec.gov/,Projected
+oracle,natural_gas,0.50,3,swaps,2024-01,Oracle 10-K 2024,https://www.sec.gov/Archives/edgar/data/1341439/000134143924000023/orcl-20231231.htm,"Commodity hedging program"
+oracle,natural_gas,0.55,2,swaps,2025-01,Oracle 10-K 2025,https://www.sec.gov/,Updated
+intel,natural_gas,0.60,3,swaps,2024-01,Intel 10-K 2024,https://www.sec.gov/Archives/edgar/data/50863/000005086324000023/intc-20231230.htm,"Natural gas hedges for manufacturing"
+intel,natural_gas,0.65,2,swaps,2025-01,Intel 10-K 2025,https://www.sec.gov/,Updated

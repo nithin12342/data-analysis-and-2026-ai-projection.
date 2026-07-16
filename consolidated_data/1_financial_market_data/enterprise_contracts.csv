@@ -1,0 +1,16 @@
+company,contract_type,avg_contract_length_years,renewal_rate_pct,downsizing_pct_at_renewal,expansion_pct_at_renewal,net_revenue_retention_pct,gross_revenue_retention_pct,year,source,source_url,notes
+aws,enterprise_agreement,3,95,15,25,115,98,2024,AWS 10-K / Analyst Reports,https://www.sec.gov/Archives/edgar/data/1018724/000101872424000023/amzn-20231231.htm,"EA typically 3-5yr; NRR ~115%"
+aws,reserved_instances,3,90,20,10,105,95,2024,AWS 10-K / Flexera State of Cloud,https://info.flexera.com/CM-REPORT-State-of-the-Cloud,RI 3yr no upfront
+aws,savings_plans,3,92,18,15,110,96,2024,AWS 10-K / Analyst,https://www.sec.gov/,
+azure,enterprise_agreement,3,94,12,22,112,97,2024,Microsoft 10-K / Analyst,https://www.sec.gov/Archives/edgar/data/789019/000078901924000023/msft-20240630.htm,"Azure consumption commit"
+azure,reserved_instances,3,88,25,8,102,93,2024,Microsoft 10-K / Flexera,https://info.flexera.com/CM-REPORT-State-of-the-Cloud,
+azure,savings_plans,3,90,20,12,108,95,2024,Microsoft 10-K / Analyst,https://www.sec.gov/,
+gcp,enterprise_agreement,3,93,18,20,110,96,2024,Alphabet 10-K / Analyst,https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm,"GCP committed use"
+gcp,committed_use_discounts,3,89,22,12,105,94,2024,Alphabet 10-K / Analyst,https://www.sec.gov/,
+gcp,committed_use_discounts,5,91,15,25,115,97,2024,Alphabet 10-K / Analyst,https://www.sec.gov/,"5yr CUD higher retention"
+oracle,universal_credits,3,92,20,15,108,95,2024,Oracle 10-K / Analyst,https://www.sec.gov/Archives/edgar/data/1341439/000134143924000023/orcl-20231231.htm,"UC model"
+salesforce,enterprise_saas,3,90,10,30,120,98,2024,Salesforce 10-K / ICONIQ,https://www.sec.gov/Archives/edgar/data/1326801/000132680124000023/meta-20231231.htm,"CRM NRR best-in-class"
+servicenow,enterprise_saas,3,94,8,35,125,99,2024,ServiceNow 10-K / KeyBanc,https://www.sec.gov/,"ITSM platform stickiness"
+databricks,enterprise_saas,3,88,12,40,128,96,2024,Databricks S-1 / Analyst,https://www.sec.gov/,"Data/AI platform expansion"
+snowflake,enterprise_saas,3,85,15,50,130,95,2024,Snowflake 10-K / ICONIQ,https://www.sec.gov/,"Consumption-based; high expansion"
+meta,enterprise_agreement,3,93,25,10,100,92,2024,Meta 10-K / Analyst,https://www.sec.gov/Archives/edgar/data/1326801/000132680124000023/meta-20231231.htm,"Internal + external cloud"

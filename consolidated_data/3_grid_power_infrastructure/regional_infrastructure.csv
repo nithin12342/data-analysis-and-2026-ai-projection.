@@ -1,0 +1,14 @@
+region,country,ppp_factor_usd_base,power_growth_cap_annual_pct,grid_connection_delay_months,gov_coordination_index,cost_per_mw_usd_millions,transformer_shortage_factor,cooling_water_availability,renewable_penetration_pct,source,source_url,notes
+us,united_states,1.00,12,24,0.50,2.50,0.20,0.35,22,World Bank ICP 2021 / LBNL / EIA,https://www.worldbank.org/en/programs/icp,"PPP=1.0 base; power growth from FERC/EIA; grid delay from LBNL Queued Up 2025"
+china,china,0.55,24,12,0.95,1.10,0.10,0.15,35,World Bank ICP 2021 / NBS China / LBNL,https://www.worldbank.org/en/programs/icp,"PPP 0.55 (ICP 2021); power growth from NDRC 5-yr plan; grid delay from China grid corp"
+india,india,0.45,18,18,0.70,1.30,0.15,0.10,25,World Bank ICP 2021 / CEA India,https://www.worldbank.org/en/programs/icp,"PPP 0.45; power growth from CEA NEP; grid delay from POSOCO"
+gulf,uae,0.80,26,8,0.85,1.70,0.05,0.05,5,World Bank ICP 2021 / DEWA / SEC,https://www.worldbank.org/en/programs/icp,"PPP 0.80; power growth from UAE Energy Strategy 2050; grid from DEWA"
+gulf,saudi_arabia,0.75,28,6,0.90,1.50,0.05,0.05,2,World Bank ICP 2021 / SEC / NEOM,https://www.worldbank.org/en/programs/icp,"PPP 0.75; power growth from Vision 2030; grid from SEC"
+eu,eu_average,1.15,5,48,0.30,3.10,0.25,0.40,45,World Bank ICP 2021 / ENTSO-E / EC,https://www.worldbank.org/en/programs/icp,"PPP 1.15 (avg); power growth low due to demand stagnation; grid delay from ENTSO-E TYNDP"
+japan,japan,0.95,4,36,0.60,3.50,0.20,0.15,22,World Bank ICP 2021 / METI / OCCTO,https://www.worldbank.org/en/programs/icp,"PPP 0.95; power growth near zero; grid delay from OCCTO"
+korea,south_korea,0.90,8,18,0.75,2.20,0.15,0.10,10,World Bank ICP 2021 / KEPCO / KPX,https://www.worldbank.org/en/programs/icp,"PPP 0.90; power growth from 10th Basic Plan"
+taiwan,taiwan,0.85,10,24,0.70,2.00,0.15,0.15,15,World Bank ICP 2021 / Taipower,https://www.worldbank.org/en/programs/icp,
+southeast_asia,vietnam,0.50,15,18,0.65,1.40,0.10,0.20,30,World Bank ICP 2021 / EVN / ADB,https://www.worldbank.org/en/programs/icp,"PPP 0.50; power growth from PDP8"
+southeast_asia,indonesia,0.45,12,24,0.55,1.60,0.10,0.15,15,World Bank ICP 2021 / PLN / ADB,https://www.worldbank.org/en/programs/icp,
+southeast_asia,malaysia,0.60,10,18,0.65,1.80,0.15,0.15,25,World Bank ICP 2021 / TNB / Suruhanjaya Tenaga,https://www.worldbank.org/en/programs/icp,
+southeast_asia,singapore,1.05,6,12,0.85,3.00,0.20,0.05,5,World Bank ICP 2021 / EMA / SP Group,https://www.worldbank.org/en/programs/icp,"PPP 1.05; land/power constrained"

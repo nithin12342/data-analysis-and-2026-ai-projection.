@@ -1,0 +1,28 @@
+region,iso,price_usd_per_mwh,price_type,year,source,source_url,notes
+us,ercot_north,28,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,"ERCOT lowest; 2023 was $52/MWh"
+us,spp,28,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,miso,31,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,ca_north,36,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,pjm_west,38,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,nyiso,45,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,isone,60,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,ca_iso,42,load_weighted_avg_rt,2024,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,"CAISO high; Jan 2024 spike from gas"
+us,ercot_north,52,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,spp,29,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,miso,36,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,ca_north,67,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,pjm_west,41,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,nyiso,51,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,isone,68,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,ca_iso,63,load_weighted_avg_rt,2023,FERC State of the Markets 2024,https://www.ferc.gov/sites/default/files/2025-03/25_State-of-the-Market_0320_1200.pdf,
+us,ercot_north,72,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,spp,35,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,miso,48,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,ca_north,82,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,pjm_west,58,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,nyiso,65,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,isone,75,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,ca_iso,85,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,national_avg,36,load_weighted_avg_rt,2023,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,"Down from $63 in 2022"
+us,national_avg,63,load_weighted_avg_rt,2022,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,
+us,national_avg,52,load_weighted_avg_rt,2021,LBNL ReWEP,https://eta-publications.lbl.gov/sites/default/files/rewep-2024update_tech-brief_20240429.pdf,

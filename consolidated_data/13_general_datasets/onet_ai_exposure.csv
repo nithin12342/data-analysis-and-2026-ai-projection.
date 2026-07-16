@@ -1,0 +1,56 @@
+occupation_code,occupation_title,ai_exposure_felten_2021,ai_exposure_felten_2023,language_modeling_exposure,image_generation_exposure,reasoning_exposure,automation_probability,augmentation_probability,displacement_risk,wage_2023,employment_2023,education_level,task_count,routine_task_pct,abstract_task_pct,manual_task_pct
+11-1011,Chief Executives,0.12,0.15,0.10,0.05,0.20,0.05,0.10,0.05,300000,280000,doctorate,50,10,85,5
+11-3021,Computer and Information Systems Managers,0.45,0.55,0.40,0.20,0.50,0.15,0.30,0.15,180000,500000,bachelor,80,20,70,10
+13-1111,Management Analysts,0.60,0.70,0.65,0.15,0.60,0.25,0.40,0.25,95000,750000,bachelor,60,30,60,10
+13-2011,Accountants and Auditors,0.65,0.75,0.70,0.10,0.55,0.50,0.25,0.50,80000,1300000,bachelor,70,60,30,10
+15-1211,Computer Systems Analysts,0.55,0.65,0.50,0.20,0.60,0.20,0.40,0.20,105000,600000,bachelor,80,25,65,10
+15-1251,Computer Programmers,0.75,0.85,0.80,0.25,0.70,0.65,0.20,0.65,95000,200000,bachelor,90,35,55,10
+15-1252,Software Developers,0.45,0.55,0.50,0.20,0.55,0.25,0.30,0.25,120000,1800000,bachelor,90,30,60,10
+15-1253,Software Quality Assurance Analysts and Testers,0.60,0.70,0.65,0.25,0.55,0.40,0.30,0.40,100000,200000,bachelor,80,40,50,10
+15-1254,Web Developers,0.55,0.65,0.60,0.30,0.50,0.35,0.30,0.35,85000,200000,bachelor,80,35,55,10
+15-1299,Computer Occupations All Other,0.50,0.60,0.55,0.20,0.50,0.20,0.30,0.20,95000,500000,bachelor,70,30,60,10
+15-2031,Operations Research Analysts,0.50,0.60,0.55,0.15,0.55,0.25,0.30,0.25,85000,100000,master,60,30,60,10
+15-2041,Statisticians,0.60,0.70,0.65,0.15,0.60,0.30,0.35,0.30,100000,40000,master,70,35,55,10
+15-2051,Data Scientists,0.65,0.75,0.70,0.20,0.65,0.35,0.35,0.35,130000,200000,master,80,30,60,10
+17-2051,Civil Engineers,0.30,0.40,0.35,0.15,0.40,0.10,0.25,0.10,95000,300000,bachelor,60,40,40,20
+17-2071,Electrical Engineers,0.35,0.45,0.40,0.20,0.45,0.15,0.25,0.15,110000,200000,bachelor,70,35,50,15
+17-2112,Industrial Engineers,0.45,0.55,0.50,0.15,0.50,0.25,0.25,0.25,95000,300000,bachelor,60,40,45,15
+17-2141,Mechanical Engineers,0.30,0.40,0.35,0.15,0.40,0.10,0.25,0.10,95000,300000,bachelor,60,40,40,20
+19-1042,Medical Scientists,0.40,0.50,0.45,0.20,0.50,0.15,0.30,0.15,95000,150000,doctorate,70,30,60,10
+19-3039,Psychologists All Other,0.35,0.45,0.40,0.10,0.45,0.10,0.30,0.10,85000,180000,doctorate,60,20,70,10
+21-1012,Healthcare Social Workers,0.25,0.35,0.30,0.05,0.35,0.05,0.30,0.05,60000,200000,master,50,30,50,20
+23-1011,Lawyers,0.55,0.65,0.60,0.10,0.60,0.20,0.40,0.20,140000,750000,doctorate,70,40,55,5
+23-2011,Paralegals and Legal Assistants,0.70,0.80,0.75,0.15,0.60,0.50,0.30,0.50,60000,350000,associate,80,50,40,10
+25-2021,Elementary School Teachers,0.20,0.30,0.25,0.10,0.30,0.05,0.25,0.05,65000,1500000,bachelor,50,20,60,20
+25-2031,Secondary School Teachers,0.25,0.35,0.30,0.10,0.35,0.05,0.30,0.05,70000,1000000,bachelor,55,25,60,15
+25-1071,Health Specialties Teachers Postsecondary,0.35,0.45,0.40,0.15,0.45,0.10,0.35,0.10,100000,250000,doctorate,65,30,60,10
+27-1011,Art Directors,0.45,0.55,0.50,0.60,0.40,0.25,0.30,0.25,100000,100000,bachelor,70,30,65,5
+27-2012,Producers and Directors,0.40,0.50,0.45,0.40,0.45,0.20,0.30,0.20,85000,150000,bachelor,65,35,55,10
+27-3041,Editors,0.65,0.75,0.70,0.20,0.55,0.40,0.35,0.40,70000,100000,bachelor,75,45,50,5
+27-3042,Technical Writers,0.70,0.80,0.75,0.25,0.60,0.45,0.35,0.45,80000,60000,bachelor,80,40,55,5
+27-3043,Writers and Authors,0.65,0.75,0.70,0.20,0.60,0.35,0.40,0.35,70000,150000,bachelor,75,35,60,5
+29-1141,Registered Nurses,0.25,0.35,0.30,0.10,0.35,0.05,0.30,0.05,80000,3000000,bachelor,60,30,50,20
+29-1171,Nurse Practitioners,0.35,0.45,0.40,0.15,0.45,0.10,0.35,0.10,120000,250000,master,65,30,60,10
+29-1069,Physicians and Surgeons All Other,0.30,0.40,0.35,0.20,0.40,0.10,0.30,0.10,200000,750000,doctorate,70,30,60,10
+31-1128,Home Health Aides,0.15,0.25,0.20,0.05,0.25,0.05,0.20,0.05,30000,3500000,hs_diploma,40,50,20,30
+31-1131,Nursing Assistants,0.15,0.25,0.20,0.05,0.25,0.05,0.20,0.05,35000,1500000,hs_diploma,45,55,15,30
+33-3051,Police Officers,0.30,0.40,0.35,0.20,0.40,0.10,0.30,0.10,70000,700000,hs_diploma,55,40,45,15
+35-3023,Fast Food and Counter Workers,0.20,0.30,0.25,0.05,0.30,0.10,0.20,0.10,28000,3500000,less_hs,40,60,10,30
+37-2011,Janitors and Cleaners,0.10,0.20,0.15,0.05,0.20,0.05,0.15,0.05,30000,2200000,less_hs,35,70,10,20
+39-9011,Childcare Workers,0.15,0.25,0.20,0.05,0.25,0.05,0.20,0.05,28000,1000000,hs_diploma,40,50,25,25
+41-1011,First-Line Supervisors of Retail Sales Workers,0.35,0.45,0.40,0.10,0.40,0.15,0.30,0.15,45000,1000000,hs_diploma,60,45,40,15
+41-3091,Sales Representatives of Services,0.50,0.60,0.55,0.15,0.50,0.25,0.35,0.25,70000,1500000,bachelor,65,35,55,10
+41-4011,Sales Representatives Wholesale and Manufacturing,0.45,0.55,0.50,0.15,0.45,0.20,0.35,0.20,75000,1200000,bachelor,65,40,50,10
+43-1011,First-Line Supervisors of Office Support Workers,0.45,0.55,0.50,0.10,0.50,0.20,0.35,0.20,60000,1500000,hs_diploma,65,50,40,10
+43-3031,Bookkeeping Accounting and Auditing Clerks,0.75,0.85,0.80,0.10,0.60,0.65,0.20,0.65,45000,1500000,associate,85,70,20,10
+43-4051,Customer Service Representatives,0.70,0.80,0.75,0.10,0.60,0.45,0.35,0.45,40000,2800000,hs_diploma,75,55,35,10
+43-4171,Receptionists and Information Clerks,0.60,0.70,0.65,0.10,0.55,0.35,0.35,0.35,35000,1000000,hs_diploma,70,60,30,10
+43-6014,Secretaries and Administrative Assistants,0.65,0.75,0.70,0.15,0.60,0.40,0.35,0.40,42000,2200000,hs_diploma,75,55,35,10
+43-9061,Office Clerks General,0.55,0.65,0.60,0.10,0.50,0.30,0.35,0.30,38000,2500000,hs_diploma,70,60,30,10
+47-2031,Carpenters,0.15,0.25,0.20,0.10,0.25,0.05,0.20,0.05,55000,700000,hs_diploma,40,50,20,30
+47-2111,Electricians,0.25,0.35,0.30,0.15,0.35,0.10,0.25,0.10,65000,750000,hs_diploma,50,45,30,25
+49-9071,Maintenance and Repair Workers General,0.20,0.30,0.25,0.10,0.30,0.10,0.20,0.10,45000,1400000,hs_diploma,50,50,30,20
+51-2092,Team Assemblers,0.25,0.35,0.30,0.10,0.35,0.15,0.20,0.15,35000,1200000,hs_diploma,45,60,15,25
+51-4041,Machinists,0.30,0.40,0.35,0.15,0.40,0.15,0.25,0.15,50000,400000,hs_diploma,55,50,25,25
+53-3032,Heavy and Tractor-Trailer Truck Drivers,0.35,0.45,0.40,0.20,0.45,0.20,0.25,0.20,50000,1800000,hs_diploma,50,55,25,20
+53-7062,Laborers and Freight Stock and Material Movers,0.20,0.30,0.25,0.10,0.30,0.10,0.20,0.10,35000,3000000,less_hs,40,65,15,20

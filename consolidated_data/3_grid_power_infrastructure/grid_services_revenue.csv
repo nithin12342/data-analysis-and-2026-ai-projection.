@@ -1,0 +1,29 @@
+iso,service,price_usd_per_mw_yr,volume_mw,date,source,source_url,notes
+caiso,regulation_up,45000,1200,2024-01,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jan-2024/ancillary-services-1.html,IFM average price
+caiso,regulation_down,38000,1100,2024-01,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jan-2024/ancillary-services-1.html,
+caiso,spinning_reserve,25000,800,2024-01,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jan-2024/ancillary-services-1.html,
+caiso,non_spinning_reserve,18000,600,2024-01,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jan-2024/ancillary-services-1.html,
+caiso,regulation_up,41000,650,2024-06,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jun-2024/ancillary-services.html,June 2024 average
+caiso,regulation_down,6000,933,2024-06,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jun-2024/ancillary-services.html,
+caiso,spinning_reserve,1670,746,2024-06,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jun-2024/ancillary-services.html,
+caiso,non_spinning_reserve,1880,1248,2024-06,CAISO Monthly Market Performance,https://www.caiso.com/content/monthly-market-performance/jun-2024/ancillary-services.html,
+pjm,capacity_2025_26,98520,135684,2024-07,PJM 2025/26 BRA Report,https://www.pjm.com/-/media/DotCom/markets-ops/rpm/rpm-auction-info/2025-2026/2025-2026-base-residual-auction-report.pdf,"$269.92/MW-day * 365 = $98,520/MW-yr RTO"
+pjm,capacity_2024_25,10556,147478,2023-07,PJM 2024/25 BRA Report,https://www.pjm.com/-/media/DotCom/markets-ops/rpm/rpm-auction-info/2024-2025/2024-2025-base-residual-auction-report.ashx,"$28.92/MW-day * 365"
+pjm,regulation,25000,800,2024-01,PJM State of the Market 2024,https://www.monitoringanalytics.com/reports/Reports/2024/IMM_2024_State_of_the_Market_Report_for_PJM.pdf,Regulation market
+pjm,synchronous_reserve,15000,1200,2024-01,PJM State of the Market 2024,https://www.monitoringanalytics.com/reports/Reports/2024/IMM_2024_State_of_the_Market_Report_for_PJM.pdf,
+pjm,day_ahead_scheduling_reserve,8000,500,2024-01,PJM State of the Market 2024,https://www.monitoringanalytics.com/reports/Reports/2024/IMM_2024_State_of_the_Market_Report_for_PJM.pdf,
+ercot,regulation_up,35000,500,2024-01,ERCOT Monthly Report,https://www.potomaceconomics.com/wp-content/uploads/2025/01/2024-12_Nodal_Monthly_Report.pdf,Potomac Economics
+ercot,regulation_down,30000,450,2024-01,ERCOT Monthly Report,https://www.potomaceconomics.com/wp-content/uploads/2025/01/2024-12_Nodal_Monthly_Report.pdf,
+ercot,responsive_reserve,40000,2800,2024-01,ERCOT Monthly Report,https://www.potomaceconomics.com/wp-content/uploads/2025/01/2024-12_Nodal_Monthly_Report.pdf,RRS (spinning)
+ercot,non_spinning_reserve,20000,1500,2024-01,ERCOT Monthly Report,https://www.potomaceconomics.com/wp-content/uploads/2025/01/2024-12_Nodal_Monthly_Report.pdf,
+ercot,ecrs,25000,3000,2024-01,ERCOT Monthly Report,https://www.potomaceconomics.com/wp-content/uploads/2025/01/2024-12_Nodal_Monthly_Report.pdf,ERCOT Contingency Reserve Service
+miso,regulation,22000,600,2024-01,MISO State of the Market 2024,https://www.potomaceconomics.com/wp-content/uploads/2025/06/2024-MISO-SOM_Report_Body_Final.pdf,"Ancillary services $0.13/MWh all-in"
+miso,spinning_reserve,18000,800,2024-01,MISO State of the Market 2024,https://www.potomaceconomics.com/wp-content/uploads/2025/06/2024-MISO-SOM_Report_Body_Final.pdf,
+miso,supplemental_reserve,12000,500,2024-01,MISO State of the Market 2024,https://www.potomaceconomics.com/wp-content/uploads/2025/06/2024-MISO-SOM_Report_Body_Final.pdf,
+nyiso,regulation,28000,400,2024-01,NYISO Market Data,https://www.nyiso.com/market-data,Regulation movement
+nyiso,spinning_reserve,20000,600,2024-01,NYISO Market Data,https://www.nyiso.com/market-data,
+nyiso,capacity,50000,35000,2024-01,NYISO ICAP Market,https://www.nyiso.com/market-data,Capacity market
+iso_ne,regulation,30000,300,2024-01,ISO-NE Markets,https://www.iso-ne.com/markets-operations/markets,Regulation
+iso_ne,capacity,80000,32000,2024-01,ISO-NE FCA,https://www.iso-ne.com/markets-operations/markets,Forward Capacity Auction
+spp,regulation,18000,200,2024-01,SPP Marketplace,https://www.spp.org/marketplace/,
+spp,spinning_reserve,15000,400,2024-01,SPP Marketplace,https://www.spp.org/marketplace/,

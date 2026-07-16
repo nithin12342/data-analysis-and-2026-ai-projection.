@@ -1,0 +1,20 @@
+fuel_type,region,price_usd_per_mmbtu,price_usd_per_kg,source,source_url,date,notes
+natural_gas,henry_hub,2.21,,EIA Annual Average 2024,https://www.eia.gov/todayinenergy/detail.php?id=64184,2024,Annual average spot price 2024
+natural_gas,henry_hub,3.52,,EIA/FRED 2025 Average,https://fred.stlouisfed.org/series/AHHNGSP,2025,Annual average 2025
+natural_gas,henry_hub,4.50,,EIA STEO Forecast 2026,https://www.eia.gov/outlooks/steo/,2026,Current forecast
+natural_gas,ttf_europe,12.50,,ICE/Refinitiv 2024 Average,https://www.ice.com/,2024,TTF front-month average 2024
+natural_gas,ttf_europe,18.50,,ICE/Refinitiv 2023 Average,https://www.ice.com/,2023,TTF front-month average 2023
+natural_gas,jkm_asia,14.50,,ICE/Refinitiv 2024 Average,https://www.ice.com/,2024,JKM front-month average 2024
+natural_gas,jkm_asia,19.20,,ICE/Refinitiv 2023 Average,https://www.ice.com/,2023,JKM front-month average 2023
+natural_gas,pg_e_citygate,4.20,,EIA Citygate 2024 Average,https://www.eia.gov/dnav/ng/ng_pri_sum_dcu_nus_m.htm,2024,PG&E citygate price includes basis
+natural_gas,waha_tx,2.10,,EIA/Platts 2024 Average,https://www.eia.gov/,2024,Waha hub Permian basis
+diesel,us_gulf_coast,18.50,,EIA Weekly Retail 2024 Average,https://www.eia.gov/dnav/pet/pet_pri_gnd_dcus_nus_w.htm,2024,Ultra-low sulfur diesel retail
+diesel,us_gulf_coast,22.00,,EIA Weekly Retail 2025 Average,https://www.eia.gov/dnav/pet/pet_pri_gnd_dcus_nus_w.htm,2025,Ultra-low sulfur diesel retail
+hydrogen,green_pem_us,16.00,5.50,"DOE H2A 2024 (PEM; $0.03/kWh; 97% CF)",https://www.hydrogen.energy.gov/docs/hydrogenprogramlibraries/pdfs/24005-clean-hydrogen-production-cost-pem-electrolyzer.pdf,2024,"LCOH $5-7/kg 2022$; converted to $/MMBtu using 1 kg H2 = 0.12 MMBtu LHV"
+hydrogen,green_pem_us,,5.50,DOE H2A 2024 (PEM),https://www.hydrogen.energy.gov/docs/hydrogenprogramlibraries/pdfs/24005-clean-hydrogen-production-cost-pem-electrolyzer.pdf,2024,Levelized cost $5-7/kg 2022$
+hydrogen,blue_smr_ccs_us,,2.50,DOE H2A 2024 (SMR+CCS),https://www.hydrogen.energy.gov/,2024,Levelized cost ~$1.5-2.5/kg
+hydrogen,gray_smr_us,,1.50,DOE H2A 2024 (SMR),https://www.hydrogen.energy.gov/,2024,Levelized cost ~$1-2/kg
+hydrogen,delivered_green_us,,8.00,Industry estimates 2024 (delivery + compression),https://www.energy.gov/,2024,Delivered cost including liquefaction/transport
+hydrogen,delivered_blue_us,,4.00,Industry estimates 2024,https://www.energy.gov/,2024,Delivered cost
+biogas,us_average,8.00,,EPA AgSTAR / Industry,https://www.epa.gov/agstar,2024,Upgraded biogas (RNG) pipeline quality
+biogas,california_lcfs,12.00,,California LCFS credit adjusted,https://ww2.arb.ca.gov/,2024,RNG with LCFS credits ~$12/MMBtu effective

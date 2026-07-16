@@ -1,0 +1,17 @@
+unit,technology,fuel_type,heat_rate_btu_kwh,date,degradation_pct_yr,source
+bloom_es5,sofc,natural_gas,6800,2024-01,0.5,bloomenergy_whitepaper
+bloom_es5,sofc,natural_gas,6850,2025-01,0.5,bloomenergy_whitepaper
+bloom_es5,sofc,natural_gas,6900,2026-01,0.5,bloomenergy_whitepaper
+bloom_es5,sofc,natural_gas,6950,2027-01,0.5,bloomenergy_whitepaper
+bloom_es5,sofc,natural_gas,7000,2028-01,0.5,bloomenergy_whitepaper
+ge_7ha,gas_turbine,natural_gas,9200,2024-01,0.7,ge_specs
+ge_7ha,gas_turbine,natural_gas,9300,2025-01,0.7,ge_specs
+ge_7ha,gas_turbine,natural_gas,9400,2026-01,0.7,ge_specs
+siemens_hl,gas_turbine,natural_gas,9000,2024-01,0.6,siemens_specs
+siemens_hl,gas_turbine,natural_gas,9100,2025-01,0.6,siemens_specs
+mitsubishi_m501,gas_turbine,natural_gas,9500,2024-01,0.7,mitsubishi_specs
+wartsila_18v50,rice,natural_gas,8200,2024-01,0.5,wartsila_specs
+wartsila_18v50,rice,natural_gas,8300,2025-01,0.5,wartsila_specs
+plug_power_gen,solid_oxide,hydrogen,5500,2024-01,0.3,plug_power_specs
+ballard_fc,hydrogen,hydrogen,5500,2024-01,0.3,ballard_specs
+caterpillar_fc,hydrogen,hydrogen,5500,2024-01,0.3,caterpillar_specs

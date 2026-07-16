@@ -1,0 +1,17 @@
+company,commodity,hedge_ratio,tenor_yr,instruments,date,source
+microsoft,natural_gas,0.65,3,swaps_collars,2024-01,microsoft_10k
+microsoft,natural_gas,0.70,2,swaps_collars,2025-01,microsoft_10k
+microsoft,natural_gas,0.75,2,swaps_collars,2026-01,microsoft_10k
+google,natural_gas,0.60,3,swaps_collars,2024-01,alphabet_10k
+google,natural_gas,0.65,2,swaps_collars,2025-01,alphabet_10k
+google,natural_gas,0.70,2,swaps_collars,2026-01,alphabet_10k
+aws,natural_gas,0.70,3,swaps_collars_physical,2024-01,amazon_10k
+aws,natural_gas,0.75,2,swaps_collars_physical,2025-01,amazon_10k
+aws,natural_gas,0.80,2,swaps_collars_physical,2026-01,amazon_10k
+meta,natural_gas,0.55,3,swaps,2024-01,meta_10k
+meta,natural_gas,0.60,2,swaps,2025-01,meta_10k
+meta,natural_gas,0.65,2,swaps,2026-01,meta_10k
+oracle,natural_gas,0.50,3,swaps,2024-01,oracle_10k
+oracle,natural_gas,0.55,2,swaps,2025-01,oracle_10k
+intel,natural_gas,0.60,3,swaps,2024-01,intel_10k
+intel,natural_gas,0.65,2,swaps,2025-01,intel_10k

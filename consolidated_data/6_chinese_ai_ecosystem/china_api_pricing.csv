@@ -1,0 +1,23 @@
+provider,model,input_price_usd_per_million_tokens,output_price_usd_per_million_tokens,currency,date,source,source_url,notes
+zhipu_ai,glm_4,0.14,0.14,USD,2024-11,Zhipu AI Platform,https://open.bigmodel.cn/,"~1 RMB/M tokens input/output"
+zhipu_ai,glm_4v,0.28,0.28,USD,2024-11,Zhipu AI Platform,https://open.bigmodel.cn/,
+zhipu_ai,glm_4_air,0.07,0.07,USD,2024-11,Zhipu AI Platform,https://open.bigmodel.cn/,"Lite version"
+baichuan,baichuan_4,0.10,0.10,USD,2024-11,Baichuan Platform,https://platform.baichuan-ai.com/,
+baichuan,baichuan_3,0.07,0.07,USD,2024-11,Baichuan Platform,https://platform.baichuan-ai.com/,
+zero_one_ai,yi_34b,0.15,0.15,USD,2024-11,01.ai Platform,https://platform.01.ai/,
+zero_one_ai,yi_6b,0.05,0.05,USD,2024-11,01.ai Platform,https://platform.01.ai/,
+moonshot,kimi_v1,0.12,0.12,USD,2024-11,Moonshot Platform,https://platform.moonshot.cn/,
+minimax,minimax_01,0.20,0.20,USD,2024-11,Minimax Platform,https://api.minimax.chat/,
+alibaba,qwen_max,0.16,0.16,USD,2024-11,Alibaba Cloud DashScope,https://dashscope.aliyuncs.com/,
+alibaba,qwen_plus,0.08,0.08,USD,2024-11,Alibaba Cloud DashScope,https://dashscope.aliyuncs.com/,
+alibaba,qwen_turbo,0.03,0.03,USD,2024-11,Alibaba Cloud DashScope,https://dashscope.aliyuncs.com/,
+tencent,hunyuan_pro,0.18,0.18,USD,2024-11,Tencent Cloud,https://cloud.tencent.com/,
+tencent,hunyuan_standard,0.09,0.09,USD,2024-11,Tencent Cloud,https://cloud.tencent.com/,
+bytedance,doubao_pro,0.11,0.11,USD,2024-11,VolcEngine,https://www.volcengine.com/,
+bytedance,doubao_lite,0.04,0.04,USD,2024-11,VolcEngine,https://www.volcengine.com/,
+deepseek,deepseek_v2_5,0.14,0.28,USD,2024-11,DeepSeek Platform,https://platform.deepseek.com/,"Input $0.14, Output $0.28"
+deepseek,deepseek_v2,0.10,0.20,USD,2024-11,DeepSeek Platform,https://platform.deepseek.com/,
+openai,gpt_4o,2.50,10.00,USD,2024-11,OpenAI API,https://platform.openai.com/docs/pricing,
+openai,gpt_4o_mini,0.15,0.60,USD,2024-11,OpenAI API,https://platform.openai.com/docs/pricing,
+anthropic,claude_3_5_sonnet,3.00,15.00,USD,2024-11,Anthropic API,https://docs.anthropic.com/claude/reference/pricing,
+google,gemini_1_5_pro,1.25,5.00,USD,2024-11,Google AI Studio,https://ai.google.dev/pricing,

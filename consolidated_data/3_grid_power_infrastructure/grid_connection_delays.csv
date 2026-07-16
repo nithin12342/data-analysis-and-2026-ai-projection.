@@ -1,0 +1,34 @@
+region,iso,project_type,median_ir_to_cod_months,median_ia_to_cod_months,withdrawal_rate_pct,completion_rate_pct,total_active_gw,total_withdrawn_gw,date,source,source_url,notes
+us,caiso,solar,72,50,75,14,200,1200,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,CAISO solar projects 2018-2024
+us,caiso,wind,60,45,70,15,50,300,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,caiso,battery,48,36,65,18,300,500,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,caiso,natural_gas,48,30,60,20,20,50,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,Gas projects faster
+us,caiso,data_center,60,40,50,25,10,20,2024,LBNL Queued Up 2025 / Industry,https://emp.lbl.gov/publications/queued-2025-edition,Estimated for large loads
+us,pjm,solar,48,36,72,15,400,2000,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,PJM reform transition
+us,pjm,wind,54,40,68,16,100,400,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,pjm,battery,42,28,60,20,200,800,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,pjm,natural_gas,42,24,55,22,72,200,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,Gas +72% YoY 2024
+us,pjm,data_center,48,30,45,30,15,30,2024,LBNL Queued Up 2025 / Industry,https://emp.lbl.gov/publications/queued-2025-edition,
+us,ercot,solar,36,18,65,18,300,1500,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,ERCOT fastest queue
+us,ercot,wind,30,15,60,20,150,500,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,ercot,battery,24,12,55,25,250,1000,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,ercot,natural_gas,30,18,50,28,136,200,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,ercot,data_center,36,18,40,35,20,40,2024,LBNL Queued Up 2025 / Industry,https://emp.lbl.gov/publications/queued-2025-edition,
+us,miso,solar,54,40,70,15,100,400,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,miso,wind,48,36,68,16,80,300,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,miso,battery,42,30,62,19,80,300,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,miso,natural_gas,42,28,58,21,30,80,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,miso,data_center,48,32,50,28,10,25,2024,LBNL Queued Up 2025 / Industry,https://emp.lbl.gov/publications/queued-2025-edition,
+us,nyiso,solar,60,45,72,14,30,150,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,nyiso,wind,66,50,70,13,40,200,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,nyiso,battery,48,36,65,18,20,80,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,nyiso,data_center,60,42,55,25,5,15,2024,LBNL Queued Up 2025 / Industry,https://emp.lbl.gov/publications/queued-2025-edition,
+us,spp,solar,42,30,68,17,80,400,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,spp,wind,48,36,65,18,120,500,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,spp,battery,36,24,60,22,50,200,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,spp,data_center,42,28,48,30,5,12,2024,LBNL Queued Up 2025 / Industry,https://emp.lbl.gov/publications/queued-2025-edition,
+us,non_iso,solar,48,36,70,15,200,800,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,Southeast/West non-ISO
+us,non_iso,wind,54,40,68,16,60,200,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,non_iso,battery,42,28,62,19,100,300,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,non_iso,natural_gas,36,24,55,22,40,100,2024,LBNL Queued Up 2025,https://emp.lbl.gov/publications/queued-2025-edition,
+us,non_iso,data_center,42,28,50,28,8,20,2024,LBNL Queued Up 2025 / Industry,https://emp.lbl.gov/publications/queued-2025-edition,

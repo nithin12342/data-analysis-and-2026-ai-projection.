@@ -1,0 +1,17 @@
+model,organization,benchmark,elo,ci_low,ci_high,date,category,language
+glm-5.2,zhipu-ai,lmsys_chatbot_arena,1541,1506,1576,2026-03-02,chat,zh/en
+glm-4.7,zhipu-ai,lmsys_chatbot_arena,1541,1506,1576,2026-03-02,chat,zh/en
+deepseek-v4,deepseek,lmsys_chatbot_arena,1445,1410,1480,2026-06-01,chat,zh/en
+deepseek-r1,deepseek,lmsys_chatbot_arena,1445,1410,1480,2026-06-01,reasoning,zh/en
+qwen-3-max,alibaba,lmsys_chatbot_arena,1445,1410,1480,2026-06-01,chat,zh/en
+qwen-3.5-397b-reasoning,alibaba,opencompass,79,75,83,2026-06-11,reasoning,zh/en
+yi-large,01.ai,lmsys_chatbot_arena,1236,1200,1272,2026-04-17,chat,zh/en
+kimi-k2.5-thinking,moonshot,lmsys_chatbot_arena,1517,1489,1545,2026-03-02,chat,zh/en
+kimi-k2,moonshot,opencompass,81,77,85,2026-06-11,chat,zh/en
+baichuan-4,baichuan,lmsys_chatbot_arena,1236,1200,1272,2026-04-17,chat,zh/en
+ernie-5.0,baidu,lmsys_chatbot_arena,1506,1482,1530,2026-03-02,chat,zh/en
+dola-seed-2.0-preview,bytedance,lmsys_chatbot_arena,1549,1509,1589,2026-03-02,chat,zh/en
+step-1o,stepfun,lmsys_chatbot_arena,1506,1478,1534,2026-01-13,chat,zh/en
+internvl-3-78b,shanghai-ai-lab,mmbench,87.5,85,90,2026-04-14,multimodal,zh/en
+glm-4v-plus,zhipu-ai,mmbench,87.8,85,90,2026-01-25,multimodal,zh/en
+hunyuan-standard-vision,tencent,mmbench,87.9,85,90,2025-12-31,multimodal,zh/en

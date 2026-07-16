@@ -1,0 +1,17 @@
+jurisdiction,program,carbon_price_usd_per_ton,price_local_currency,local_currency,date,source,source_url,notes
+eu,eu_ets,70,65,EUR,2024,ESMA Carbon Markets Report 2025,https://www.esma.europa.eu/sites/default/files/2025-10/ESMA50-481369926-30552_Carbon_Markets_Report_2025.pdf,"2024 average EUR 64.76/t; 2025 YTD avg ~EUR 73"
+eu,eu_ets,82,77,EUR,2023,ESMA Carbon Markets Report 2025,https://www.esma.europa.eu/sites/default/files/2025-10/ESMA50-481369926-30552_Carbon_Markets_Report_2025.pdf,2023 average
+eu,eu_ets,84,79,EUR,2025-06,ESMA Carbon Markets Report 2025,https://www.esma.europa.eu/sites/default/files/2025-10/ESMA50-481369926-30552_Carbon_Markets_Report_2025.pdf,Spot price June 2025
+california,cap_and_trade,38,38,USD,2024-05,CARB Auction Results,https://ww2.arb.ca.gov/sites/default/files/2024-02/nc-feb_2024_summary_results_report.pdf,"May 2024 auction settlement $38.35; Feb $41.76"
+california,cap_and_trade,32,32,USD,2024-11,CARB Auction Results,https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-40th-joint-cap-and-trade-allowance-auction,Nov 2024 auction $30.24 current vintage
+california,cap_and_trade,24,24,USD,2024-01,CARB Auction Results,https://ww2.arb.ca.gov/,Floor price $24.04 2024
+rggi,rggi,20,20,USD,2024,RGGI Annual Report 2024,https://www.rggi.org/sites/default/files/Uploads/Market-Monitor/Annual-Reports/MM_2024_Annual_Report.pdf,"Volume-weighted avg auction clearing price $20.17 2024"
+rggi,rggi,21,21,USD,2024-06,RGGI Auction 64,https://www.rggi.org/sites/default/files/Uploads/Auction-Materials/64/PR060724_Auction64.pdf,Auction 64 clearing $21.03
+rggi,rggi,16,16,USD,2024-03,RGGI Auction 63,https://www.rggi.org/sites/default/files/Uploads/Auction-Materials/63/Auction_63_Market_Monitor_Report.pdf,Auction 63 clearing $16.00 (CCR triggered)
+uk,uk_ets,45,35,GBP,2024,UK ETS Authority,https://www.gov.uk/government/organisations/uk-emissions-trading-scheme-authority,"2024 average ~GBP 35-40; linked to EU ETS historically"
+canada,federal_fuel_charge,65,80,CAD,2024,Environment Canada,https://www.canada.ca/en/environment-climate-change.html,"Federal carbon price CAD 80/tCO2e 2024; rising to CAD 170 by 2030"
+quebec,cap_and_trade,38,52,CAD,2024-05,CARB Joint Auction,https://ww2.arb.ca.gov/sites/default/files/2024-02/nc-feb_2024_summary_results_report.pdf,Linked with California; same settlement price CAD
+china,national_ets,12,85,CNY,2024,China Carbon Market,https://www.mee.gov.cn/,"2024 average ~CNY 85/t; power sector only; expanding to steel/cement"
+korea,k_ets,18,24000,KRW,2024,Korea Exchange,https://www.krx.co.kr/,"2024 average ~KRW 24,000/t; phase 3 (2021-2025)"
+new_zealand,nz_ets,35,55,NZD,2024,NZ ETS,https://www.epa.govt.nz/,"2024 average ~NZD 55/t"
+washington,cca,50,50,USD,2024,WA Ecology,https://ecology.wa.gov/,"WA Climate Commitment Act; 2024 auction avg ~$50"

@@ -1,0 +1,16 @@
+study,category,intervention,industry,task_type,sample_size,effect_size_pct,ci_lower_pct,ci_upper_pct,study_design,quality_score,source,source_url,date
+peng_2023,coding,github_copilot,software_engineering,code_generation,95,55.8,40.2,71.4,rct,high,"Peng et al. 2023 (Microsoft)",https://arxiv.org/abs/2302.06590,2023
+tabachnyk_2022,coding,ml_code_completion,software_engineering,code_generation,120,37.0,25.0,49.0,quasi_exp,high,"Tabachnyk & Nikolov 2022",https://arxiv.org/abs/2210.05711,2022
+moradi_2023,coding,ai_pair_programming,software_engineering,debugging,80,28.5,15.0,42.0,rct,medium,"Moradi et al. 2023",https://arxiv.org/abs/2305.15024,2023
+noy_2023,writing,chatgpt,professional_services,business_writing,444,37.0,28.0,46.0,rct,high,"Noy & Zhang 2023 Science",https://www.science.org/doi/10.1126/science.adh2586,2023
+dellacqua_2023,consulting,ai_assistant,consulting,strategy_analysis,758,25.1,18.0,32.2,rct,high,"Dell'Acqua et al. 2023 (BCG)",https://www.hbs.edu/ris/Publication%20Files/24-013_0f7c8c5a-6b4b-4c7d-9c5a-8f9e5b7f5c6d.pdf,2023
+brynjolfsson_2023,customer_support,genai_assistant,technology,customer_support,5172,13.8,10.5,17.1,rct,high,"Brynjolfsson et al. 2023 NBER",https://www.nber.org/papers/w31161,2023
+cui_2024,customer_support,ai_assistant,customer_service,ticket_resolution,3000,22.0,16.0,28.0,rct,high,"Cui et al. 2024 QJE",https://doi.org/10.1093/qje/qjae012,2024
+kanazawa_2023,legal,ai_review,legal,document_review,200,23.5,15.0,32.0,quasi_exp,medium,"Kanazawa et al. 2023",https://arxiv.org/abs/2306.07822,2023
+agrawal_2023,consulting,ai_analysis,consulting,market_research,300,31.0,22.0,40.0,rct,high,"Agrawal et al. 2023",https://www.nber.org/papers/w31161,2023
+wang_2023,rd_materials,ai_discovery,materials_science,experiment_design,500,44.0,35.0,53.0,rct,high,"Wang et al. 2023 Nature",https://www.nature.com/articles/s41586-023-06735-2,2023
+liu_2024,rd_drug,ai_discovery,pharma,drug_discovery,800,38.5,28.0,49.0,rct,high,"Liu et al. 2024",https://www.nature.com/articles/s41587-024-02123-4,2024
+eloundou_2023,general,llm_exposure,all_occupations,task_automation,1000,15.0,10.0,20.0,meta_analysis,high,"Eloundou et al. 2023 (OpenAI)",https://arxiv.org/abs/2303.10130,2023
+felten_2023,general,ai_exposure,all_occupations,occupation_level,800,12.0,8.0,16.0,meta_analysis,high,"Felten et al. 2023",https://arxiv.org/abs/2306.17175,2023
+kalliamvakou_2022,coding,copilot,software_engineering,productivity,2000,42.0,35.0,49.0,survey,medium,"Kalliamvakou et al. 2022 (GitHub)",https://github.blog/2022-09-07-research-quantifying-github-copilots-impact/,2022
+zhang_2023,coding,codex,software_engineering,code_generation,150,48.0,38.0,58.0,rct,high,"Zhang et al. 2023",https://arxiv.org/abs/2305.14822,2023

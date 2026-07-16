@@ -1,0 +1,32 @@
+vendor,metric,date,value,source,confidence
+openai,chatgpt_mau,2026-06-02,1000000000,Reuters/Sensor Tower,0.9
+openai,chatgpt_plus_subscribers,2024-10-15,11000000,MSFT earnings call,0.9
+anthropic,claude_ai_traffic_jan2026,2026-01-15,202900000,Similarweb,0.85
+anthropic,business_customers,2025-09-01,300000,Anthropic disclosure,0.85
+anthropic,high_spend_customers_1m_plus,2026-02-01,500,Anthropic disclosure,0.85
+anthropic,claude_code_revenue_runrate,2026-02-01,2500000000,Anthropic disclosure,0.8
+anthropic,api_pricing_opus_46_per_mtok_in,2026-02-01,5.00,Anthropic pricing,0.95
+anthropic,api_pricing_opus_46_per_mtok_out,2026-02-01,25.00,Anthropic pricing,0.95
+anthropic,api_pricing_sonnet_45_per_mtok_in,2026-02-01,3.00,Anthropic pricing,0.95
+anthropic,api_pricing_sonnet_45_per_mtok_out,2026-02-01,15.00,Anthropic pricing,0.95
+anthropic,api_pricing_haiku_45_per_mtok_in,2026-02-01,1.00,Anthropic pricing,0.95
+anthropic,api_pricing_haiku_45_per_mtok_out,2026-02-01,5.00,Anthropic pricing,0.95
+microsoft,copilot_365_orgs,2024-07-30,77000,MSFT FY24 Q4 earnings,0.95
+microsoft,copilot_365_orgs_yoy_growth,2024-07-30,1.8,MSFT FY24 Q4 earnings,0.95
+microsoft,copilot_daily_users_qoq_growth,2024-07-30,2.0,MSFT FY24 Q4 earnings,0.9
+microsoft,copilot_customers_10k_plus_seats,2024-07-30,2.0,MSFT FY24 Q4 earnings,0.9
+microsoft,copilot_studio_orgs,2024-07-30,50000,MSFT FY24 Q4 earnings,0.9
+microsoft,copilot_studio_qoq_growth,2024-07-30,1.7,MSFT FY24 Q4 earnings,0.9
+microsoft,daxton_copilot_orgs,2024-07-30,400,MSFT FY24 Q4 earnings,0.9
+microsoft,copilot_paid_seats_apr2026,2026-04-30,20000000,Analytics Insight,0.85
+microsoft,copilot_seats_qoq_growth,2026-04-30,1.33,Analytics Insight,0.85
+microsoft,copilot_orgs_50k_plus_seats,2026-04-30,4.0,Analytics Insight,0.85
+microsoft,accenture_copilot_seats,2026-04-30,740000,Analytics Insight,0.85
+google,gemini_enterprise_use_cases,2026-05-01,1302,Google Cloud blog,0.9
+google,vertex_ai_agent_builder_orgs,2025-09-04,52%,Google Cloud ROI study,0.85
+google,agentic_early_adopters_pct,2025-09-04,0.13,Google Cloud ROI study,0.85
+aws,bedrock_model_invocations,2024-07-01,0,re:Invent keynotes,0.7
+aws,trainium_inferentia_adoption,2025-07-01,0,AWS ML blog,0.7
+meta,llama_hf_downloads,2024-07-01,0,Llama release blogs,0.7
+meta,internal_gpu_fleet,2024-07-01,0,MSFT earnings calls,0.7
+meta,ai_ad_revenue,2024-07-01,0,MSFT earnings calls,0.7

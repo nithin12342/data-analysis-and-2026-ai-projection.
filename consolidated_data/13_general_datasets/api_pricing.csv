@@ -1,0 +1,32 @@
+provider,model,input_price_per_mtok,output_price_per_mtok,cached_input_price_per_mtok,context_window,date,source
+zhipu-ai,glm-5.2,1.00,3.20,0.20,1000000,2026-06-13,z.ai pricing
+zhipu-ai,glm-5-turbo,1.20,4.00,0.24,1000000,2026-06-13,z.ai pricing
+zhipu-ai,glm-5-code,1.20,5.00,0.30,1000000,2026-06-13,z.ai pricing
+zhipu-ai,glm-4.7,0.60,2.20,0.11,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.7-flashx,0.07,0.40,0.01,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.6,0.60,2.20,0.11,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.5,0.60,2.20,0.11,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.5-x,2.20,8.90,0.45,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.5-air,0.20,1.10,0.03,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.5-airx,1.10,4.50,0.22,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4-32b-0414-128k,0.10,0.10,0.00,128000,2025-12-22,z.ai pricing
+zhipu-ai,glm-4.7-flash,0.00,0.00,0.00,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.5-flash,0.00,0.00,0.00,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.6v,0.30,0.90,0.05,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-ocr,0.03,0.03,0.00,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.6v-flashx,0.04,0.40,0.004,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.5v,0.60,1.80,0.11,204800,2026-04-17,z.ai pricing
+zhipu-ai,glm-4.6v-flash,0.00,0.00,0.00,204800,2026-04-17,z.ai pricing
+baichuan,baichuan-4,0.00098,0.00098,0.00098,192000,2026-06-11,ComputeUnion
+baichuan,baichuan4-air,0.00098,0.00098,0.00098,192000,2026-06-11,ComputeUnion
+baichuan,baichuan4-turbo,0.00098,0.00098,0.00098,192000,2026-06-11,ComputeUnion
+baichuan,baichuan-m2,0.002,0.02,0.00,131000,2026-06-11,AI_COST
+baichuan,baichuan-m2-plus,0.01,0.03,0.00,131000,2026-06-11,AI_COST
+baichuan,baichuan-m3,0.01,0.03,0.00,131000,2026-06-11,AI_COST
+baichuan,baichuan-m3-plus,0.005,0.009,0.00,131000,2026-06-11,AI_COST
+moonshot,kimi-k2.5,0.60,2.50,0.00,1000000,2026-06-16,toolcenter.ai
+moonshot,kimi-k2,0.60,2.50,0.00,1000000,2026-06-16,toolcenter.ai
+01.ai,yi-series,0.00,0.00,0.00,200000,2026-06-11,platform.01.ai
+alibaba,qwen-series,0.00,0.00,0.00,1000000,2026-06-11,dashscope.aliyuncs.com
+tencent,hunyuan,0.00,0.00,0.00,1000000,2026-06-11,cloud.tencent.com
+bytedance,doubao,0.00,0.00,0.00,1000000,2026-06-11,volcengine.com
