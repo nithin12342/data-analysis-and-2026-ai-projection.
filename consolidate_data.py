@@ -10,7 +10,7 @@ print(f"Found {len(csv_files)} CSV files:")
 for f in csv_files:
     print(f"  {f.relative_to(data_dir)}")
 
-conn = duckdb.connect("consolidated_data.duckdb")
+conn = duckdb.connect("databases/consolidated_data.duckdb")
 
 for csv_file in csv_files:
     table_name = csv_file.stem.lower().replace("-", "_").replace(" ", "_")
@@ -28,4 +28,4 @@ for t in tables:
     print(f"  {t[0]}")
 
 conn.close()
-print("\nDuckDB database created: consolidated_data.duckdb")
+print("\nDuckDB database created: databases/consolidated_data.duckdb")

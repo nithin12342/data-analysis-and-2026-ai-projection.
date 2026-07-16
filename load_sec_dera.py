@@ -10,7 +10,7 @@ from pathlib import Path
 
 # Configuration
 DATA_ROOT = Path(r"C:\Users\NITHING\Desktop\projections\DATA")
-DB_PATH = DATA_ROOT / "sec_dera.duckdb"
+DB_PATH = Path(r"C:\Users\NITHING\Desktop\projections\databases\sec_dera.duckdb")
 
 # 13 quarters available
 QUARTERS = [

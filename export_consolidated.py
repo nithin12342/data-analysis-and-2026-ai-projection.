@@ -2,7 +2,7 @@ import duckdb
 import pandas as pd
 from pathlib import Path
 
-conn = duckdb.connect("consolidated_data.duckdb")
+conn = duckdb.connect("databases/consolidated_data.duckdb")
 
 # Get all tables
 tables = conn.execute("SHOW TABLES").fetchall()
