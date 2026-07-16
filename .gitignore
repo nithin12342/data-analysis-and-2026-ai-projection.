@@ -8,3 +8,4 @@ node_modules/
 DATA/
 *.duckdb
 *.log
+to_delete/

@@ -18,8 +18,9 @@ def dumps_native(obj, indent=None):
 
 # Define paths
 DATA_DIR = "DATA"
-USITC_PATH = os.path.join(DATA_DIR, "DataWeb-Query-Export.xlsx")
-LBNL_PATH = os.path.join(DATA_DIR, "LBNL_Ix_Queue_Data_File_thru2025.xlsx")
+CONSOLIDATED_DIR = "consolidated_data"
+USITC_PATH = os.path.join(CONSOLIDATED_DIR, "4_semiconductor_supply_chain", "DataWeb-Query-Export.xlsx")
+LBNL_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "LBNL_Ix_Queue_Data_File_thru2025.xlsx")
 
 # SEC quarters
 SEC_QUARTERS = [
@@ -48,26 +49,26 @@ REVENUE_TAGS = [
 ]
 
 # New CSV data paths
-TECH_PARAMS_PATH = os.path.join(DATA_DIR, "technology_parameters.csv")
-FUEL_PRICES_PATH = os.path.join(DATA_DIR, "power", "fuel_prices.csv")
-GRID_SERVICES_PATH = os.path.join(DATA_DIR, "power", "grid_services_revenue.csv")
-HEAT_RATES_PATH = os.path.join(DATA_DIR, "heat_rates.csv")
-ONSITE_CAPACITY_PATH = os.path.join(DATA_DIR, "power", "onsite_gen_capacity.csv")
-HEDGE_RATIOS_PATH = os.path.join(DATA_DIR, "power", "hedge_ratios.csv")
-CARBON_PRICES_PATH = os.path.join(DATA_DIR, "carbon_prices.csv")
-GRID_DELAYS_PATH = os.path.join(DATA_DIR, "grid_connection_delays.csv")
-TRANSFORMER_PATH = os.path.join(DATA_DIR, "transformer_shortage.csv")
-WHOLESALE_POWER_PATH = os.path.join(DATA_DIR, "wholesale_electricity_prices.csv")
-REGIONAL_INFRA_PATH = os.path.join(DATA_DIR, "regional_infrastructure.csv")
-ENTERPRISE_CONTRACTS_PATH = os.path.join(DATA_DIR, "enterprise_contracts.csv")
-PRODUCTIVITY_PATH = os.path.join(DATA_DIR, "productivity", "meta_analysis_studies.csv")
-CALIBRATION_PARAMS_PATH = os.path.join(DATA_DIR, "calibration_parameters.csv")
+TECH_PARAMS_PATH = os.path.join(CONSOLIDATED_DIR, "11_model_calibration", "technology_parameters.csv")
+FUEL_PRICES_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "power_fuel_prices.csv")
+GRID_SERVICES_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "grid_services_revenue.csv")
+HEAT_RATES_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "heat_rates.csv")
+ONSITE_CAPACITY_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "power_onsite_gen_capacity.csv")
+HEDGE_RATIOS_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "power_hedge_ratios.csv")
+CARBON_PRICES_PATH = os.path.join(CONSOLIDATED_DIR, "13_general_datasets", "carbon_prices.csv")
+GRID_DELAYS_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "grid_connection_delays.csv")
+TRANSFORMER_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "transformer_shortage.csv")
+WHOLESALE_POWER_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "wholesale_electricity_prices.csv")
+REGIONAL_INFRA_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "regional_infrastructure.csv")
+ENTERPRISE_CONTRACTS_PATH = os.path.join(CONSOLIDATED_DIR, "1_financial_market_data", "enterprise_contracts.csv")
+PRODUCTIVITY_PATH = os.path.join(CONSOLIDATED_DIR, "13_general_datasets", "productivity_meta_analysis_studies.csv")
+CALIBRATION_PARAMS_PATH = os.path.join(CONSOLIDATED_DIR, "11_model_calibration", "calibration_parameters.csv")
 
 # Additional data paths for previously unused datasets
-CHINA_BENCHMARKS_PATH = os.path.join(DATA_DIR, "china_benchmarks.csv")
-CHINA_API_PRICING_PATH = os.path.join(DATA_DIR, "china_api_pricing.csv")
-PRODUCTIVITY_ROOT_PATH = os.path.join(DATA_DIR, "productivity_meta_analysis.csv")
-MODULE_31_STRESS_PATH = os.path.join(DATA_DIR, "module_31_black_swan_stress_test.csv")
+CHINA_BENCHMARKS_PATH = os.path.join(CONSOLIDATED_DIR, "6_chinese_ai_ecosystem", "china_benchmarks.csv")
+CHINA_API_PRICING_PATH = os.path.join(CONSOLIDATED_DIR, "6_chinese_ai_ecosystem", "china_api_pricing.csv")
+PRODUCTIVITY_ROOT_PATH = os.path.join(CONSOLIDATED_DIR, "13_general_datasets", "productivity_meta_analysis_studies.csv")
+MODULE_31_STRESS_PATH = os.path.join(CONSOLIDATED_DIR, "9_stress_scenarios", "module_31_black_swan_stress_test.csv")
 
 print("=" * 70)
 print("TESM Data Ingestion & Calibration Pipeline v4.0 - Fully Data-Driven")

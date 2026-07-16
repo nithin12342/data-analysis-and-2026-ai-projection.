@@ -14,7 +14,7 @@
  * - Productivity meta-analysis (Peng 2023, Noy 2023, Brynjolfsson 2023, etc.)
  * - Enterprise contract surveys (Flexera, KeyBanc, Gartner, Morgan Stanley)
  *
- * Generated: 2026-07-16 10:38:53
+ * Generated: 2026-07-16 11:18:36
  */
 
 window.TESM_CALIBRATED_OVERRIDES = {
@@ -286,7 +286,71 @@ window.TESM_CALIBRATED_OVERRIDES = {
   },
   "wholesaleAvgPrice": 51.333333333333336,
   "wholesaleVolatility": 0.3321809766577432,
-  "stressShocks": {},
+  "stressShocks": {
+    "Black_Swan_Stress_Test": {
+      "global_recession_probability_annual": 0.15,
+      "global_recession_gdp_decline_pct": 0.035,
+      "energy_crisis_probability_annual": 0.05,
+      "energy_crisis_oil_price_shock_pct": 1.5,
+      "energy_crisis_electricity_price_spike_pct": 3.0,
+      "semiconductor_supply_disruption_probability_annual": 0.03,
+      "semiconductor_disruption_tsmc_outage_duration_months": 6.0,
+      "semiconductor_disruption_gdp_impact_pct": 0.025,
+      "major_cyber_incident_probability_annual": 0.02,
+      "cyber_incident_cloud_outage_cost_billion_usd": 50.0,
+      "ai_safety_incident_probability_annual": 0.01,
+      "ai_safety_incident_market_cap_impact_pct": 0.2,
+      "financial_crisis_probability_annual": 0.03,
+      "financial_crisis_ai_capex_impact_pct": 0.5,
+      "major_geopolitical_conflict_probability_annual": 0.02,
+      "taiwan_strait_conflict_tsmc_disruption_probability": 0.05,
+      "taiwan_conflict_gdp_impact_global_pct": 0.05,
+      "breakthrough_algorithmic_efficiency_probability_annual": 0.1,
+      "algorithmic_breakthrough_compute_demand_impact_pct": 0.5,
+      "breakthrough_hardware_quantum_probability_annual": 0.01,
+      "quantum_ai_impact_encryption_risk_pct": 1.0,
+      "fusion_commercialization_probability_2030": 0.15,
+      "fusion_electricity_cost_reduction_vs_current_pct": 0.9,
+      "sustained_deflationary_ai_cost_probability": 0.3,
+      "deflationary_ai_capex_impact_pct": 0.4
+    },
+    "# Stress Test Scenarios (quantified)": {
+      "NaN": NaN
+    },
+    "Stress_Test_Scenario": {
+      "bear_case_ai_demand_shock_pct": 0.2,
+      "bear_case_gpu_utilization_pct": 0.25,
+      "bear_case_capex_cut_pct": 0.5,
+      "bear_case_hyperscaler_stock_decline_pct": 0.4,
+      "base_case_gradual_deflation_pct": 0.2,
+      "base_case_utilization_stabilize_pct": 0.55,
+      "base_case_capex_growth_pct": 0.15,
+      "bull_case_productivity_boom_pct": 0.35,
+      "bull_case_gpu_utilization_pct": 0.7,
+      "bull_case_capex_growth_pct": 0.35,
+      "stagnation_case_japan_style_pct": 0.1,
+      "stagnation_case_capex_growth_pct": 0.02,
+      "stagnation_case_valuation_compression_pct": 0.35
+    },
+    "# Combined scenario weights (must sum to 1.0)": {
+      "NaN": NaN
+    },
+    "Scenario_Weights": {
+      "bear_case_weight": 0.2,
+      "base_case_weight": 0.4,
+      "bull_case_weight": 0.25,
+      "stagnation_case_weight": 0.15
+    },
+    "# Combined stress test: simultaneous shocks": {
+      "NaN": NaN
+    },
+    "Stress_Test_Combined": {
+      "tsmc_outage_plus_recession_gdp_impact_pct": 0.07,
+      "tsmc_outage_plus_recession_ai_capex_cut_pct": 0.7,
+      "energy_crisis_plus_cyber_attack_gdp_impact_pct": 0.04,
+      "perfect_storm_ai_sector_drawdown_pct": 0.6
+    }
+  },
   "henryTtfCorr": 0.948,
   "henryJkmCorr": 0.96,
   "ttfJkmCorr": 0.994,
@@ -1263,7 +1327,71 @@ window.TESM_CALIBRATED_OVERRIDES = {
     "trainingCostPerPflopDay": 50000,
     "gpuUtilizationTarget": 0.45
   },
-  "stressScenarioMetrics": {},
+  "stressScenarioMetrics": {
+    "Black_Swan_Stress_Test": {
+      "global_recession_probability_annual": 0.15,
+      "global_recession_gdp_decline_pct": 0.035,
+      "energy_crisis_probability_annual": 0.05,
+      "energy_crisis_oil_price_shock_pct": 1.5,
+      "energy_crisis_electricity_price_spike_pct": 3.0,
+      "semiconductor_supply_disruption_probability_annual": 0.03,
+      "semiconductor_disruption_tsmc_outage_duration_months": 6.0,
+      "semiconductor_disruption_gdp_impact_pct": 0.025,
+      "major_cyber_incident_probability_annual": 0.02,
+      "cyber_incident_cloud_outage_cost_billion_usd": 50.0,
+      "ai_safety_incident_probability_annual": 0.01,
+      "ai_safety_incident_market_cap_impact_pct": 0.2,
+      "financial_crisis_probability_annual": 0.03,
+      "financial_crisis_ai_capex_impact_pct": 0.5,
+      "major_geopolitical_conflict_probability_annual": 0.02,
+      "taiwan_strait_conflict_tsmc_disruption_probability": 0.05,
+      "taiwan_conflict_gdp_impact_global_pct": 0.05,
+      "breakthrough_algorithmic_efficiency_probability_annual": 0.1,
+      "algorithmic_breakthrough_compute_demand_impact_pct": 0.5,
+      "breakthrough_hardware_quantum_probability_annual": 0.01,
+      "quantum_ai_impact_encryption_risk_pct": 1.0,
+      "fusion_commercialization_probability_2030": 0.15,
+      "fusion_electricity_cost_reduction_vs_current_pct": 0.9,
+      "sustained_deflationary_ai_cost_probability": 0.3,
+      "deflationary_ai_capex_impact_pct": 0.4
+    },
+    "# Stress Test Scenarios (quantified)": {
+      "NaN": NaN
+    },
+    "Stress_Test_Scenario": {
+      "bear_case_ai_demand_shock_pct": 0.2,
+      "bear_case_gpu_utilization_pct": 0.25,
+      "bear_case_capex_cut_pct": 0.5,
+      "bear_case_hyperscaler_stock_decline_pct": 0.4,
+      "base_case_gradual_deflation_pct": 0.2,
+      "base_case_utilization_stabilize_pct": 0.55,
+      "base_case_capex_growth_pct": 0.15,
+      "bull_case_productivity_boom_pct": 0.35,
+      "bull_case_gpu_utilization_pct": 0.7,
+      "bull_case_capex_growth_pct": 0.35,
+      "stagnation_case_japan_style_pct": 0.1,
+      "stagnation_case_capex_growth_pct": 0.02,
+      "stagnation_case_valuation_compression_pct": 0.35
+    },
+    "# Combined scenario weights (must sum to 1.0)": {
+      "NaN": NaN
+    },
+    "Scenario_Weights": {
+      "bear_case_weight": 0.2,
+      "base_case_weight": 0.4,
+      "bull_case_weight": 0.25,
+      "stagnation_case_weight": 0.15
+    },
+    "# Combined stress test: simultaneous shocks": {
+      "NaN": NaN
+    },
+    "Stress_Test_Combined": {
+      "tsmc_outage_plus_recession_gdp_impact_pct": 0.07,
+      "tsmc_outage_plus_recession_ai_capex_cut_pct": 0.7,
+      "energy_crisis_plus_cyber_attack_gdp_impact_pct": 0.04,
+      "perfect_storm_ai_sector_drawdown_pct": 0.6
+    }
+  },
   "powerMetrics": {
     "capacity": [
       {
@@ -4917,7 +5045,7 @@ window.TESM_CALIBRATION_META = {
   "lbnlGridProjects": 10775,
   "lbnlMeanQueueDays": 831,
   "lbnlWithdrawalRate": 57.38,
-  "generatedAt": "2026-07-16 10:38:53"
+  "generatedAt": "2026-07-16 11:18:36"
 };
 
 window.TESM_DATA_CATEGORIES = {
@@ -9967,7 +10095,547 @@ window.TESM_DATA_CATEGORIES = {
     "date": 2023
   }
 ],
-  "module_31_stress": []
+  "module_31_stress": [
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "global_recession_probability_annual",
+    "value": 0.15,
+    "unit": "ratio",
+    "source": "IMF 2026; OECD 2026; Historical frequency 1960-2024",
+    "source_url": "https://www.imf.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "~15% annual probability (1 in 7 years historically)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "global_recession_gdp_decline_pct",
+    "value": 0.035,
+    "unit": "ratio",
+    "source": "IMF 2026; Historical average 1960-2024",
+    "source_url": "https://www.imf.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Average recession: -3.5% global GDP peak-to-trough"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "energy_crisis_probability_annual",
+    "value": 0.05,
+    "unit": "ratio",
+    "source": "IEA 2026; Historical 1973, 1979, 1990, 2000, 2022",
+    "source_url": "https://www.iea.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "~5% annual probability (5 major crises in 50 years)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "energy_crisis_oil_price_shock_pct",
+    "value": 1.5,
+    "unit": "ratio",
+    "source": "1973: +300%, 1979: +150%, 1990: +100%, 2022: +80%",
+    "source_url": "https://www.iea.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Oil price can 1.5-4x spike during supply disruptions"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "energy_crisis_electricity_price_spike_pct",
+    "value": 3.0,
+    "unit": "ratio",
+    "source": "ERCOT 2021; California 2000; Europe 2022",
+    "source_url": "https://www.ercot.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Electricity prices can 3-10x during supply crises"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "semiconductor_supply_disruption_probability_annual",
+    "value": 0.03,
+    "unit": "ratio",
+    "source": "SIA 2025; CSIS 2025; Historical: 2011 Thailand floods, 2020-22 COVID",
+    "source_url": "https://www.semiconductors.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "3% annual probability major semi supply disruption"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "semiconductor_disruption_tsmc_outage_duration_months",
+    "value": 6.0,
+    "unit": "months",
+    "source": "CSIS 2025; RAND 2024; Taiwan contingency planning",
+    "source_url": "https://www.csis.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "TSMC disruption: 6-12 months to restore leading-edge capacity"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "semiconductor_disruption_gdp_impact_pct",
+    "value": 0.025,
+    "unit": "ratio",
+    "source": "Goldman Sachs 2025; Rhodium Group 2025; CSIS 2025",
+    "source_url": "https://www.goldmansachs.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Full TSMC disruption: -2.5% global GDP (semis 0.5% GDP, multipliers 5x)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "major_cyber_incident_probability_annual",
+    "value": 0.02,
+    "unit": "ratio",
+    "source": "WEF Global Risks 2026; CrowdStrike 2024; SolarWinds 2020",
+    "source_url": "https://www.weforum.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "2% annual probability major cyber event (cloud/AI infra target)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "cyber_incident_cloud_outage_cost_billion_usd",
+    "value": 50.0,
+    "unit": "USD_B",
+    "source": "Parametric insurance 2026; Cloud incident post-mortems 2020-2025",
+    "source_url": "https://www.lloyds.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Major cloud provider outage: $10-100B economic losses"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "ai_safety_incident_probability_annual",
+    "value": 0.01,
+    "unit": "ratio",
+    "source": "Anthropic 2026; CAIS 2026; AI Incident Database 2025",
+    "source_url": "https://www.anthropic.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "1% annual prob major AI safety event (misalignment, misuse, accident)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "ai_safety_incident_market_cap_impact_pct",
+    "value": 0.2,
+    "unit": "ratio",
+    "source": "IntuitionLabs 2026; Dot-com analog 2000",
+    "source_url": "https://intuitionlabs.ai",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Major AI safety event: -20% AI sector market cap (dot-com: -78% Nasdaq)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "financial_crisis_probability_annual",
+    "value": 0.03,
+    "unit": "ratio",
+    "source": "BIS 2026; Reinhart/Rogoff 2009; Historical 1870-2024",
+    "source_url": "https://www.bis.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "~3% annual probability systemic financial crisis (1 per 30 years)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "financial_crisis_ai_capex_impact_pct",
+    "value": 0.5,
+    "unit": "ratio",
+    "source": "2008 analog; 2000 dot-com analog; Morgan Stanley 2026",
+    "source_url": "https://www.morganstanley.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "Financial crisis cuts AI capex 50%+ (credit freeze, demand collapse)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "major_geopolitical_conflict_probability_annual",
+    "value": 0.02,
+    "unit": "ratio",
+    "source": "CFR 2026; IISS 2026; Historical 1945-2024",
+    "source_url": "https://www.cfr.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "2% annual prob major power conflict (Taiwan Strait, Korea, ME)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "taiwan_strait_conflict_tsmc_disruption_probability",
+    "value": 0.05,
+    "unit": "ratio",
+    "source": "CSIS 2025; RAND 2025; US Indo-Pacific Command 2025",
+    "source_url": "https://www.csis.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "5% annual prob conflict disrupting TSMC (60% of AI chips)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "taiwan_conflict_gdp_impact_global_pct",
+    "value": 0.05,
+    "unit": "ratio",
+    "source": "RhG 2025; CSIS 2025; Bloomberg Economics 2025",
+    "source_url": "https://www.rhg.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "Taiwan conflict: -5% global GDP (semis, shipping, trade)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "breakthrough_algorithmic_efficiency_probability_annual",
+    "value": 0.1,
+    "unit": "ratio",
+    "source": "Epoch AI 2025; METR 2025; ArXiv 2025",
+    "source_url": "https://epochai.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "10% annual prob of 5-10x algorithmic efficiency breakthrough"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "algorithmic_breakthrough_compute_demand_impact_pct",
+    "value": 0.5,
+    "unit": "ratio",
+    "source": "Epoch AI 2025; SemiAnalysis 2025",
+    "source_url": "https://epochai.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "5-10x efficiency gain -> 50% compute demand reduction (Jevons partial)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "breakthrough_hardware_quantum_probability_annual",
+    "value": 0.01,
+    "unit": "ratio",
+    "source": "McKinsey Quantum 2025; DARPA 2025; PsiQuantum/IonQ 2025",
+    "source_url": "https://www.mckinsey.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Very_Low",
+    "notes": "1% annual prob commercial quantum advantage (AI-relevant)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "quantum_ai_impact_encryption_risk_pct",
+    "value": 1.0,
+    "unit": "ratio",
+    "source": "NSA 2025; NIST PQC 2025; IBM/Google quantum roadmaps 2025",
+    "source_url": "https://www.nist.gov",
+    "date_accessed": "2026-07-14",
+    "confidence": "Very_Low",
+    "notes": "CRQC (cryptographically relevant quantum computer) <1% by 2030"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "fusion_commercialization_probability_2030",
+    "value": 0.15,
+    "unit": "ratio",
+    "source": "DOE 2025; ITER 2025; Commonwealth Fusion 2025; Helion 2025",
+    "source_url": "https://www.energy.gov",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "15% prob commercial fusion by 2030 (unlimited clean energy -> AI power)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "fusion_electricity_cost_reduction_vs_current_pct",
+    "value": 0.9,
+    "unit": "ratio",
+    "source": "Commonwealth Fusion 2025; Helion 2025; DOE ARPA-E 2025",
+    "source_url": "https://www.cfs.energy",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Fusion: 90% cheaper electricity -> transforms AI economics"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "sustained_deflationary_ai_cost_probability",
+    "value": 0.3,
+    "unit": "ratio",
+    "source": "ArXiv 2606.01575; Zhang & Zhang 2026; IntuitionLabs 2026",
+    "source_url": "https://arxiv.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "30% prob sustained 50%+ annual AI cost declines (deflationary spiral)"
+  },
+  {
+    "module": "Black_Swan_Stress_Test",
+    "metric": "deflationary_ai_capex_impact_pct",
+    "value": 0.4,
+    "unit": "ratio",
+    "source": "IntuitionLabs 2026; Morgan Stanley 2026",
+    "source_url": "https://intuitionlabs.ai",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Sustained deflation: 40% capex reduction as efficiency outpaces demand"
+  },
+  {
+    "module": "# Stress Test Scenarios (quantified)",
+    "metric": NaN,
+    "value": NaN,
+    "unit": NaN,
+    "source": NaN,
+    "source_url": NaN,
+    "date_accessed": NaN,
+    "confidence": NaN,
+    "notes": NaN
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "bear_case_ai_demand_shock_pct",
+    "value": 0.2,
+    "unit": "ratio",
+    "source": "Morgan Stanley 2026; American Century 2026; Scenario engine",
+    "source_url": "https://www.morganstanley.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "AI demand -20% YoY (enterprise pullback, ROI disappointment)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "bear_case_gpu_utilization_pct",
+    "value": 0.25,
+    "unit": "ratio",
+    "source": "WinBuzzer 2026; SemiAnalysis 2026",
+    "source_url": "https://semianalysis.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "Utilization drops to 25% (from 45%) -> massive overcapacity"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "bear_case_capex_cut_pct",
+    "value": 0.5,
+    "unit": "ratio",
+    "source": "CoreWeave 2026 guidance; Lambda 2026; Historical 2001, 2008",
+    "source_url": "https://www.coreweave.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Hyperscalers cut AI capex 50% (credit freeze, demand collapse)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "bear_case_hyperscaler_stock_decline_pct",
+    "value": 0.4,
+    "unit": "ratio",
+    "source": "Dot-com 2000-2002 analog; 2008 financial crisis analog",
+    "source_url": "https://www.morganstanley.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "MAG7 -40% peak-to-trough (vs -78% Nasdaq 2000-2002)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "base_case_gradual_deflation_pct",
+    "value": 0.2,
+    "unit": "ratio",
+    "source": "American Century 2026; Morgan Stanley 2026; Probability 40%",
+    "source_url": "https://www.americancentury.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Gradual valuation compression 20% over 2-3 years"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "base_case_utilization_stabilize_pct",
+    "value": 0.55,
+    "unit": "ratio",
+    "source": "IDC 2026; SemiAnalysis 2026",
+    "source_url": "https://www.idc.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Utilization stabilizes at 55-60% (vs 45% now)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "base_case_capex_growth_pct",
+    "value": 0.15,
+    "unit": "ratio",
+    "source": "Introl 2026; Company guidance 2025",
+    "source_url": "https://blakecrosley.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "High",
+    "notes": "Capex growth slows to 15% YoY (from 36% in 2026)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "bull_case_productivity_boom_pct",
+    "value": 0.35,
+    "unit": "ratio",
+    "source": "Morgan Stanley 2026; Goldman Sachs 2026; Probability 25%",
+    "source_url": "https://www.morganstanley.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "AI adds 1%+ to productivity -> sustained 30%+ capex growth"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "bull_case_gpu_utilization_pct",
+    "value": 0.7,
+    "unit": "ratio",
+    "source": "IDC 2026; SemiAnalysis 2026",
+    "source_url": "https://www.idc.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "Utilization reaches 70% (efficient markets, strong demand)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "bull_case_capex_growth_pct",
+    "value": 0.35,
+    "unit": "ratio",
+    "source": "Morgan Stanley 2026; Goldman Sachs 2026",
+    "source_url": "https://www.morganstanley.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Medium",
+    "notes": "Capex growth accelerates to 35% (investment supercycle)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "stagnation_case_japan_style_pct",
+    "value": 0.1,
+    "unit": "ratio",
+    "source": "Richmond Fed 2025; BoJ 1990s analog; Probability 10%",
+    "source_url": "https://www.richmondfed.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "ROIC < WACC for 5+ years, zombie AI infra, low rates"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "stagnation_case_capex_growth_pct",
+    "value": 0.02,
+    "unit": "ratio",
+    "source": "Japan 1990s analog; Richmond Fed 2025",
+    "source_url": "https://www.richmondfed.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Capex growth stalls at 2% (maintenance only)"
+  },
+  {
+    "module": "Stress_Test_Scenario",
+    "metric": "stagnation_case_valuation_compression_pct",
+    "value": 0.35,
+    "unit": "ratio",
+    "source": "Japan 1990-2010 analog; TOPIX -50% over 20 years",
+    "source_url": "https://www.boj.or.jp",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Valuations compress 35% over 5 years (P/E 35x -> 20x)"
+  },
+  {
+    "module": "# Combined scenario weights (must sum to 1.0)",
+    "metric": NaN,
+    "value": NaN,
+    "unit": NaN,
+    "source": NaN,
+    "source_url": NaN,
+    "date_accessed": NaN,
+    "confidence": NaN,
+    "notes": NaN
+  },
+  {
+    "module": "Scenario_Weights",
+    "metric": "bear_case_weight",
+    "value": 0.2,
+    "unit": "ratio",
+    "source": "Internal probability assessment",
+    "source_url": "2026-07-14",
+    "date_accessed": "Medium",
+    "confidence": NaN,
+    "notes": NaN
+  },
+  {
+    "module": "Scenario_Weights",
+    "metric": "base_case_weight",
+    "value": 0.4,
+    "unit": "ratio",
+    "source": "Internal probability assessment",
+    "source_url": "2026-07-14",
+    "date_accessed": "High",
+    "confidence": NaN,
+    "notes": NaN
+  },
+  {
+    "module": "Scenario_Weights",
+    "metric": "bull_case_weight",
+    "value": 0.25,
+    "unit": "ratio",
+    "source": "Internal probability assessment",
+    "source_url": "2026-07-14",
+    "date_accessed": "Medium",
+    "confidence": NaN,
+    "notes": NaN
+  },
+  {
+    "module": "Scenario_Weights",
+    "metric": "stagnation_case_weight",
+    "value": 0.15,
+    "unit": "ratio",
+    "source": "Internal probability assessment",
+    "source_url": "2026-07-14",
+    "date_accessed": "Low",
+    "confidence": NaN,
+    "notes": NaN
+  },
+  {
+    "module": "# Combined stress test: simultaneous shocks",
+    "metric": NaN,
+    "value": NaN,
+    "unit": NaN,
+    "source": NaN,
+    "source_url": NaN,
+    "date_accessed": NaN,
+    "confidence": NaN,
+    "notes": NaN
+  },
+  {
+    "module": "Stress_Test_Combined",
+    "metric": "tsmc_outage_plus_recession_gdp_impact_pct",
+    "value": 0.07,
+    "unit": "ratio",
+    "source": "CSIS 2025 + IMF 2026 combined scenario",
+    "source_url": "https://www.csis.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "TSMC outage + global recession = -7% global GDP"
+  },
+  {
+    "module": "Stress_Test_Combined",
+    "metric": "tsmc_outage_plus_recession_ai_capex_cut_pct",
+    "value": 0.7,
+    "unit": "ratio",
+    "source": "Combined scenario modeling",
+    "source_url": "2026-07-14",
+    "date_accessed": "Low",
+    "confidence": "Capex cut 70% (credit freeze + demand collapse + supply disruption)",
+    "notes": NaN
+  },
+  {
+    "module": "Stress_Test_Combined",
+    "metric": "energy_crisis_plus_cyber_attack_gdp_impact_pct",
+    "value": 0.04,
+    "unit": "ratio",
+    "source": "IEA 2025 + WEF 2026 combined scenario",
+    "source_url": "https://www.iea.org",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Energy crisis + major cyber attack = -4% global GDP"
+  },
+  {
+    "module": "Stress_Test_Combined",
+    "metric": "perfect_storm_ai_sector_drawdown_pct",
+    "value": 0.6,
+    "unit": "ratio",
+    "source": "Dot-com 2000-2002 (-78% Nasdaq) + 2008 financial crisis analog",
+    "source_url": "https://www.nasdaq.com",
+    "date_accessed": "2026-07-14",
+    "confidence": "Low",
+    "notes": "Perfect storm: -60% AI sector drawdown (worse than 2000, 2008)"
+  }
+]
 };
 
 // Apply values to the default parameters template block
