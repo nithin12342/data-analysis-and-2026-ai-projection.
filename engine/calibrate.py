@@ -1063,9 +1063,9 @@ if (window.TESMEngine) {{
 }}
 """
 
-overrides_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "param_overrides.js")
+overrides_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "param_overrides.json")
 with open(overrides_path, "w") as f:
-    f.write(overrides_js_content)
+    f.write(dumps_native(calibrated_overrides, indent=2))
 
 # Close database connection
 conn.close()

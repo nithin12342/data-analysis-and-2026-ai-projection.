@@ -1,0 +1,338 @@
+{
+  "gridConnectionDelay": 15,
+  "powerGrowthCap": 0.45,
+  "transformerShortage": 0.27,
+  "downsizingRatio": 0.6,
+  "siliconSupply": 72.6,
+  "wacc": 0.085,
+  "capitalReflexivity": 0.26,
+  "onsiteGenCapacityMW": 5551.8,
+  "onsiteCapacityFactor": 0.8865043769588241,
+  "onsiteGenMix": {
+    "bloom_sofc": 0.9094888144385604,
+    "gas_turbine": 0.08970063763103858,
+    "hydrogen_fc": 0.0008105479304009511
+  },
+  "onsiteFuelExposure": 0.7,
+  "hedgeRatio": 0.65,
+  "gridServicesRevenue": 39773,
+  "carbonIntensityTonCO2perMWh": 0.218,
+  "carbonPriceExposure": 10.9,
+  "waterIntensityLperMWh": 0.6,
+  "gridDefectionThreshold": 0.85,
+  "averageContractLength": 12,
+  "contractMix3yr": 0.93,
+  "baseMultipleSales": 8.0,
+  "targetMultipleSales": 3.5,
+  "elasticityCoefficient": 1.24,
+  "adoptionDecayRate": 0.0227,
+  "nationalStrategicInvestment": 1.5,
+  "insolvencyWriteDownRate": 0.1,
+  "chinaEloGap": 40,
+  "chinaConvergenceRate": 0.025,
+  "chinaPriceDiscount": 0.701871129707113,
+  "chinaPriceCompressionVelocity": 0.08,
+  "chinaOpenWeightShare": 0.5384615384615384,
+  "chinaFrontierLag": 2,
+  "elasticityByCategory": {
+    "coding": 1.34,
+    "writing": 1.3,
+    "consulting": 1.22,
+    "customer_support": 1.14,
+    "legal": 1.19,
+    "rd_materials": 1.35,
+    "rd_drug": 1.31,
+    "general": 1.11
+  },
+  "adoptionDecayByCategory": {
+    "coding": 0.01,
+    "writing": 0.01,
+    "consulting": 0.01,
+    "customer_support": 0.01,
+    "legal": 0.01,
+    "rd_materials": 0.01,
+    "rd_drug": 0.01,
+    "general": 0.01
+  },
+  "revenueQualityCoeff": 0.8775999999999999,
+  "nrrByType": {
+    "enterprise_agreement": 1.0925,
+    "reserved_instances": 1.035,
+    "savings_plans": 1.09,
+    "committed_use_discounts": 1.1,
+    "universal_credits": 1.08,
+    "enterprise_saas": 1.2575
+  },
+  "grrByType": {
+    "enterprise_agreement": 0.9575,
+    "reserved_instances": 0.94,
+    "savings_plans": 0.955,
+    "committed_use_discounts": 0.955,
+    "universal_credits": 0.95,
+    "enterprise_saas": 0.97
+  },
+  "downsizingByType": {
+    "enterprise_agreement": 0.175,
+    "reserved_instances": 0.225,
+    "savings_plans": 0.19,
+    "committed_use_discounts": 0.185,
+    "universal_credits": 0.2,
+    "enterprise_saas": 0.1125
+  },
+  "expansionByType": {
+    "enterprise_agreement": 0.1925,
+    "reserved_instances": 0.09,
+    "savings_plans": 0.135,
+    "committed_use_discounts": 0.185,
+    "universal_credits": 0.15,
+    "enterprise_saas": 0.3875
+  },
+  "typeSpendShare": {
+    "enterprise_agreement": 0.26666666666666666,
+    "reserved_instances": 0.13333333333333333,
+    "savings_plans": 0.13333333333333333,
+    "committed_use_discounts": 0.13333333333333333,
+    "universal_credits": 0.06666666666666667,
+    "enterprise_saas": 0.26666666666666666
+  },
+  "expirationProfile": {
+    "enterprise_agreement": {
+      "length_qtrs": 12,
+      "renewal": 0.95,
+      "downsizing": 0.15,
+      "expansion": 0.25,
+      "spend_weight": 0.26666666666666666
+    },
+    "reserved_instances": {
+      "length_qtrs": 12,
+      "renewal": 0.9,
+      "downsizing": 0.2,
+      "expansion": 0.1,
+      "spend_weight": 0.13333333333333333
+    },
+    "savings_plans": {
+      "length_qtrs": 12,
+      "renewal": 0.92,
+      "downsizing": 0.18,
+      "expansion": 0.15,
+      "spend_weight": 0.13333333333333333
+    },
+    "committed_use_discounts": {
+      "length_qtrs": 12,
+      "renewal": 0.89,
+      "downsizing": 0.22,
+      "expansion": 0.12,
+      "spend_weight": 0.13333333333333333
+    },
+    "universal_credits": {
+      "length_qtrs": 12,
+      "renewal": 0.92,
+      "downsizing": 0.2,
+      "expansion": 0.15,
+      "spend_weight": 0.06666666666666667
+    },
+    "enterprise_saas": {
+      "length_qtrs": 12,
+      "renewal": 0.9,
+      "downsizing": 0.1,
+      "expansion": 0.3,
+      "spend_weight": 0.26666666666666666
+    }
+  },
+  "regionalParams": {
+    "us": {
+      "ppp_factor": 1.0,
+      "power_growth_cap": 0.12,
+      "grid_delay_qtrs": 8,
+      "gov_coordination": 0.5,
+      "cost_per_mw_m": 2.5,
+      "transformer_shortage": 0.2,
+      "cooling_water": 0.35,
+      "renewable_pct": 0.22
+    },
+    "china": {
+      "ppp_factor": 0.55,
+      "power_growth_cap": 0.24,
+      "grid_delay_qtrs": 4,
+      "gov_coordination": 0.95,
+      "cost_per_mw_m": 1.1,
+      "transformer_shortage": 0.1,
+      "cooling_water": 0.15,
+      "renewable_pct": 0.35
+    },
+    "india": {
+      "ppp_factor": 0.45,
+      "power_growth_cap": 0.18,
+      "grid_delay_qtrs": 6,
+      "gov_coordination": 0.7,
+      "cost_per_mw_m": 1.3,
+      "transformer_shortage": 0.15,
+      "cooling_water": 0.1,
+      "renewable_pct": 0.25
+    },
+    "gulf": {
+      "ppp_factor": 0.75,
+      "power_growth_cap": 0.28,
+      "grid_delay_qtrs": 2,
+      "gov_coordination": 0.9,
+      "cost_per_mw_m": 1.5,
+      "transformer_shortage": 0.05,
+      "cooling_water": 0.05,
+      "renewable_pct": 0.02
+    },
+    "eu": {
+      "ppp_factor": 1.15,
+      "power_growth_cap": 0.05,
+      "grid_delay_qtrs": 16,
+      "gov_coordination": 0.3,
+      "cost_per_mw_m": 3.1,
+      "transformer_shortage": 0.25,
+      "cooling_water": 0.4,
+      "renewable_pct": 0.45
+    },
+    "japan": {
+      "ppp_factor": 0.95,
+      "power_growth_cap": 0.04,
+      "grid_delay_qtrs": 12,
+      "gov_coordination": 0.6,
+      "cost_per_mw_m": 3.5,
+      "transformer_shortage": 0.2,
+      "cooling_water": 0.15,
+      "renewable_pct": 0.22
+    },
+    "korea": {
+      "ppp_factor": 0.9,
+      "power_growth_cap": 0.08,
+      "grid_delay_qtrs": 6,
+      "gov_coordination": 0.75,
+      "cost_per_mw_m": 2.2,
+      "transformer_shortage": 0.15,
+      "cooling_water": 0.1,
+      "renewable_pct": 0.1
+    },
+    "taiwan": {
+      "ppp_factor": 0.85,
+      "power_growth_cap": 0.1,
+      "grid_delay_qtrs": 8,
+      "gov_coordination": 0.7,
+      "cost_per_mw_m": 2.0,
+      "transformer_shortage": 0.15,
+      "cooling_water": 0.15,
+      "renewable_pct": 0.15
+    },
+    "southeast_asia": {
+      "ppp_factor": 1.05,
+      "power_growth_cap": 0.06,
+      "grid_delay_qtrs": 4,
+      "gov_coordination": 0.85,
+      "cost_per_mw_m": 3.0,
+      "transformer_shortage": 0.2,
+      "cooling_water": 0.05,
+      "renewable_pct": 0.05
+    }
+  },
+  "avgCostPerMW": 2.0538461538461537,
+  "avgCoolingWaterAvailability": 0.1576923076923077,
+  "avgGovCoordination": 0.6884615384615385,
+  "degradationByTechQuarterly": {
+    "sofc": 0.00125,
+    "gas_turbine": 0.0017499999999999998,
+    "rice": 0.00125,
+    "solid_oxide": 0.00075,
+    "hydrogen": 0.00075
+  },
+  "weightedDegradationQuarterly": 0.0012944450448503187,
+  "fuelTermStructure": {
+    "henry_hub": {
+      "spot": 5.8,
+      "forward_1y": 5.9159999999999995,
+      "forward_2y": 6.032,
+      "volatility": 0.35,
+      "basis_risk": 0.0
+    },
+    "ttf": {
+      "spot": 33.0,
+      "forward_1y": 33.660000000000004,
+      "forward_2y": 34.32,
+      "volatility": 0.45,
+      "basis_risk": 0.0
+    },
+    "jk": {
+      "spot": 41.0,
+      "forward_1y": 41.82,
+      "forward_2y": 42.64,
+      "volatility": 0.45,
+      "basis_risk": 0.0
+    }
+  },
+  "wholesaleAvgPrice": 51.333333333333336,
+  "wholesaleVolatility": 0.3321809766577432,
+  "stressShocks": {
+    "Black_Swan_Stress_Test": {
+      "global_recession_probability_annual": 0.15,
+      "global_recession_gdp_decline_pct": 0.035,
+      "energy_crisis_probability_annual": 0.05,
+      "energy_crisis_oil_price_shock_pct": 1.5,
+      "energy_crisis_electricity_price_spike_pct": 3.0,
+      "semiconductor_supply_disruption_probability_annual": 0.03,
+      "semiconductor_disruption_tsmc_outage_duration_months": 6.0,
+      "semiconductor_disruption_gdp_impact_pct": 0.025,
+      "major_cyber_incident_probability_annual": 0.02,
+      "cyber_incident_cloud_outage_cost_billion_usd": 50.0,
+      "ai_safety_incident_probability_annual": 0.01,
+      "ai_safety_incident_market_cap_impact_pct": 0.2,
+      "financial_crisis_probability_annual": 0.03,
+      "financial_crisis_ai_capex_impact_pct": 0.5,
+      "major_geopolitical_conflict_probability_annual": 0.02,
+      "taiwan_strait_conflict_tsmc_disruption_probability": 0.05,
+      "taiwan_conflict_gdp_impact_global_pct": 0.05,
+      "breakthrough_algorithmic_efficiency_probability_annual": 0.1,
+      "algorithmic_breakthrough_compute_demand_impact_pct": 0.5,
+      "breakthrough_hardware_quantum_probability_annual": 0.01,
+      "quantum_ai_impact_encryption_risk_pct": 1.0,
+      "fusion_commercialization_probability_2030": 0.15,
+      "fusion_electricity_cost_reduction_vs_current_pct": 0.9,
+      "sustained_deflationary_ai_cost_probability": 0.3,
+      "deflationary_ai_capex_impact_pct": 0.4
+    },
+    "# Stress Test Scenarios (quantified)": {
+      "NaN": NaN
+    },
+    "Stress_Test_Scenario": {
+      "bear_case_ai_demand_shock_pct": 0.2,
+      "bear_case_gpu_utilization_pct": 0.25,
+      "bear_case_capex_cut_pct": 0.5,
+      "bear_case_hyperscaler_stock_decline_pct": 0.4,
+      "base_case_gradual_deflation_pct": 0.2,
+      "base_case_utilization_stabilize_pct": 0.55,
+      "base_case_capex_growth_pct": 0.15,
+      "bull_case_productivity_boom_pct": 0.35,
+      "bull_case_gpu_utilization_pct": 0.7,
+      "bull_case_capex_growth_pct": 0.35,
+      "stagnation_case_japan_style_pct": 0.1,
+      "stagnation_case_capex_growth_pct": 0.02,
+      "stagnation_case_valuation_compression_pct": 0.35
+    },
+    "# Combined scenario weights (must sum to 1.0)": {
+      "NaN": NaN
+    },
+    "Scenario_Weights": {
+      "bear_case_weight": 0.2,
+      "base_case_weight": 0.4,
+      "bull_case_weight": 0.25,
+      "stagnation_case_weight": 0.15
+    },
+    "# Combined stress test: simultaneous shocks": {
+      "NaN": NaN
+    },
+    "Stress_Test_Combined": {
+      "tsmc_outage_plus_recession_gdp_impact_pct": 0.07,
+      "tsmc_outage_plus_recession_ai_capex_cut_pct": 0.7,
+      "energy_crisis_plus_cyber_attack_gdp_impact_pct": 0.04,
+      "perfect_storm_ai_sector_drawdown_pct": 0.6
+    }
+  },
+  "henryTtfCorr": 0.948,
+  "henryJkmCorr": 0.96,
+  "ttfJkmCorr": 0.994
+}
