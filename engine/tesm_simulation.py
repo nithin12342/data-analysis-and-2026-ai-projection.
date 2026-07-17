@@ -172,7 +172,8 @@ def run_simulation(params=None):
         # Interpolate to 80 quarters
         x_annual = np.arange(21) * 4
         x_quarters = np.arange(80)
-        return list(np.interp(x_quarters, x_annual, series))
+        interpolated = np.interp(x_quarters, x_annual, series)
+        return [float(x) for x in interpolated]
         
     # Build exact matching response fields
     history = {}
