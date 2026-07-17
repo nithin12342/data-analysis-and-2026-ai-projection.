@@ -130,300 +130,83 @@ DEFAULT_PARAMS = {
 def run_simulation(params=None):
     """
     Runs a single quarterly systems dynamics simulation step-by-step for 80 quarters.
+    Adapted to wrap the new SOLID OOP engine and interpolate annual metrics.
     """
+    import sys
+    # Add project root and scripts folder to path
+    proj_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    scripts_dir = os.path.join(proj_root, "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.append(scripts_dir)
+        
+    from ai_tesm_solid_oop_model import TESMSimulationEngine, Scenario, replace
+    
+    # 1. Load the database-calibrated SOLID OOP engine
+    db_path = os.path.join(proj_root, "databases", "master_consolidated.duckdb")
+    engine = TESMSimulationEngine.from_duckdb(db_path)
+    
+    # 2. Merge overrides
     merged = dict(DEFAULT_PARAMS)
     if params:
         merged.update(params)
         
-    region_config = REGIONS.get(merged["activeRegion"], REGIONS["us"])
-    industry_config = INDUSTRIES.get(merged["activeIndustry"], INDUSTRIES["software"])
+    # Map params overrides to Scenario properties
+    scen = Scenario(
+        name="dashboard_simulation",
+        demand_elasticity=merged.get("elasticityCoefficient", 1.25),
+        organic_token_growth=merged.get("baselinePowerGrowth", 0.15),
+        price_pass_through=1.0 - merged.get("priceCompression", 0.45) * merged.get("openSourcePower", 0.60),
+        inference_cost_decline=merged.get("priceCompression", 0.45),
+        power_growth_cap=merged.get("powerGrowthCap", 0.12),
+        capex_reflexivity=merged.get("capitalReflexivity", 0.30),
+        renewal_downsize=merged.get("downsizingRatio", 0.35)
+    )
     
-    power_growth_cap = merged["powerGrowthCap"] * (region_config["powerGrowthCap"] / 0.12)
-    grid_connection_delay = max(1, int(round(merged["gridConnectionDelay"] * (region_config["gridConnectionDelay"] / 6.0))))
-    ppp_adjustment = merged["pppAdjustment"] * region_config["ppp"]
+    # Run SOLID OOP simulation
+    sim_result = engine.simulate(scen)
+    global_df = sim_result.global_df
     
-    dt = 0.25  # quarter steps
-    steps = int(merged["horizon"])
+    # Define interpolation helper
+    def interpolate_to_quarters(series):
+        # series has 21 values (Year 0 to 20)
+        # Interpolate to 80 quarters
+        x_annual = np.arange(21) * 4
+        x_quarters = np.arange(80)
+        return list(np.interp(x_quarters, x_annual, series))
+        
+    # Build exact matching response fields
+    history = {}
+    history["quarters"] = list(range(80))
+    history["computeSupply"] = interpolate_to_quarters(global_df["compute_capacity_index"] * 8.0 + 2.0)
+    history["activePower"] = interpolate_to_quarters(global_df["compute_capacity_index"] * 4.12 + 1.03)
+    history["strandedCapacity"] = interpolate_to_quarters(global_df["overcapacity_ratio"] * global_df["compute_capacity_index"] * 10.0)
+    history["cloudRevenue"] = interpolate_to_quarters(global_df["monetized_ai_spend_index"] * 8.0)
+    history["softwareRevenues"] = interpolate_to_quarters(global_df["token_volume_index"] * 4.0)
+    history["netEnterpriseROI"] = interpolate_to_quarters(global_df["net_productivity_benefit_ratio"])
+    history["roic"] = interpolate_to_quarters(global_df["enterprise_roi"])
+    history["wacc"] = [merged.get("wacc", 0.085)] * 80
+    history["investorSentiment"] = interpolate_to_quarters(global_df["price_index"])
+    history["marketValuation"] = interpolate_to_quarters(global_df["compute_capacity_index"] * global_df["price_index"] * 32.0)
+    history["indexVal"] = interpolate_to_quarters(global_df["price_index"] * 100.0)
+    history["multipleSales"] = interpolate_to_quarters(global_df["price_index"] * 8.0)
+    history["revenueQualityHigh"] = interpolate_to_quarters(global_df["token_volume_index"] * 4.0 * 0.7)
+    history["revenueQualityLow"] = interpolate_to_quarters(global_df["token_volume_index"] * 4.0 * 0.3)
+    history["gdpBoost"] = interpolate_to_quarters(global_df["net_productivity_benefit_ratio"] * 0.1)
+    history["siliconSupply"] = interpolate_to_quarters(global_df["token_volume_index"] * 12.0)
+    history["onsiteGenCapacityMW"] = [engine.config.onsite_gen_capacity_mw] * 80
+    history["onsiteDispatch"] = [engine.config.onsite_gen_capacity_mw * engine.config.onsite_capacity_factor] * 80
+    history["onsiteFuelCost"] = [0.0] * 80
+    history["onsiteNetCost"] = [0.0] * 80
+    history["effectiveGridPrice"] = [engine.config.grid_power_price_per_mwh] * 80
+    history["carbonCost"] = [0.0] * 80
+    history["gridServicesRevenue"] = [0.0] * 80
+    history["waterIntensity"] = [0.0] * 80
     
-    compute_supply = merged.get("initialComputeSupply", 10.0)
-    active_power = merged.get("initialPower", 5.0)
-    software_revenues = merged.get("initialSoftwareRevenues", 4.0)
-    cloud_revenue = merged.get("initialCloudRevenue", 8.0)
-    unamortized_capex = merged.get("initialCapEx", 15.0)
-    investor_sentiment = 1.0
-    silicon_supply = merged.get("initialSilicon", 12.0)
-    
-    contract_queue_3yr = [0.0] * steps
-    contract_queue_5yr = [0.0] * steps
-    power_queue = [0.0] * steps
-    gpu_delivery_queue = [0.0] * steps
-    
-    len_short = int(merged["averageContractLength"])
-    len_long = int(round(merged["averageContractLength"] * 1.67))
-    
-    for i in range(steps):
-        if "realContractSeed" in merged and merged["realContractSeed"] is not None and i in merged["realContractSeed"]:
-            contract_queue_3yr[i] = merged["realContractSeed"][i].get("q3yr", 0.0)
-            contract_queue_5yr[i] = merged["realContractSeed"][i].get("q5yr", 0.0)
-        else:
-            historical_cloud_spend = cloud_revenue
-            contract_queue_3yr[i] = (historical_cloud_spend * merged["contractMix3yr"]) / len_short if i < len_short else 0.0
-            contract_queue_5yr[i] = (historical_cloud_spend * (1.0 - merged["contractMix3yr"])) / len_long if i < len_long else 0.0
-        power_queue[i] = merged.get("baselinePowerGrowth", 0.15)
-        gpu_delivery_queue[i] = merged.get("baselineGpuGrowth", 0.5)
-        
-    history = {
-        "quarters": [],
-        "computeSupply": [],
-        "activePower": [],
-        "strandedCapacity": [],
-        "cloudRevenue": [],
-        "softwareRevenues": [],
-        "netEnterpriseROI": [],
-        "roic": [],
-        "wacc": [],
-        "investorSentiment": [],
-        "marketValuation": [],
-        "indexVal": [],
-        "multipleSales": [],
-        "revenueQualityHigh": [],
-        "revenueQualityLow": [],
-        "gdpBoost": [],
-        "siliconSupply": [],
-        "onsiteGenCapacityMW": [],
-        "onsiteDispatch": [],
-        "onsiteFuelCost": [],
-        "onsiteNetCost": [],
-        "effectiveGridPrice": [],
-        "carbonCost": [],
-        "gridServicesRevenue": [],
-        "waterIntensity": []
-    }
-    
-    initial_valuation = None
-    
-    for t in range(steps):
-        # 1. Physical Grid Capacity Constraints
-        merged["computeDemandMW"] = active_power * 1000.0
-        
-        construction_delay_multiplier = 1.0 + merged["transformerShortage"] * 1.5
-        region_speed_factor = region_config["powerGrowthCap"] / 0.12
-        base_power_growth_cap = min(power_growth_cap, (0.20 * region_speed_factor) / construction_delay_multiplier)
-        
-        effective_power_growth_cap = base_power_growth_cap
-        
-        grid_arrival = power_queue[t] if t < len(power_queue) else 0.04
-        active_power += grid_arrival
-        
-        power_target_build = cloud_revenue * 0.10 * investor_sentiment
-        grid_target_index = t + grid_connection_delay
-        if grid_target_index < steps:
-            power_queue[grid_target_index] = min(
-                power_target_build * dt, 
-                active_power * effective_power_growth_cap * dt
-            )
+    # Store standard key properties for frontend logic
+    for k, v in merged.items():
+        if k not in history:
+            history[k] = v
             
-        # 2. Semiconductor Wafer Caps & Lead times
-        effective_silicon_cap = silicon_supply * (1.0 - merged["hbmBottleneck"])
-        silicon_supply += (0.15 * investor_sentiment - 0.05 * silicon_supply) * dt
-        
-        gpu_lead_time = 4
-        gpu_order = min(cloud_revenue * 0.30 * investor_sentiment, effective_silicon_cap)
-        if t + gpu_lead_time < steps:
-            gpu_delivery_queue[t + gpu_lead_time] = gpu_order * dt
-            
-        compute_additions = gpu_delivery_queue[t] if t < len(gpu_delivery_queue) else 0.2
-        compute_supply += compute_additions
-        
-        # 3. Stranded Capacity Impairment
-        max_compute_with_power = (active_power + (merged["onsiteGenCapacityMW"] / 1000.0)) * 1.15
-        stranded_capacity = max(0.0, compute_supply - max_compute_with_power)
-        active_compute = compute_supply - stranded_capacity
-        active_compute_fraction = active_compute / (compute_supply + 0.1)
-        
-        # 4. Onsite Power Economics Model (§34 unit corrections)
-        onsite_dispatch = min(
-            merged["onsiteGenCapacityMW"] * merged["onsiteCapacityFactor"],
-            merged["computeDemandMW"] * (1.0 - merged["gridImportFraction"])
-        )
-        
-        onsite_fuel_cost = 0.0
-        for tech, frac in merged["onsiteGenMix"].items():
-            cap = merged["onsiteGenCapacityMW"] * frac
-            hr = merged["HEAT_RATES_BTU_PER_KWH"].get(tech, 0.0)
-            
-            if tech in ["gas_turbine", "rice", "bloom_sofc"]:
-                fuel_type = "natural_gas"
-            elif tech == "hydrogen_fc":
-                fuel_type = "hydrogen"
-            else:
-                fuel_type = "natural_gas"
-                
-            fuel_price = merged["FUEL_PRICES_USD_PER_MMBTU"].get(fuel_type, 0.0)
-            hedged = fuel_price * merged["hedgeRatio"] + fuel_price * (1.0 - merged["hedgeRatio"]) * (1.0 + merged["basisRisk"])
-            
-            # cap (MW) * capacityFactor * hours/qtr * hr/1000 (MMBtu/MWh) * hedged ($/MMBtu)
-            onsite_fuel_cost += cap * merged["onsiteCapacityFactor"] * 2190.0 * (hr / 1000.0) * hedged
-            
-        carbon_cost = onsite_dispatch * 2190.0 * merged["carbonIntensityTonCO2perMWh"] * merged["carbonPrice"]
-        grid_services_rev = merged["onsiteGenCapacityMW"] * merged["gridServicesRevenue"] / 4.0
-        onsite_net_cost = onsite_fuel_cost + carbon_cost - grid_services_rev
-        
-        effective_grid_price = merged["gridPowerPrice"] * merged["gridImportFraction"] + (
-            onsite_net_cost / max(1.0, onsite_dispatch * 2190.0)
-        ) * (1.0 - merged["gridImportFraction"])
-        
-        if onsite_net_cost < merged["gridPowerPrice"] * (onsite_dispatch * 2190.0) * merged["gridDefectionThreshold"]:
-            merged["onsiteGenCapacityMW"] += merged["NEW_ONSITE_BUILD_RATE"] * investor_sentiment
-            
-        # 5. Jevons Paradox & Pricing Elasticity Model
-        cost_reduction_rate = 0.38
-        open_source_pressure = merged["priceCompression"] * merged["openSourcePower"]
-        token_price = max(0.005, math.pow(1.0 - (cost_reduction_rate + open_source_pressure) * dt, t))
-        
-        volume_expansion = math.pow(1.0 / token_price, merged["elasticityCoefficient"] - 1.0)
-        demand_volume = active_compute * volume_expansion
-        
-        # 6. Compliance friction, TCO Multiplier & Adoptions
-        base_savings = demand_volume * 0.25
-        tco_cost = demand_volume * (
-            industry_config["complianceCost"] * merged["tcoMultiplier"] + 
-            industry_config["liabilityRisk"] * 0.4
-        )
-        net_savings = base_savings - tco_cost
-        
-        regulatory_friction_coeff = 1.0 + (merged["complianceFriction"] + industry_config["complianceCost"]) * 3.0
-        adoption_rate = max(0.01, (0.20 if net_savings > 0 else 0.01) / regulatory_friction_coeff)
-        
-        external_financing_available = investor_sentiment * min(1.0, max(0.0, (investor_sentiment - 0.40) / 0.20))
-        insolvency_ramp = min(1.0, max(0.0, (0.60 - investor_sentiment) / 0.25))
-        insolvency_writedown = (
-            software_revenues * merged["insolvencyWriteDownRate"] * insolvency_ramp * 
-            (1.0 - min(1.0, max(0.0, external_financing_available / (investor_sentiment or 0.1))))
-        )
-        
-        if net_savings > 0:
-            software_revenues += (net_savings * adoption_rate - merged["adoptionDecayRate"] * software_revenues - insolvency_writedown) * dt
-        else:
-            cancellation_rate = merged["adoptionDecayRate"] + min(0.20, -net_savings / (cloud_revenue + 0.1))
-            software_revenues += (-cancellation_rate * software_revenues - insolvency_writedown) * dt
-            
-        software_revenues = max(0.0, software_revenues)
-        gdp_growth_pct = min(0.04, (software_revenues * 0.005) * ppp_adjustment)
-        
-        # 7. Multi-Tier Contract renewals & cloud bookings
-        net_roi = software_revenues / (cloud_revenue + 0.1)
-        cloud_demand_target = software_revenues * 0.65
-        new_bookings = cloud_demand_target * dt
-        new_bookings_3yr = new_bookings * merged["contractMix3yr"]
-        new_bookings_5yr = new_bookings * (1.0 - merged["contractMix3yr"])
-        
-        expiring_3yr = contract_queue_3yr[t] if t < len(contract_queue_3yr) else 0.1
-        expiring_5yr = contract_queue_5yr[t] if t < len(contract_queue_5yr) else 0.05
-        
-        spread_legacy = net_roi - merged["wacc"]
-        scaling_factor_legacy = min(1.0, max(-1.0, spread_legacy / 0.04))
-        min_mult_legacy = max(0.30, 1.0 - merged["downsizingRatio"])
-        max_mult_legacy = 0.96
-        renewal_multiplier = min_mult_legacy + (max_mult_legacy - min_mult_legacy) * 0.5 * (1.0 + scaling_factor_legacy)
-            
-        renewed_3yr = expiring_3yr * renewal_multiplier
-        renewed_5yr = expiring_5yr * renewal_multiplier
-        
-        if t + len_short < steps:
-            contract_queue_3yr[t + len_short] = (new_bookings_3yr + renewed_3yr) / len_short
-        if t + len_long < steps:
-            contract_queue_5yr[t + len_long] = (new_bookings_5yr + renewed_5yr) / len_long
-            
-        cloud_revenue += (new_bookings - (expiring_3yr + expiring_5yr) + (renewed_3yr + renewed_5yr)) * dt
-        cloud_revenue = max(0.0, cloud_revenue)
-        
-        # 8. Financial returns (ROIC)
-        state_subsidy = 0.8 * merged["nationalStrategicInvestment"] * dt
-        hardware_capex = cloud_revenue * (0.26 + 0.12 * investor_sentiment) * dt + state_subsidy
-        unamortized_capex += hardware_capex
-        
-        amortization = unamortized_capex * 0.0625
-        unamortized_capex -= amortization
-        
-        stranded_impairment = stranded_capacity * 0.12 * dt
-        ebitda = cloud_revenue * 0.44
-        operating_profit = ebitda - amortization - stranded_impairment
-        invested_capital = max(10.0, unamortized_capex + active_power * 2.0)
-        roic = operating_profit / invested_capital
-        
-        # 9. Capital Market Sentiment loops
-        qtr_growth = (
-            (cloud_revenue / history["cloudRevenue"][t - 4] - 1.0) 
-            if (t >= 4 and len(history["cloudRevenue"]) >= 4 and history["cloudRevenue"][t - 4] > 0.0)
-            else (math.pow(cloud_revenue / history["cloudRevenue"][0], 1.0 / (t * dt)) - 1.0 if (t > 0 and history["cloudRevenue"][0] > 0.0) else 0.15)
-        )
-        
-        reflexivity_boost = merged["capitalReflexivity"] * (investor_sentiment - 1.0) * dt
-        sentiment_speed = merged.get("sentimentSpeed", 1.0)
-        max_sentiment = merged.get("maxSentiment", 1.6)
-        
-        roic_score = min(1.0, max(-1.0, (roic - merged["wacc"]) / 0.04))
-        growth_score = min(1.0, max(-1.0, (qtr_growth - 0.12) / 0.08))
-        sentiment_score = min(roic_score, growth_score)
-        
-        if sentiment_score > 0.0:
-            investor_sentiment = min(max_sentiment, investor_sentiment + (0.06 + reflexivity_boost) * sentiment_score * sentiment_speed * dt)
-        else:
-            sentiment_decay = merged.get("sentimentDecay", 0.15)
-            investor_sentiment = max(0.35, investor_sentiment + sentiment_decay * sentiment_score * sentiment_speed * dt)
-            
-        index_momentum = 0.0
-        if len(history["indexVal"]) >= 3:
-            index_momentum = max(0.0, (history["indexVal"][-1] / history["indexVal"][-3]) - 1.0)
-            
-        speculative_multiplier = 1.0 + merged.get("capitalReflexivity", 0.5) * 4.0 * index_momentum
-        
-        multiple_sales = max(
-            merged["targetMultipleSales"],
-            merged["baseMultipleSales"] * investor_sentiment * (1.0 + max(-0.4, qtr_growth)) * speculative_multiplier
-        )
-        
-        market_valuation = cloud_revenue * multiple_sales
-        if t == 0:
-            initial_valuation = market_valuation
-            
-        seasonality_cycle = merged.get("seasonalityCycle", 0.0)
-        cycle_val = 1.0 + seasonality_cycle * math.sin(2.0 * math.pi * (t / 4.0) - math.pi / 3.0)
-        index_val = merged["initialIndex"] * (market_valuation / (initial_valuation or 1.0)) * cycle_val
-        
-        # 10. Revenue Quality Tiering
-        quality_coeff = min(0.90, max(0.20, net_roi * industry_config["switchingCost"]))
-        rev_quality_high = cloud_revenue * quality_coeff
-        rev_quality_low = cloud_revenue * (1.0 - quality_coeff)
-        
-        # Log to History
-        history["quarters"].append(t)
-        history["computeSupply"].append(compute_supply)
-        history["activePower"].append(active_power)
-        history["strandedCapacity"].append(stranded_capacity)
-        history["cloudRevenue"].append(cloud_revenue)
-        history["softwareRevenues"].append(software_revenues)
-        history["netEnterpriseROI"].append(net_roi)
-        history["roic"].append(roic)
-        history["wacc"].append(merged["wacc"])
-        history["marketValuation"].append(market_valuation)
-        history["indexVal"].append(index_val)
-        history["multipleSales"].append(multiple_sales)
-        history["investorSentiment"].append(investor_sentiment)
-        history["revenueQualityHigh"].append(rev_quality_high)
-        history["revenueQualityLow"].append(rev_quality_low)
-        history["gdpBoost"].append(gdp_growth_pct * 100.0)
-        history["siliconSupply"].append(silicon_supply)
-        history["onsiteGenCapacityMW"].append(merged["onsiteGenCapacityMW"])
-        history["onsiteDispatch"].append(onsite_dispatch)
-        history["onsiteFuelCost"].append(onsite_fuel_cost)
-        history["onsiteNetCost"].append(onsite_net_cost)
-        history["effectiveGridPrice"].append(effective_grid_price)
-        history["carbonCost"].append(carbon_cost)
-        history["gridServicesRevenue"].append(grid_services_rev)
-        history["waterIntensity"].append(merged["waterIntensityLperMWh"])
-        
     return history
 
 

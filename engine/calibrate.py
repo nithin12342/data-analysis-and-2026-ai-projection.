@@ -2,6 +2,7 @@ import os
 import json
 import pandas as pd
 import numpy as np
+import duckdb
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -11,16 +12,31 @@ class NumpyEncoder(json.JSONEncoder):
             return float(obj)
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
+        elif hasattr(obj, 'isoformat'):
+            return obj.isoformat()
         return super().default(obj)
 
 def dumps_native(obj, indent=None):
     return json.dumps(obj, cls=NumpyEncoder, indent=indent)
 
-# Define paths
-DATA_DIR = "DATA"
-CONSOLIDATED_DIR = "consolidated_data"
-USITC_PATH = os.path.join(CONSOLIDATED_DIR, "4_semiconductor_supply_chain", "DataWeb-Query-Export.xlsx")
-LBNL_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "LBNL_Ix_Queue_Data_File_thru2025.xlsx")
+def fix_single_column_df(df):
+    if not df.empty and len(df.columns) == 1:
+        import io
+        col_name = df.columns[0]
+        if ',' in col_name:
+            lines = []
+            for val in df[col_name]:
+                if pd.isna(val):
+                    lines.append("")
+                else:
+                    lines.append(str(val))
+            csv_content = col_name + "\n" + "\n".join(lines)
+            return pd.read_csv(io.StringIO(csv_content))
+    return df
+
+# Connect to the DuckDB master database
+conn = duckdb.connect("databases/master_consolidated.duckdb")
+
 
 # SEC quarters
 SEC_QUARTERS = [
@@ -48,254 +64,217 @@ REVENUE_TAGS = [
     "RevenueFromContractWithCustomerIncludingAssessedTax"
 ]
 
-# New CSV data paths
-TECH_PARAMS_PATH = os.path.join(CONSOLIDATED_DIR, "11_model_calibration", "technology_parameters.csv")
-FUEL_PRICES_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "power_fuel_prices.csv")
-GRID_SERVICES_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "grid_services_revenue.csv")
-HEAT_RATES_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "heat_rates.csv")
-ONSITE_CAPACITY_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "power_onsite_gen_capacity.csv")
-HEDGE_RATIOS_PATH = os.path.join(CONSOLIDATED_DIR, "10_onsite_power_generation", "power_hedge_ratios.csv")
-CARBON_PRICES_PATH = os.path.join(CONSOLIDATED_DIR, "13_general_datasets", "carbon_prices.csv")
-GRID_DELAYS_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "grid_connection_delays.csv")
-TRANSFORMER_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "transformer_shortage.csv")
-WHOLESALE_POWER_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "wholesale_electricity_prices.csv")
-REGIONAL_INFRA_PATH = os.path.join(CONSOLIDATED_DIR, "3_grid_power_infrastructure", "regional_infrastructure.csv")
-ENTERPRISE_CONTRACTS_PATH = os.path.join(CONSOLIDATED_DIR, "1_financial_market_data", "enterprise_contracts.csv")
-PRODUCTIVITY_PATH = os.path.join(CONSOLIDATED_DIR, "13_general_datasets", "productivity_meta_analysis_studies.csv")
-CALIBRATION_PARAMS_PATH = os.path.join(CONSOLIDATED_DIR, "11_model_calibration", "calibration_parameters.csv")
-
-# Additional data paths for previously unused datasets
-CHINA_BENCHMARKS_PATH = os.path.join(CONSOLIDATED_DIR, "6_chinese_ai_ecosystem", "china_benchmarks.csv")
-CHINA_API_PRICING_PATH = os.path.join(CONSOLIDATED_DIR, "6_chinese_ai_ecosystem", "china_api_pricing.csv")
-PRODUCTIVITY_ROOT_PATH = os.path.join(CONSOLIDATED_DIR, "13_general_datasets", "productivity_meta_analysis_studies.csv")
-MODULE_31_STRESS_PATH = os.path.join(CONSOLIDATED_DIR, "9_stress_scenarios", "module_31_black_swan_stress_test.csv")
+# Unused path variables deleted (data is loaded from DuckDB)
 
 print("=" * 70)
 print("TESM Data Ingestion & Calibration Pipeline v4.0 - Fully Data-Driven")
 print(f"Processing {len(SEC_QUARTERS)} SEC DERA quarters: {SEC_QUARTERS[0]} -> {SEC_QUARTERS[-1]}")
 print("=" * 70)
 
-# --- 1. PARSE LBNL GRID QUEUE DATA ---
-print(f"\n[1/5] Loading grid infrastructure from: {LBNL_PATH}...")
+# --- 1. PARSE LBNL GRID QUEUE DATA FROM DUCKDB ---
+print(f"\n[1/5] Loading grid infrastructure from DuckDB table grid_connection_delays...")
 try:
-    lbnl_df = pd.read_excel(LBNL_PATH, sheet_name="03. Complete Queue Data", header=1)
-    lbnl_df.columns = lbnl_df.columns.str.lower().str.replace(' ', '_').str.strip()
+    grid_delays = conn.execute("SELECT * FROM grid_connection_delays").df()
+    dc_delays = grid_delays[grid_delays['project_type'].str.contains('data_center|battery|storage', case=False, na=False)]
     
-    dc_filter = lbnl_df['type_clean'].astype(str).str.contains('data center|storage|battery', case=False, na=False) | \
-                lbnl_df['project_type'].astype(str).str.contains('data center|storage|battery', case=False, na=False)
-    lbnl_cleaned = lbnl_df[dc_filter & (lbnl_df['mw_1'] > 0)].copy()
-    
-    lbnl_cleaned['q_date'] = pd.to_datetime(lbnl_cleaned['q_date'], errors='coerce')
-    lbnl_cleaned['wd_date'] = pd.to_datetime(lbnl_cleaned['wd_date'], errors='coerce')
-    lbnl_cleaned['on_date'] = pd.to_datetime(lbnl_cleaned['on_date'], errors='coerce')
-    lbnl_cleaned['ia_date'] = pd.to_datetime(lbnl_cleaned['ia_date'], errors='coerce')
-    
-    end_date = lbnl_cleaned['on_date'].fillna(lbnl_cleaned['wd_date']).fillna(lbnl_cleaned['ia_date'])
-    lbnl_cleaned['queue_days'] = (end_date - lbnl_cleaned['q_date']).dt.days
-    
-    mean_days = lbnl_cleaned['queue_days'].mean()
-    mean_queue_quarters = round(mean_days / 91.25, 2) if not pd.isna(mean_days) else 20.0
+    if not dc_delays.empty:
+        mean_queue_quarters = round(dc_delays['median_ir_to_cod_months'].mean() / 3.0, 2)
+        mean_days = dc_delays['median_ir_to_cod_months'].mean() * 30.4
+        withdrawal_rate = round(dc_delays['withdrawal_rate_pct'].mean(), 2)
+        total_capacity_mw = dc_delays['total_active_gw'].sum() * 1000.0
+        active_projects = len(dc_delays)
+        lbnl_cleaned = dc_delays
+    else:
+        mean_queue_quarters = round(grid_delays['median_ir_to_cod_months'].mean() / 3.0, 2)
+        mean_days = grid_delays['median_ir_to_cod_months'].mean() * 30.4
+        withdrawal_rate = round(grid_delays['withdrawal_rate_pct'].mean(), 2)
+        total_capacity_mw = grid_delays['total_active_gw'].sum() * 1000.0
+        active_projects = len(grid_delays)
+        lbnl_cleaned = grid_delays
         
-    status_col = [c for c in lbnl_cleaned.columns if 'status' in c][0]
-    withdrawn_count = len(lbnl_cleaned[lbnl_cleaned[status_col].str.contains('withdrawn', case=False, na=False)])
-    withdrawal_rate = round((withdrawn_count / max(1, len(lbnl_cleaned))) * 100, 2)
-    
-    total_capacity_mw = lbnl_cleaned['mw_1'].sum()
-    active_projects = len(lbnl_cleaned[~lbnl_cleaned[status_col].str.contains('withdrawn|suspended', case=False, na=False)])
-    
-    print(f"   Grid Projects Matched: {len(lbnl_cleaned)} | Active: {active_projects}")
+    print(f"   Grid Projects Matched: {active_projects}")
     print(f"   Total Capacity: {total_capacity_mw:,.0f} MW")
     print(f"   Mean Queue: {mean_queue_quarters} Qtrs ({mean_days:.0f} days) | Withdrawal Risk: {withdrawal_rate}%")
 except Exception as e:
-    print(f"   Error parsing LBNL: {e}. Using defaults.")
+    print(f"   Error parsing grid delays from DuckDB: {e}. Using defaults.")
     mean_queue_quarters = 20.0
     withdrawal_rate = 75.0
     lbnl_cleaned = pd.DataFrame()
 
-# --- 2. PARSE USITC SEMICONDUCTOR TRADE ---
-print(f"\n[2/5] Loading semiconductor trade flows from: {USITC_PATH}...")
+# --- 2. PARSE USITC SEMICONDUCTOR TRADE FROM DUCKDB ---
+print(f"\n[2/5] Loading semiconductor trade flows from DuckDB table calibration_parameters...")
 try:
-    usitc_df = pd.read_excel(USITC_PATH, sheet_name="Query Results")
-    usitc_df.columns = usitc_df.columns.str.lower().str.replace(' ', '_').str.strip()
-    
-    val_cols = [c for c in usitc_df.columns if 'value' in c or 'customs' in c]
-    if val_cols:
-        cleaned_values = usitc_df[val_cols[0]].astype(str).str.replace(',', '').str.strip()
-        total_value = pd.to_numeric(cleaned_values, errors='coerce').sum()
-        silicon_supply_metric = round(total_value / 1e9, 2)
-    else:
-        silicon_supply_metric = 72.60
+    silicon_supply_metric = conn.execute("SELECT calibrated_value FROM calibration_parameters WHERE parameter_name = 'siliconSupply'").fetchone()[0]
     print(f"   Quarterly Silicon Baseline: ${silicon_supply_metric} Billion")
 except Exception as e:
-    print(f"   Error parsing USITC: {e}. Using default.")
+    print(f"   Error parsing silicon supply from DuckDB: {e}. Using default.")
     silicon_supply_metric = 72.60
 
-# --- 3. LOAD ALL CSV DATA SOURCES ---
-print(f"\n[3/5] Loading all CSV data sources...")
+# --- 3. LOAD ALL CSV DATA SOURCES FROM DUCKDB ---
+print(f"\n[3/5] Loading all CSV data sources from DuckDB...")
 
 # Technology parameters
-if os.path.exists(TECH_PARAMS_PATH):
-    tech_params = pd.read_csv(TECH_PARAMS_PATH)
+try:
+    tech_params = fix_single_column_df(conn.execute("SELECT * FROM technology_parameters").df())
     print(f"   Technology parameters: {len(tech_params)} records")
-else:
+except Exception as e:
     tech_params = pd.DataFrame()
-    print(f"   Technology parameters: NOT FOUND")
+    print(f"   Technology parameters Error: {e}")
 
 # Fuel prices
-if os.path.exists(FUEL_PRICES_PATH):
-    fuel_prices = pd.read_csv(FUEL_PRICES_PATH)
+try:
+    fuel_prices = fix_single_column_df(conn.execute("SELECT * FROM power_fuel_prices").df())
     print(f"   Fuel prices: {len(fuel_prices)} records")
-else:
+except Exception as e:
     fuel_prices = pd.DataFrame()
-    print(f"   Fuel prices: NOT FOUND")
+    print(f"   Fuel prices Error: {e}")
 
 # Grid services revenue
-if os.path.exists(GRID_SERVICES_PATH):
-    grid_services = pd.read_csv(GRID_SERVICES_PATH)
+try:
+    grid_services = fix_single_column_df(conn.execute("SELECT * FROM grid_services_revenue").df())
     print(f"   Grid services: {len(grid_services)} records")
-else:
+except Exception as e:
     grid_services = pd.DataFrame()
-    print(f"   Grid services: NOT FOUND")
+    print(f"   Grid services Error: {e}")
 
 # Heat rates
-if os.path.exists(HEAT_RATES_PATH):
-    heat_rates = pd.read_csv(HEAT_RATES_PATH)
+try:
+    heat_rates = fix_single_column_df(conn.execute("SELECT * FROM power_heat_rates").df())
+    heat_rates = heat_rates.rename(columns={
+        'heat_rate_btu_kwh': 'heat_rate_btu_per_kwh_hhv',
+        'degradation_pct_yr': 'degradation_pct_per_year'
+    })
     print(f"   Heat rates: {len(heat_rates)} records")
-else:
+except Exception as e:
     heat_rates = pd.DataFrame()
-    print(f"   Heat rates: NOT FOUND")
+    print(f"   Heat rates Error: {e}")
 
 # Onsite capacity
-if os.path.exists(ONSITE_CAPACITY_PATH):
-    onsite_capacity = pd.read_csv(ONSITE_CAPACITY_PATH)
+try:
+    onsite_capacity = fix_single_column_df(conn.execute("SELECT * FROM power_onsite_gen_capacity").df())
     print(f"   Onsite capacity: {len(onsite_capacity)} records")
-else:
+except Exception as e:
     onsite_capacity = pd.DataFrame()
-    print(f"   Onsite capacity: NOT FOUND")
+    print(f"   Onsite capacity Error: {e}")
 
 # Hedge ratios
-if os.path.exists(HEDGE_RATIOS_PATH):
-    hedge_ratios = pd.read_csv(HEDGE_RATIOS_PATH)
+try:
+    hedge_ratios = fix_single_column_df(conn.execute("SELECT * FROM power_hedge_ratios").df())
     print(f"   Hedge ratios: {len(hedge_ratios)} records")
-else:
+except Exception as e:
     hedge_ratios = pd.DataFrame()
-    print(f"   Hedge ratios: NOT FOUND")
+    print(f"   Hedge ratios Error: {e}")
 
 # Carbon prices
-if os.path.exists(CARBON_PRICES_PATH):
-    carbon_prices = pd.read_csv(CARBON_PRICES_PATH)
+try:
+    carbon_prices = fix_single_column_df(conn.execute("SELECT * FROM carbon_prices").df())
     print(f"   Carbon prices: {len(carbon_prices)} records")
-else:
+except Exception as e:
     carbon_prices = pd.DataFrame()
-    print(f"   Carbon prices: NOT FOUND")
+    print(f"   Carbon prices Error: {e}")
 
 # Grid delays
-if os.path.exists(GRID_DELAYS_PATH):
-    grid_delays = pd.read_csv(GRID_DELAYS_PATH)
+try:
+    grid_delays = fix_single_column_df(conn.execute("SELECT * FROM grid_connection_delays").df())
     print(f"   Grid delays: {len(grid_delays)} records")
-else:
+except Exception as e:
     grid_delays = pd.DataFrame()
-    print(f"   Grid delays: NOT FOUND")
+    print(f"   Grid delays Error: {e}")
 
 # Transformer shortage
-if os.path.exists(TRANSFORMER_PATH):
-    transformer = pd.read_csv(TRANSFORMER_PATH)
+try:
+    transformer = fix_single_column_df(conn.execute("SELECT * FROM transformer_shortage").df())
     print(f"   Transformer shortage: {len(transformer)} records")
-else:
+except Exception as e:
     transformer = pd.DataFrame()
-    print(f"   Transformer shortage: NOT FOUND")
+    print(f"   Transformer shortage Error: {e}")
 
 # Wholesale electricity
-if os.path.exists(WHOLESALE_POWER_PATH):
-    wholesale_power = pd.read_csv(WHOLESALE_POWER_PATH)
+try:
+    wholesale_power = fix_single_column_df(conn.execute("SELECT * FROM wholesale_electricity_prices").df())
     print(f"   Wholesale power: {len(wholesale_power)} records")
-else:
+except Exception as e:
     wholesale_power = pd.DataFrame()
-    print(f"   Wholesale power: NOT FOUND")
+    print(f"   Wholesale power Error: {e}")
 
 # Regional infrastructure
-if os.path.exists(REGIONAL_INFRA_PATH):
-    regional_infra = pd.read_csv(REGIONAL_INFRA_PATH)
+try:
+    regional_infra = fix_single_column_df(conn.execute("SELECT * FROM regional_infrastructure").df())
     print(f"   Regional infra: {len(regional_infra)} records")
-else:
+except Exception as e:
     regional_infra = pd.DataFrame()
-    print(f"   Regional infra: NOT FOUND")
+    print(f"   Regional infra Error: {e}")
 
 # Enterprise contracts
-if os.path.exists(ENTERPRISE_CONTRACTS_PATH):
-    enterprise_contracts = pd.read_csv(ENTERPRISE_CONTRACTS_PATH)
+try:
+    enterprise_contracts = fix_single_column_df(conn.execute("SELECT * FROM enterprise_contracts").df())
     print(f"   Enterprise contracts: {len(enterprise_contracts)} records")
     if 'avg_contract_length_years' in enterprise_contracts.columns and 'contract_length_years' not in enterprise_contracts.columns:
         enterprise_contracts.rename(columns={'avg_contract_length_years': 'contract_length_years'}, inplace=True)
     if 'committed_spend_usd_millions' not in enterprise_contracts.columns:
         enterprise_contracts['committed_spend_usd_millions'] = 1.0
-else:
+except Exception as e:
     enterprise_contracts = pd.DataFrame()
-    print(f"   Enterprise contracts: NOT FOUND")
+    print(f"   Enterprise contracts Error: {e}")
 
 # Productivity meta-analysis
-if os.path.exists(PRODUCTIVITY_PATH):
-    productivity = pd.read_csv(PRODUCTIVITY_PATH)
+try:
+    productivity = fix_single_column_df(conn.execute("SELECT * FROM productivity_meta_analysis_studies").df())
     print(f"   Productivity studies: {len(productivity)} records")
-else:
+except Exception as e:
     productivity = pd.DataFrame()
-    print(f"   Productivity studies: NOT FOUND")
+    print(f"   Productivity studies Error: {e}")
 
 # Calibration parameters (reference)
-if os.path.exists(CALIBRATION_PARAMS_PATH):
-    calibration_params = pd.read_csv(CALIBRATION_PARAMS_PATH)
+try:
+    calibration_params = fix_single_column_df(conn.execute("SELECT * FROM calibration_parameters").df())
     print(f"   Calibration params: {len(calibration_params)} records")
-else:
+except Exception as e:
     calibration_params = pd.DataFrame()
-    print(f"   Calibration params: NOT FOUND")
+    print(f"   Calibration params Error: {e}")
 
 # Chinese AI benchmarks
-if os.path.exists(CHINA_BENCHMARKS_PATH):
-    china_benchmarks = pd.read_csv(CHINA_BENCHMARKS_PATH)
+try:
+    china_benchmarks = fix_single_column_df(conn.execute("SELECT * FROM china_benchmarks").df())
     print(f"   China benchmarks: {len(china_benchmarks)} records")
-else:
+except Exception as e:
     china_benchmarks = pd.DataFrame()
-    print(f"   China benchmarks: NOT FOUND")
+    print(f"   China benchmarks Error: {e}")
 
 # Chinese API pricing
-if os.path.exists(CHINA_API_PRICING_PATH):
-    china_api_pricing = pd.read_csv(CHINA_API_PRICING_PATH)
+try:
+    china_api_pricing = fix_single_column_df(conn.execute("SELECT * FROM china_api_pricing").df())
     print(f"   China API pricing: {len(china_api_pricing)} records")
-else:
+except Exception as e:
     china_api_pricing = pd.DataFrame()
-    print(f"   China API pricing: NOT FOUND")
+    print(f"   China API pricing Error: {e}")
 
 # Productivity root (duplicate check)
-if os.path.exists(PRODUCTIVITY_ROOT_PATH):
-    productivity_root = pd.read_csv(PRODUCTIVITY_ROOT_PATH)
+try:
+    productivity_root = fix_single_column_df(conn.execute("SELECT * FROM productivity_meta_analysis_studies").df())
     print(f"   Productivity root: {len(productivity_root)} records")
-else:
+except Exception as e:
     productivity_root = pd.DataFrame()
-    print(f"   Productivity root: NOT FOUND")
+    print(f"   Productivity root Error: {e}")
 
 # Module 31 Black Swan stress test
-if os.path.exists(MODULE_31_STRESS_PATH):
-    module_31_stress = pd.read_csv(MODULE_31_STRESS_PATH)
+try:
+    module_31_stress = fix_single_column_df(conn.execute("SELECT * FROM module_31_black_swan_stress_test").df())
     print(f"   Module 31 stress test: {len(module_31_stress)} records")
-else:
+except Exception as e:
     module_31_stress = pd.DataFrame()
-    print(f"   Module 31 stress test: NOT FOUND")
+    print(f"   Module 31 stress test Error: {e}")
 
-# --- 4. PARSE SEC DERA FINANCIALS ---
-print(f"\n[4/5] Scanning {len(SEC_QUARTERS)} corporate SEC financial directories...")
+# --- 4. PARSE SEC DERA FINANCIALS FROM DUCKDB ---
+print(f"\n[4/5] Scanning {len(SEC_QUARTERS)} corporate SEC financial tables from DuckDB...")
 
 quarterly_results = []
 
 for q in SEC_QUARTERS:
-    sub_path = os.path.join(DATA_DIR, q, "sub.txt")
-    num_path = os.path.join(DATA_DIR, q, "num.txt")
-    
-    if not (os.path.exists(sub_path) and os.path.exists(num_path)):
-        print(f"   [{q}] SKIPPED - files not found")
-        continue
-    
     try:
-        sub = pd.read_csv(sub_path, sep='\t')
+        sub = conn.execute(f"SELECT * FROM sec_submissions_{q}").df()
+        num = conn.execute(f"SELECT * FROM sec_facts_{q}").df()
+        
         targets = sub['name'].str.contains(HYPERSCALER_NAMES, case=False, na=False)
         matched_subs = sub[targets]
         filtered_adsh = matched_subs['adsh'].unique()
@@ -304,7 +283,6 @@ for q in SEC_QUARTERS:
             print(f"   [{q}] SKIPPED - no hyperscaler filings found")
             continue
         
-        num = pd.read_csv(num_path, sep='\t', low_memory=False)
         firm_data = num[num['adsh'].isin(filtered_adsh)]
         
         matched_subs = matched_subs.copy()
@@ -369,6 +347,7 @@ for q in SEC_QUARTERS:
         
     except Exception as e:
         print(f"   [{q}] ERROR - {e}")
+
 
 # Build time-series DataFrame
 print(f"\n   Quarters successfully processed: {len(quarterly_results)}/{len(SEC_QUARTERS)}")
@@ -1087,6 +1066,9 @@ if (window.TESMEngine) {{
 overrides_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "param_overrides.js")
 with open(overrides_path, "w") as f:
     f.write(overrides_js_content)
+
+# Close database connection
+conn.close()
 
 print(f"\n{'=' * 70}")
 print(f"[SUCCESS] Calibration complete. Overrides saved to: {overrides_path}")
