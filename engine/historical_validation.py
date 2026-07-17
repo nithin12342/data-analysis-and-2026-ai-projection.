@@ -285,7 +285,7 @@ def verify_historical_case(dynamic_crisis):
     test_params.update(opt_params)
     
     sim_output = run_simulation(test_params)
-    simulated = sim_output["indexVal"]
+    simulated = sim_output["indexVal"][:n]
     
     # Generate Comparison Plot
     plt.figure(figsize=(10, 6))
