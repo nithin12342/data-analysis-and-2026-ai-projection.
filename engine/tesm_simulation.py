@@ -159,7 +159,12 @@ def run_simulation(params=None):
         inference_cost_decline=merged.get("priceCompression", 0.45),
         power_growth_cap=merged.get("powerGrowthCap", 0.12),
         capex_reflexivity=merged.get("capitalReflexivity", 0.30),
-        renewal_downsize=merged.get("downsizingRatio", 0.35)
+        renewal_downsize=merged.get("downsizingRatio", 0.35),
+        tco_multiplier=merged.get("tcoMultiplier", 1.35),
+        valuation_multiple_multiplier=merged.get("targetMultipleSales", 3.5) / merged.get("baseMultipleSales", 8.0),
+        sentiment_decay=merged.get("sentimentDecay", 0.03),
+        wacc_spread_add=merged.get("wacc_spread_add", 0.0),
+        recession_shock=merged.get("recessionShock", 0.0)
     )
     
     # Run SOLID OOP simulation

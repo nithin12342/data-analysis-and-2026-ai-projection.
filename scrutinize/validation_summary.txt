@@ -1,0 +1,79 @@
+============================================================
+RUNNING HYPER-OPTIMIZED VALIDATION WITH 8 CORES
+============================================================
+Optimizing parameters for DOTCOM calibration in parallel...
+  Best RMSE: 377.146 | Best DA: 13.0%
+Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\backtest_dotcom.png
+--------------------------------------------------
+Optimizing parameters for JAPAN calibration in parallel...
+  Best RMSE: 19.791 | Best DA: 34.8%
+Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\backtest_japan.png
+--------------------------------------------------
+Optimizing parameters for RAILWAY calibration in parallel...
+  Best RMSE: 138.944 | Best DA: 7.1%
+Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\backtest_railway.png
+--------------------------------------------------
+Optimizing parameters for TELECOM calibration in parallel...
+  Best RMSE: 68.194 | Best DA: 60.0%
+Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\backtest_telecom.png
+--------------------------------------------------
+Optimizing parameters for GFC calibration in parallel...
+  Best RMSE: 56.584 | Best DA: 85.7%
+Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\backtest_gfc.png
+--------------------------------------------------
+Optimizing parameters for CLOUD calibration in parallel...
+  Best RMSE: 121.963 | Best DA: 63.2%
+Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\backtest_cloud.png
+--------------------------------------------------
+Optimizing parameters for SMARTPHONE calibration in parallel...
+  Best RMSE: 102.410 | Best DA: 52.6%
+Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\backtest_smartphone.png
+--------------------------------------------------
+
+============================================================
+SUMMARY OF HISTORICAL CALIBRATIONS (Completed in 269.1s)
+============================================================
+Crisis: DOTCOM
+  RMSE:                 377.146
+  Directional Accuracy: 13.0%
+  Optimized Parameters: {'elasticityCoefficient': 2.200000000000001, 'priceCompression': 0.6000000000000001, 'capitalReflexivity': 0.1}
+  Status:               FAILED
+--------------------------------------------------
+Crisis: JAPAN
+  RMSE:                 19.791
+  Directional Accuracy: 34.8%
+  Optimized Parameters: {'elasticityCoefficient': 1.4000000000000004, 'priceCompression': 0.9000000000000001, 'capitalReflexivity': 0.1}
+  Status:               FAILED
+--------------------------------------------------
+Crisis: RAILWAY
+  RMSE:                 138.944
+  Directional Accuracy: 7.1%
+  Optimized Parameters: {'elasticityCoefficient': 2.200000000000001, 'priceCompression': 0.6000000000000001, 'capitalReflexivity': 0.1}
+  Status:               FAILED
+--------------------------------------------------
+Crisis: TELECOM
+  RMSE:                 68.194
+  Directional Accuracy: 60.0%
+  Optimized Parameters: {'elasticityCoefficient': 2.200000000000001, 'priceCompression': 0.6000000000000001, 'capitalReflexivity': 0.1}
+  Status:               PASSED
+--------------------------------------------------
+Crisis: GFC
+  RMSE:                 56.584
+  Directional Accuracy: 85.7%
+  Optimized Parameters: {'elasticityCoefficient': 2.200000000000001, 'priceCompression': 0.6000000000000001, 'capitalReflexivity': 0.1}
+  Status:               FAILED
+--------------------------------------------------
+Crisis: CLOUD
+  RMSE:                 121.963
+  Directional Accuracy: 63.2%
+  Optimized Parameters: {'elasticityCoefficient': 2.200000000000001, 'priceCompression': 0.6000000000000001, 'capitalReflexivity': 0.1}
+  Status:               FAILED
+--------------------------------------------------
+Crisis: SMARTPHONE
+  RMSE:                 102.410
+  Directional Accuracy: 52.6%
+  Optimized Parameters: {'elasticityCoefficient': 2.200000000000001, 'priceCompression': 0.6000000000000001, 'capitalReflexivity': 0.1}
+  Status:               FAILED
+--------------------------------------------------
+
+WARNING: Some historical calibrations did not meet validation criteria.

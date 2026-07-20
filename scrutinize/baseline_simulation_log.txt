@@ -1,0 +1,63 @@
+Executing baseline simulation...
+
+==================================================
+BASELINE SYSTEMS DYNAMICS MODEL OUTPUTS
+==================================================
+Quarter 0 (Year 0.0):
+  Cloud Revenue:       $8.00B/yr
+  Software SaaS Rev:   $4.00B/yr
+  Active Grid Power:   6.18 GW
+  Compute Supply:      12.00 capacity units
+  Stranded Capacity:   0.00 units
+  Effective Power Cost: $51.33/MWh
+  Hyperscaler ROIC:    0.0%
+  TESM Tech Index:     100.0
+------------------------------
+Quarter 4 (Year 1.0):
+  Cloud Revenue:       $10.12B/yr
+  Software SaaS Rev:   $7.96B/yr
+  Active Grid Power:   6.50 GW
+  Compute Supply:      12.62 capacity units
+  Stranded Capacity:   0.00 units
+  Effective Power Cost: $51.33/MWh
+  Hyperscaler ROIC:    -91.5%
+  TESM Tech Index:     55.9
+------------------------------
+Quarter 20 (Year 5.0):
+  Cloud Revenue:       $26.30B/yr
+  Software SaaS Rev:   $129.48B/yr
+  Active Grid Power:   8.29 GW
+  Compute Supply:      16.10 capacity units
+  Stranded Capacity:   0.00 units
+  Effective Power Cost: $51.33/MWh
+  Hyperscaler ROIC:    -76.1%
+  TESM Tech Index:     112.7
+------------------------------
+Quarter 40 (Year 10.0):
+  Cloud Revenue:       $84.90B/yr
+  Software SaaS Rev:   $4239.53B/yr
+  Active Grid Power:   11.82 GW
+  Compute Supply:      22.94 capacity units
+  Stranded Capacity:   0.00 units
+  Effective Power Cost: $51.33/MWh
+  Hyperscaler ROIC:    -62.8%
+  TESM Tech Index:     128.7
+------------------------------
+Quarter 79 (Year 19.8):
+  Cloud Revenue:       $802.92B/yr
+  Software SaaS Rev:   $3878946.91B/yr
+  Active Grid Power:   25.52 GW
+  Compute Supply:      49.55 capacity units
+  Stranded Capacity:   0.00 units
+  Effective Power Cost: $51.33/MWh
+  Hyperscaler ROIC:    -50.5%
+  TESM Tech Index:     74.7
+------------------------------
+Generated trajectories plot saved to: C:/Users/NITHING/.gemini/antigravity/brain/60e8d70e-69ee-4ab6-a08d-332834a5ddce\tesm_trajectories.png
+
+Running Scenario Matrix combos (powerset of A-E)...
+Successfully simulated 32 scenario combinations.
+
+Running Monte Carlo (500 trials)...
+Monte Carlo complete.
+Year 20 Index P10: 41.0 | P50: 82.4 | P90: 175.8

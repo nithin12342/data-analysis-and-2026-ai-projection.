@@ -1,0 +1,14 @@
+============================================================
+RUNNING GLOBAL PARAMETER SENSITIVITY ANALYSIS
+============================================================
+Running high-fidelity Sobol Sensitivity Analysis...
+  Generated 768 parameter combinations for Sobol sample.
+  Saved Sobol sensitivity plot to: C:\Users\NITHING\Desktop\projections\outputs\sensitivity_sobol_price_index.png
+  Saved sensitivity markdown report to: C:\Users\NITHING\Desktop\projections\outputs\sensitivity_analysis_report.md
+
+Sensitivity analysis runs completed successfully!
+
+
+=== STDERR ===
+C:\Users\NITHING\Desktop\projections\engine\sensitivity_analysis.py:100: DeprecationWarning: `salib.sample.saltelli` will be removed in SALib 1.5.1 Please use `salib.sample.sobol`
+  param_values = saltelli.sample(problem, 64)

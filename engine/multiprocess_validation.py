@@ -41,18 +41,37 @@ def evaluate_combo(args):
     global engine_instance
     elasticity, price_compress, reflexivity, dynamic_crisis, n, actual = args
     
-    from ai_tesm_solid_oop_model import Scenario
+    import copy
+    from ai_tesm_solid_oop_model import Scenario, replace
     
-    # Map parameter combinations to Scenario properties
+    # 1. Get default overrides for this crisis
+    crisis_params = get_crisis_params(dynamic_crisis, n)
+    
+    # 2. Merge current grid search parameters
+    merged = dict(DEFAULT_PARAMS)
+    merged.update(crisis_params)
+    merged.update({
+        "elasticityCoefficient": elasticity,
+        "priceCompression": price_compress,
+        "capitalReflexivity": reflexivity
+    })
+    
+    # 3. Create a thread-safe copy of the pre-loaded engine
+    # 3. Build scenario properties
     scen = Scenario(
         name="dashboard_simulation",
         demand_elasticity=elasticity,
-        organic_token_growth=0.15,
-        price_pass_through=1.0 - price_compress * 0.60,
+        organic_token_growth=merged.get("baselinePowerGrowth", 0.15),
+        price_pass_through=1.0 - price_compress * merged.get("openSourcePower", 0.60),
         inference_cost_decline=price_compress,
-        power_growth_cap=0.12,
+        power_growth_cap=merged.get("powerGrowthCap", 0.12),
         capex_reflexivity=reflexivity,
-        renewal_downsize=0.35
+        renewal_downsize=merged.get("downsizingRatio", 0.35),
+        tco_multiplier=merged.get("tcoMultiplier", 1.35),
+        valuation_multiple_multiplier=merged.get("valuationMultipleMultiplier", merged.get("targetMultipleSales", 3.5) / merged.get("baseMultipleSales", 8.0)),
+        sentiment_decay=merged.get("sentimentDecay", 0.03),
+        wacc_spread_add=merged.get("wacc_spread_add", 0.0),
+        recession_shock=merged.get("recessionShock", 0.0)
     )
     
     # Run the in-memory simulation step (no database queries)

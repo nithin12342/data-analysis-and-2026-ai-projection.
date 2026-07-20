@@ -100,7 +100,10 @@ def get_crisis_params(dynamic_crisis, horizon):
         })
     elif dynamic_crisis == "japan":
         params.update({
-            "wacc": 0.06,
+            "wacc_spread_add": 0.02,
+            "valuationMultipleMultiplier": 0.20,
+            "sentimentDecay": 0.15,
+            "recessionShock": 0.10,
             "downsizingRatio": 0.75,
             "seasonalityCycle": 0.045
         })
