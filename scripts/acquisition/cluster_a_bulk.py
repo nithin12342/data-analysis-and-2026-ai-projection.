@@ -31,6 +31,7 @@ def acquire_company_security_master():
             })
             
         df = pd.DataFrame(records)
+        df = df.drop_duplicates(subset=["cik"])
         
         con = get_db_connection()
         con.execute("CREATE TABLE IF NOT EXISTS company_security_master (cik VARCHAR PRIMARY KEY, ticker VARCHAR, company_name VARCHAR, model_sector VARCHAR)")

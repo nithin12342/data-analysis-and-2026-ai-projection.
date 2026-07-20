@@ -92,6 +92,7 @@ def acquire_company_security_master(db_path):
             })
             
         df = pd.DataFrame(records)
+        df = df.drop_duplicates(subset=["cik"])
         con = get_db_connection(db_path)
         con.execute("CREATE TABLE IF NOT EXISTS company_security_master (cik VARCHAR PRIMARY KEY, ticker VARCHAR, company_name VARCHAR, model_sector VARCHAR)")
         
@@ -848,7 +849,6 @@ def main():
     
     db_path = args.output_db
     
-    # Mount Google Drive if requested in Colab
     if args.mount_drive:
         logger.info("Attempting to mount Google Drive...")
         try:
@@ -857,7 +857,12 @@ def main():
             db_path = "/content/drive/MyDrive/master_consolidated.duckdb"
             logger.info(f"Redirecting output database path to Google Drive: {db_path}")
         except Exception as e:
-            logger.warning(f"Could not mount Google Drive. Using local path instead. Error: {e}")
+            logger.warning(f"Could not mount Google Drive programmatically: {e}")
+            if os.path.exists("/content/drive/MyDrive"):
+                db_path = "/content/drive/MyDrive/master_consolidated.duckdb"
+                logger.info(f"Google Drive is already mounted. Using path: {db_path}")
+            else:
+                logger.warning(f"Using local path instead: {db_path}")
 
     logger.info("=" * 60)
     logger.info(f"RUNNING PIPELINE AGAINST DATABASE: {db_path}")
