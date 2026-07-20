@@ -103,7 +103,7 @@ class DuckDBConfigRepository:
 
     def load_config(self) -> ModelConfig:
         import duckdb
-        conn = duckdb.connect(self.db_path)
+        conn = duckdb.connect(self.db_path, read_only=True)
         rows = conn.execute("SELECT parameter_name, calibrated_value FROM calibration_parameters").fetchall()
         params = {r[0]: float(r[1]) for r in rows}
         conn.close()
@@ -131,7 +131,7 @@ class DuckDBSectorRepository:
         import duckdb
         sectors = default_sectors()
         
-        conn = duckdb.connect(self.db_path)
+        conn = duckdb.connect(self.db_path, read_only=True)
         rows = conn.execute("SELECT parameter_name, calibrated_value FROM calibration_parameters").fetchall()
         params = {r[0]: float(r[1]) for r in rows}
         conn.close()
