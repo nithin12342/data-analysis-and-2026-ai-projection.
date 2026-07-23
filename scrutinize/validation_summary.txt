@@ -31,7 +31,7 @@ Generated backtest plot saved to: C:\Users\NITHING\Desktop\projections\outputs\b
 --------------------------------------------------
 
 ============================================================
-SUMMARY OF HISTORICAL CALIBRATIONS (Completed in 269.1s)
+SUMMARY OF HISTORICAL CALIBRATIONS (Completed in 449.4s)
 ============================================================
 Crisis: DOTCOM
   RMSE:                 377.146

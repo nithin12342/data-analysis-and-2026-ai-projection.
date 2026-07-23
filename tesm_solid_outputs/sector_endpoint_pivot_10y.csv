@@ -1,8 +1,0 @@
-sector,baseline_gradual_deflation,optimistic_productivity,pessimistic_renewal_compression,stress_dotcom_like_burst
-ai_cloud_rental,severe crash (-80),booming (+75),complete crash (-100),complete crash (-100)
-ai_semiconductors,booming (+80),booming (+80),stagnation (+9),complete crash (-100)
-datacenter_power_cooling,booming (+80),booming (+80),valuation deflation (-19),complete crash (-100)
-enterprise_ai_software,booming (+60),booming (+80),severe crash (-78),complete crash (-100)
-frontier_model_providers,severe crash (-79),booming (+80),complete crash (-100),complete crash (-100)
-hyperscaler_cloud_ai,severe crash (-81),resilient (+52),complete crash (-100),complete crash (-100)
-networking_storage_infra,booming (+80),booming (+80),valuation deflation (-14),complete crash (-100)

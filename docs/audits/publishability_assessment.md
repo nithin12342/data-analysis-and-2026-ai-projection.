@@ -52,7 +52,7 @@ The SOLID/OOP refactor ([ai_tesm_solid_oop_model.py](file:///c:/Users/NITHING/De
 ### 🔴 Gap 1: Revenue Model Bug
 > **Severity: BLOCKER**
 
-Your [GAP_ANALYSIS.md](file:///c:/Users/NITHING/Desktop/projections/docs/GAP_ANALYSIS.md) identifies that `financial_modeling_final.py` outputs **$0 revenue**. This invalidates all downstream financial projections, DCF valuations, and investment recommendations.
+Your [GAP_ANALYSIS.md](file:///c:/Users/NITHING/Desktop/projections/docs/audits/GAP_ANALYSIS.md) identifies that `financial_modeling_final.py` outputs **$0 revenue**. This invalidates all downstream financial projections, DCF valuations, and investment recommendations.
 
 **Action:** Debug and fix the revenue calculation. Verify all downstream metrics recalculate correctly. This is prerequisite to everything else.
 
@@ -61,7 +61,7 @@ Your [GAP_ANALYSIS.md](file:///c:/Users/NITHING/Desktop/projections/docs/GAP_ANA
 ### 🔴 Gap 2: Zero Academic Citations
 > **Severity: CRITICAL — instant desk-rejection at any journal**
 
-Neither [report.md](file:///c:/Users/NITHING/Desktop/projections/docs/report.md) nor [FINAL_REPORT.md](file:///c:/Users/NITHING/Desktop/projections/docs/FINAL_REPORT.md) contains a bibliography. You need to cite:
+Neither [report.md](file:///c:/Users/NITHING/Desktop/projections/docs/reports/report.md) nor [FINAL_REPORT.md](file:///c:/Users/NITHING/Desktop/projections/docs/reports/FINAL_REPORT.md) contains a bibliography. You need to cite:
 
 | Area | Must-Cite References |
 |------|---------------------|
@@ -75,7 +75,7 @@ Neither [report.md](file:///c:/Users/NITHING/Desktop/projections/docs/report.md)
 | Monte Carlo in finance | Glasserman (2003) |
 | Infrastructure economics | Relevant data center literature |
 
-**Action:** Create a formal bibliography with 30–50 references. Many are already mentioned in your [context.md](file:///c:/Users/NITHING/Desktop/projections/docs/context.md) appendix — they just need to be formatted as proper in-text citations.
+**Action:** Create a formal bibliography with 30–50 references. Many are already mentioned in your [context.md](file:///c:/Users/NITHING/Desktop/projections/docs/reports/context.md) appendix — they just need to be formatted as proper in-text citations.
 
 ---
 
@@ -126,7 +126,7 @@ Your documents are excellent **technical reports** but structured wrong for a jo
 12. Appendices (code, additional tables)
 ```
 
-**Action:** Restructure [report.md](file:///c:/Users/NITHING/Desktop/projections/docs/report.md) into this standard format. Most content already exists — it needs reorganization, not rewriting.
+**Action:** Restructure [report.md](file:///c:/Users/NITHING/Desktop/projections/docs/reports/report.md) into this standard format. Most content already exists — it needs reorganization, not rewriting.
 
 ---
 
@@ -136,10 +136,10 @@ Your documents are excellent **technical reports** but structured wrong for a jo
 |-------|----------|-----|
 | `NaN` values in JSON | [param_overrides.json](file:///c:/Users/NITHING/Desktop/projections/engine/param_overrides.json) lines 299, 317 | Replace with `null` or sentinel value |
 | Duplicate print blocks | [calibrate.py](file:///c:/Users/NITHING/Desktop/projections/engine/calibrate.py) lines 786–849 | Remove duplicate |
-| Stress scenario 100% FCF margin | [scenario_summary.csv](file:///c:/Users/NITHING/Desktop/projections/tesm_solid_outputs/scenario_summary.csv) | Add discussion/guard in paper |
+| Stress scenario 100% FCF margin | [scenario_summary.csv](file:///c:/Users/NITHING/Desktop/projections/to_delete/tesm_solid_outputs/scenario_summary.csv) | Add discussion/guard in paper |
 | Heuristic calibration mappings | `CapEx/RPO → downsizing_ratio` etc. | Add formal justification or sensitivity test |
 | Magic constants inline | e.g., `0.35 + 0.65 * adoption`, `2.20 * delta` | Extract to named constants |
-| No data access dates | [DATA_ANALYSIS_REPORT.md](file:///c:/Users/NITHING/Desktop/projections/docs/DATA_ANALYSIS_REPORT.md) | Document when each dataset was accessed |
+| No data access dates | [DATA_ANALYSIS_REPORT.md](file:///c:/Users/NITHING/Desktop/projections/docs/reports/DATA_ANALYSIS_REPORT.md) | Document when each dataset was accessed |
 
 ---
 
@@ -193,4 +193,4 @@ Your documents are excellent **technical reports** but structured wrong for a jo
 > [!IMPORTANT]
 > Your **model is publishable-grade** (A-). Your **documentation is not** (C+). The gap is primarily formal academic packaging — citations, confidence intervals, paper structure — not intellectual substance. With 2–4 weeks of targeted work on the 5 gaps above, this could be a strong working paper on arXiv/SSRN, and with further statistical hardening, a credible journal submission.
 
-The honest self-assessment in your [PUBLICATION_GAP_ANALYSIS.md](file:///c:/Users/NITHING/Desktop/projections/docs/PUBLICATION_GAP_ANALYSIS.md) (which rates coverage at ~33%) is too harsh on the modeling but correctly identifies the documentation gaps. You've built a genuinely sophisticated simulation — you just haven't dressed it up for peer review yet.
+The honest self-assessment in your [PUBLICATION_GAP_ANALYSIS.md](file:///c:/Users/NITHING/Desktop/projections/docs/audits/PUBLICATION_GAP_ANALYSIS.md) (which rates coverage at ~33%) is too harsh on the modeling but correctly identifies the documentation gaps. You've built a genuinely sophisticated simulation — you just haven't dressed it up for peer review yet.

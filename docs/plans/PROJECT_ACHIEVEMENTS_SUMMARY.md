@@ -42,7 +42,7 @@ This document summarizes the comprehensive achievements, empirical data utilizat
   - Supported robust parameter calibration and model validation
 
 ### 5. Robust Colab Data Pipeline
-- **File**: [`DATA_ACQUISITION_PIPELINE.ipynb`](file:///c:/Users/NITHING/Desktop/projections/DATA_ACQUISITION_PIPELINE.ipynb)
+- **File**: [`DATA_ACQUISITION_PIPELINE.ipynb`](file:///c:/Users/NITHING/Desktop/projections/notebooks/DATA_ACQUISITION_PIPELINE.ipynb)
 - **Achievements**:
   - Fixed GitHub clone HTTPS bugs (resolved trailing dot URL mismatch)
   - De-duplicated SEC CIK primary key constraints
@@ -55,9 +55,9 @@ This document summarizes the comprehensive achievements, empirical data utilizat
 
 ### 6. Documentation and Citations
 - **Files**: 
-  - Restored [`GAP_ANALYSIS.md`](file:///c:/Users/NITHING/Desktop/projections/GAP_ANALYSIS.md)
+  - Restored [`GAP_ANALYSIS.md`](file:///c:/Users/NITHING/Desktop/projections/docs/audits/GAP_ANALYSIS.md)
   - Restored [`DATA_PRESENCE_AUDIT.md`](file:///c:/Users/NITHING/Desktop/projections/DATA_PRESENCE_AUDIT.md)
-  - Created [`docs/references.bib`](file:///c:/Users/NITHING/Desktop/projections/docs/references.bib)
+  - Created [`docs/references.bib`](file:///c:/Users/NITHING/Desktop/projections/docs/reports/references.bib)
 - **Achievements**:
   - Documented 100% completion of active revenue model components
   - Established comprehensive BibTeX bibliography citing 10 core peer-reviewed academic papers

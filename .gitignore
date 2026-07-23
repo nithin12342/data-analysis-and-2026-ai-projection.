@@ -10,3 +10,5 @@ DATA/
 to_delete/
 **/*.db-wal
 **/*.wal
+*.duckdb
+*.db
